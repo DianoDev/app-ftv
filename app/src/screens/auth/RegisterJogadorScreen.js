@@ -1,271 +1,349 @@
 import React, { useState } from 'react';
 import {
-    View,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-    ActivityIndicator,
-    Alert,
-    ScrollView,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 
-export default function RegisterJogador() {
-    const router = useRouter();
-    const [loading, setLoading] = useState(false);
-    const [apiResponse, setApiResponse] = useState(null);
-    const [error, setError] = useState(null);
+const API_URL = 'http://localhost:8000/api';
 
-    const testarConexao = async () => {
-        setLoading(true);
-        setError(null);
-        setApiResponse(null);
+const RegisterJogadorScreen = ({ navigation }) => {
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    nome: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+    phone: '',
+    data_nascimento: '',
+    genero: 'masculino',
+    cpf: '',
+    cidade: '',
+    estado: '',
+    nivel_habilidade: 'iniciante',
+    posicao_preferida: 'ambos',
+    bio: '',
+  });
 
-        try {
-            console.log('Iniciando requisição para API...');
+  const handleChange = (field, value) => {
+    setFormData({ ...formData, [field]: value });
+  };
 
-            const response = await axios.get('http://localhost:8000/api/teste', {
-                timeout: 5000, // 5 segundos de timeout
-            });
+  const formatCPF = (text) => {
+    const numbers = text.replace(/\D/g, '');
+    return numbers.slice(0, 11);
+  };
 
-            console.log('Resposta recebida:', response.data);
-            setApiResponse(response.data);
-            Alert.alert('Sucesso! 🎉', `Resposta da API: ${response.data}`);
+  const formatDate = (text) => {
+    const numbers = text.replace(/\D/g, '');
+    if (numbers.length <= 2) return numbers;
+    if (numbers.length <= 4) return `${numbers.slice(0, 2)}/${numbers.slice(2)}`;
+    return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(4, 8)}`;
+  };
 
-        } catch (err) {
-            console.error('Erro na requisição:', err);
+  const handleRegister = async () => {
+    // Validações básicas
+    if (!formData.nome || !formData.email || !formData.password) {
+      Alert.alert('Erro', 'Preencha todos os campos obrigatórios');
+      return;
+    }
 
-            let errorMessage = 'Erro desconhecido';
+    if (formData.password !== formData.password_confirmation) {
+      Alert.alert('Erro', 'As senhas não coincidem');
+      return;
+    }
 
-            if (err.code === 'ECONNABORTED') {
-                errorMessage = 'Timeout: A API demorou muito para responder';
-            } else if (err.code === 'ERR_NETWORK' || err.message.includes('Network')) {
-                errorMessage = 'Erro de rede: Verifique se a API está rodando e se você está usando o IP correto';
-            } else if (err.response) {
-                errorMessage = `Erro ${err.response.status}: ${err.response.data}`;
-            } else {
-                errorMessage = err.message;
-            }
+    if (formData.cpf.length !== 11) {
+      Alert.alert('Erro', 'CPF inválido');
+      return;
+    }
 
-            setError(errorMessage);
-            Alert.alert('Erro na conexão ❌', errorMessage);
-        } finally {
-            setLoading(false);
-        }
-    };
+    setLoading(true);
 
-    return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity
-                    onPress={() => router.back()}
-                    style={styles.backButton}
-                >
-                    <Text style={styles.backButtonText}>← Voltar</Text>
-                </TouchableOpacity>
+    try {
+      const response = await axios.post(`${API_URL}/auth/register/jogador`, formData);
 
-                <Text style={styles.title}>Cadastro de Jogador 🏐</Text>
-                <Text style={styles.subtitle}>Teste de Conexão com API</Text>
-            </View>
+      if (response.data.success) {
+        // Salvar token (você pode usar AsyncStorage aqui)
+        const token = response.data.data.access_token;
 
-            <View style={styles.testContainer}>
-                <TouchableOpacity
-                    style={[styles.testButton, loading && styles.testButtonDisabled]}
-                    onPress={testarConexao}
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <ActivityIndicator color="#fff" />
-                    ) : (
-                        <Text style={styles.testButtonText}>Testar Conexão com API</Text>
-                    )}
-                </TouchableOpacity>
+        Alert.alert('Sucesso', 'Cadastro realizado com sucesso!', [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('Home'),
+          },
+        ]);
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Erro ao realizar cadastro';
+      Alert.alert('Erro', errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                {apiResponse && (
-                    <View style={styles.successBox}>
-                        <Text style={styles.successTitle}>✅ Conexão bem-sucedida!</Text>
-                        <Text style={styles.responseText}>Resposta da API:</Text>
-                        <View style={styles.responseBox}>
-                            <Text style={styles.responseData}>
-                                {typeof apiResponse === 'string'
-                                    ? apiResponse
-                                    : JSON.stringify(apiResponse, null, 2)}
-                            </Text>
-                        </View>
-                    </View>
-                )}
+  return (
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Cadastro de Jogador</Text>
+        <Text style={styles.subtitle}>Preencha seus dados para começar</Text>
+      </View>
 
-                {error && (
-                    <View style={styles.errorBox}>
-                        <Text style={styles.errorTitle}>❌ Erro na conexão</Text>
-                        <Text style={styles.errorText}>{error}</Text>
+      <View style={styles.form}>
+        {/* Nome */}
+        <Text style={styles.label}>Nome Completo *</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Digite seu nome"
+          value={formData.nome}
+          onChangeText={(text) => handleChange('nome', text)}
+        />
 
-                        <View style={styles.tipsBox}>
-                            <Text style={styles.tipsTitle}>💡 Dicas para resolver:</Text>
-                            <Text style={styles.tipText}>
-                                • Se estiver no Android: use o IP da sua máquina (ex: http://192.168.1.10:8000)
-                            </Text>
-                            <Text style={styles.tipText}>
-                                • Se estiver no iOS: localhost pode não funcionar, use o IP
-                            </Text>
-                            <Text style={styles.tipText}>
-                                • Verifique se a API está rodando: abra http://localhost:8000/api/teste no navegador
-                            </Text>
-                            <Text style={styles.tipText}>
-                                • Verifique se o CORS está habilitado no backend
-                            </Text>
-                        </View>
-                    </View>
-                )}
-            </View>
+        {/* Email */}
+        <Text style={styles.label}>E-mail *</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="seu@email.com"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          value={formData.email}
+          onChangeText={(text) => handleChange('email', text)}
+        />
 
-            <View style={styles.infoBox}>
-                <Text style={styles.infoTitle}>ℹ️ Informações</Text>
-                <Text style={styles.infoText}>Endpoint: http://localhost:8000/api/teste</Text>
-                <Text style={styles.infoText}>Método: GET</Text>
-                <Text style={styles.infoText}>Resposta esperada: "oi"</Text>
-            </View>
-        </ScrollView>
-    );
-}
+        {/* Telefone */}
+        <Text style={styles.label}>Telefone</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="(00) 00000-0000"
+          keyboardType="phone-pad"
+          value={formData.phone}
+          onChangeText={(text) => handleChange('phone', text)}
+        />
+
+        {/* CPF */}
+        <Text style={styles.label}>CPF *</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="000.000.000-00"
+          keyboardType="numeric"
+          value={formData.cpf}
+          onChangeText={(text) => handleChange('cpf', formatCPF(text))}
+          maxLength={11}
+        />
+
+        {/* Data de Nascimento */}
+        <Text style={styles.label}>Data de Nascimento *</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="DD/MM/AAAA"
+          keyboardType="numeric"
+          value={formData.data_nascimento}
+          onChangeText={(text) => handleChange('data_nascimento', formatDate(text))}
+          maxLength={10}
+        />
+
+        {/* Gênero */}
+        <Text style={styles.label}>Gênero *</Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={formData.genero}
+            onValueChange={(value) => handleChange('genero', value)}
+          >
+            <Picker.Item label="Masculino" value="masculino" />
+            <Picker.Item label="Feminino" value="feminino" />
+            <Picker.Item label="Outro" value="outro" />
+          </Picker>
+        </View>
+
+        {/* Cidade */}
+        <Text style={styles.label}>Cidade</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Sua cidade"
+          value={formData.cidade}
+          onChangeText={(text) => handleChange('cidade', text)}
+        />
+
+        {/* Estado */}
+        <Text style={styles.label}>Estado (UF)</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="SP"
+          maxLength={2}
+          autoCapitalize="characters"
+          value={formData.estado}
+          onChangeText={(text) => handleChange('estado', text)}
+        />
+
+        {/* Nível de Habilidade */}
+        <Text style={styles.label}>Nível de Habilidade</Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={formData.nivel_habilidade}
+            onValueChange={(value) => handleChange('nivel_habilidade', value)}
+          >
+            <Picker.Item label="Iniciante" value="iniciante" />
+            <Picker.Item label="Intermediário" value="intermediario" />
+            <Picker.Item label="Avançado" value="avancado" />
+            <Picker.Item label="Profissional" value="profissional" />
+          </Picker>
+        </View>
+
+        {/* Posição Preferida */}
+        <Text style={styles.label}>Posição Preferida</Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={formData.posicao_preferida}
+            onValueChange={(value) => handleChange('posicao_preferida', value)}
+          >
+            <Picker.Item label="Levantador" value="levantador" />
+            <Picker.Item label="Atacante" value="atacante" />
+            <Picker.Item label="Ambos" value="ambos" />
+          </Picker>
+        </View>
+
+        {/* Bio */}
+        <Text style={styles.label}>Biografia</Text>
+        <TextInput
+          style={[styles.input, styles.textArea]}
+          placeholder="Conte um pouco sobre você"
+          multiline
+          numberOfLines={4}
+          value={formData.bio}
+          onChangeText={(text) => handleChange('bio', text)}
+        />
+
+        {/* Senha */}
+        <Text style={styles.label}>Senha *</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Mínimo 8 caracteres"
+          secureTextEntry
+          value={formData.password}
+          onChangeText={(text) => handleChange('password', text)}
+        />
+
+        {/* Confirmar Senha */}
+        <Text style={styles.label}>Confirmar Senha *</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Digite a senha novamente"
+          secureTextEntry
+          value={formData.password_confirmation}
+          onChangeText={(text) => handleChange('password_confirmation', text)}
+        />
+
+        {/* Botão de Cadastro */}
+        <TouchableOpacity
+          style={[styles.button, loading && styles.buttonDisabled]}
+          onPress={handleRegister}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Cadastrar</Text>
+          )}
+        </TouchableOpacity>
+
+        {/* Link para Login */}
+        <TouchableOpacity
+          style={styles.linkContainer}
+          onPress={() => navigation.navigate('Login')}
+        >
+          <Text style={styles.linkText}>
+            Já tem uma conta? <Text style={styles.linkBold}>Faça login</Text>
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  );
+};
 
 const styles = StyleSheet.create({
-    container: {
-        flexGrow: 1,
-        padding: 20,
-        backgroundColor: '#f5f5f5',
-    },
-    header: {
-        marginTop: 40,
-        marginBottom: 30,
-    },
-    backButton: {
-        marginBottom: 20,
-    },
-    backButtonText: {
-        fontSize: 16,
-        color: '#2196F3',
-        fontWeight: '600',
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 8,
-    },
-    subtitle: {
-        fontSize: 16,
-        color: '#666',
-    },
-    testContainer: {
-        marginBottom: 30,
-    },
-    testButton: {
-        backgroundColor: '#2196F3',
-        padding: 16,
-        borderRadius: 12,
-        alignItems: 'center',
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-    },
-    testButtonDisabled: {
-        backgroundColor: '#90CAF9',
-    },
-    testButtonText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    successBox: {
-        marginTop: 20,
-        backgroundColor: '#E8F5E9',
-        padding: 16,
-        borderRadius: 12,
-        borderLeftWidth: 4,
-        borderLeftColor: '#4CAF50',
-    },
-    successTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#2E7D32',
-        marginBottom: 12,
-    },
-    responseText: {
-        fontSize: 14,
-        color: '#666',
-        marginBottom: 8,
-    },
-    responseBox: {
-        backgroundColor: '#fff',
-        padding: 12,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#C8E6C9',
-    },
-    responseData: {
-        fontSize: 16,
-        color: '#333',
-        fontFamily: 'monospace',
-    },
-    errorBox: {
-        marginTop: 20,
-        backgroundColor: '#FFEBEE',
-        padding: 16,
-        borderRadius: 12,
-        borderLeftWidth: 4,
-        borderLeftColor: '#F44336',
-    },
-    errorTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#C62828',
-        marginBottom: 8,
-    },
-    errorText: {
-        fontSize: 14,
-        color: '#D32F2F',
-        marginBottom: 16,
-        lineHeight: 20,
-    },
-    tipsBox: {
-        backgroundColor: '#FFF3E0',
-        padding: 12,
-        borderRadius: 8,
-        marginTop: 8,
-    },
-    tipsTitle: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: '#E65100',
-        marginBottom: 8,
-    },
-    tipText: {
-        fontSize: 13,
-        color: '#EF6C00',
-        marginBottom: 6,
-        lineHeight: 18,
-    },
-    infoBox: {
-        backgroundColor: '#E3F2FD',
-        padding: 16,
-        borderRadius: 12,
-        borderLeftWidth: 4,
-        borderLeftColor: '#2196F3',
-    },
-    infoTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#1565C0',
-        marginBottom: 8,
-    },
-    infoText: {
-        fontSize: 14,
-        color: '#1976D2',
-        marginBottom: 4,
-        fontFamily: 'monospace',
-    },
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    backgroundColor: '#2196F3',
+    padding: 30,
+    paddingTop: 60,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#fff',
+    opacity: 0.9,
+  },
+  form: {
+    padding: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+    marginTop: 12,
+  },
+  input: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 15,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  textArea: {
+    height: 100,
+    textAlignVertical: 'top',
+  },
+  pickerContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  button: {
+    backgroundColor: '#2196F3',
+    padding: 18,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 24,
+    marginBottom: 16,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  linkContainer: {
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  linkText: {
+    fontSize: 16,
+    color: '#666',
+  },
+  linkBold: {
+    fontWeight: 'bold',
+    color: '#2196F3',
+  },
 });
+
+export default RegisterJogadorScreen;
