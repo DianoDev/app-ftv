@@ -13,6 +13,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { apiRequest } from '../../Config/api.config';
+import { StorageService } from '../../services/storage';
 
 export default function LoginScreen() {
     const router = useRouter();
@@ -53,11 +54,10 @@ export default function LoginScreen() {
             const user = data.data.user;
             const tipoUsuario = user.tipo_usuario;
 
-            console.log('👤 Tipo de usuário:', tipoUsuario);
+            console.log('👤 data:', data.data.token);
 
-            // TODO: Salvar dados do usuário no AsyncStorage
-            // await AsyncStorage.setItem('user', JSON.stringify(user));
-            // await AsyncStorage.setItem('token', data.data.token);
+            await StorageService.saveUser(user);
+            await StorageService.saveToken(data.data.token);
 
             // Redirecionar baseado no tipo de usuário
             let rota = '';

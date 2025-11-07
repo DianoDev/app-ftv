@@ -1,20 +1,60 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
     View,
     Text,
     StyleSheet,
     SafeAreaView,
     ScrollView,
-    TouchableOpacity,
+    TouchableOpacity, Alert, ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import {StorageService} from "../../services/storage";
 
 export default function JogadorHomeScreen() {
     const router = useRouter();
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-    const handleLogout = () => {
-        // TODO: Limpar AsyncStorage
-        router.replace('/src/screens/auth/LoginScreen');
+    const handleLogout = async () => {
+        setIsLoggingOut(true);
+
+        try {
+            await StorageService.logout();
+            console.log('✅ Logout realizado com sucesso');
+            router.replace('/src/screens/auth/LoginScreen');
+        } catch (error) {
+            console.error('❌ Erro ao fazer logout:', error);
+
+            Alert.alert(
+                'Aviso',
+                'Houve um problema ao fazer logout, mas seus dados locais foram limpos.',
+                [
+                    {
+                        text: 'OK',
+                        onPress: () => router.replace('/src/screens/auth/LoginScreen'),
+                    },
+                ]
+            );
+        } finally {
+            setIsLoggingOut(false);
+        }
+    };
+
+    const confirmLogout = () => {
+        Alert.alert(
+            'Confirmar Logout',
+            'Deseja realmente sair da sua conta?',
+            [
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Sair',
+                    onPress: handleLogout,
+                    style: 'destructive',
+                },
+            ]
+        );
     };
 
     return (
@@ -26,8 +66,16 @@ export default function JogadorHomeScreen() {
                         <Text style={styles.greeting}>Olá, Jogador! 🏐</Text>
                         <Text style={styles.subtitle}>Pronto para jogar?</Text>
                     </View>
-                    <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                        <Text style={styles.logoutText}>Sair</Text>
+                    <TouchableOpacity
+                        style={styles.logoutButton}
+                        onPress={confirmLogout}
+                        disabled={isLoggingOut}
+                    >
+                        {isLoggingOut ? (
+                            <ActivityIndicator color="#fff" size="small" />
+                        ) : (
+                            <Text style={styles.logoutText}>Sair</Text>
+                        )}
                     </TouchableOpacity>
                 </View>
 
