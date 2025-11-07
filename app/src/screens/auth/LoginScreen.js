@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
-import { apiRequest } from '../../Config/api.config';
+import { apiRequest } from '../../config/api.config';
 import { StorageService } from '../../services/storage';
 
 export default function LoginScreen() {

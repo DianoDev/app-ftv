@@ -1,6 +1,6 @@
 // services/storage.js
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { apiRequest } from '../Config/api.config';
+import { apiRequest } from '../config/api.config';
 
 const TOKEN_KEY = '@ftv:token';
 const USER_KEY = '@ftv:user';

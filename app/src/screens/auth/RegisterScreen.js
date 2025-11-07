@@ -11,7 +11,7 @@ import {
     SafeAreaView,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { apiRequest } from '../../Config/api.config';
+import { apiRequest } from '../../config/api.config';
 
 export default function RegisterScreen() {
     const [nome, setNome] = useState('');
