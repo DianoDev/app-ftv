@@ -9,24 +9,24 @@ import {
     TouchableOpacity,
     Alert,
     ActivityIndicator,
-    Switch,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { apiRequest } from '../../../config/api.config';
 import { StorageService } from '../../../services/storage';
 
-export default function NovaQuadraScreen() {
+export default function NovaArenaScreen() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         nome: '',
-        comprimento: '',
-        largura: '',
-        valor_hora: '',
-        coberta: false,
-        iluminacao: true,
-        ativa: true,
-        observacoes: '',
+        descricao: '',
+        cnpj: '',
+        endereco: '',
+        cidade: '',
+        estado: '',
+        cep: '',
+        telefone: '',
+        whatsapp: '',
     });
 
     const handleInputChange = (field, value) => {
@@ -36,19 +36,91 @@ export default function NovaQuadraScreen() {
         }));
     };
 
+    // Máscaras de formatação
+    const formatCNPJ = (value) => {
+        const numbers = value.replace(/\D/g, '');
+        if (numbers.length <= 14) {
+            return numbers
+                .replace(/^(\d{2})(\d)/, '$1.$2')
+                .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+                .replace(/\.(\d{3})(\d)/, '.$1/$2')
+                .replace(/(\d{4})(\d)/, '$1-$2');
+        }
+        return value;
+    };
+
+    const formatPhone = (value) => {
+        const numbers = value.replace(/\D/g, '');
+        if (numbers.length <= 11) {
+            if (numbers.length <= 10) {
+                return numbers
+                    .replace(/^(\d{2})(\d)/, '($1) $2')
+                    .replace(/(\d{4})(\d)/, '$1-$2');
+            } else {
+                return numbers
+                    .replace(/^(\d{2})(\d)/, '($1) $2')
+                    .replace(/(\d{5})(\d)/, '$1-$2');
+            }
+        }
+        return value;
+    };
+
+    const formatCEP = (value) => {
+        const numbers = value.replace(/\D/g, '');
+        if (numbers.length <= 8) {
+            return numbers.replace(/^(\d{5})(\d)/, '$1-$2');
+        }
+        return value;
+    };
+
+    const handleCNPJChange = (text) => {
+        const formatted = formatCNPJ(text);
+        handleInputChange('cnpj', formatted);
+    };
+
+    const handlePhoneChange = (text) => {
+        const formatted = formatPhone(text);
+        handleInputChange('telefone', formatted);
+    };
+
+    const handleWhatsAppChange = (text) => {
+        const formatted = formatPhone(text);
+        handleInputChange('whatsapp', formatted);
+    };
+
+    const handleCEPChange = (text) => {
+        const formatted = formatCEP(text);
+        handleInputChange('cep', formatted);
+    };
+
     const validateForm = () => {
         if (!formData.nome.trim()) {
-            Alert.alert('Erro', 'O nome da quadra é obrigatório');
+            Alert.alert('Erro', 'O nome da arena é obrigatório');
             return false;
         }
 
-        if (formData.nome.length > 50) {
-            Alert.alert('Erro', 'O nome da quadra deve ter no máximo 50 caracteres');
+        if (formData.nome.length > 100) {
+            Alert.alert('Erro', 'O nome deve ter no máximo 100 caracteres');
             return false;
         }
 
-        if (formData.valor_hora && isNaN(parseFloat(formData.valor_hora))) {
-            Alert.alert('Erro', 'O valor por hora deve ser um número válido');
+        if (!formData.endereco.trim()) {
+            Alert.alert('Erro', 'O endereço é obrigatório');
+            return false;
+        }
+
+        if (!formData.cidade.trim()) {
+            Alert.alert('Erro', 'A cidade é obrigatória');
+            return false;
+        }
+
+        if (!formData.estado.trim()) {
+            Alert.alert('Erro', 'O estado é obrigatório');
+            return false;
+        }
+
+        if (formData.estado.length !== 2) {
+            Alert.alert('Erro', 'O estado deve ter 2 caracteres (ex: SP, RJ)');
             return false;
         }
 
@@ -63,7 +135,6 @@ export default function NovaQuadraScreen() {
         setLoading(true);
 
         try {
-            // Recupera o token e o usuário
             const token = await StorageService.getToken();
             const user = await StorageService.getUser();
 
@@ -75,19 +146,18 @@ export default function NovaQuadraScreen() {
 
             // Prepara os dados para envio
             const dataToSend = {
-                arena_id: user.arena_id || user.id, // Ajuste conforme estrutura do seu user
                 nome: formData.nome.trim(),
-                comprimento: formData.comprimento || null,
-                largura: formData.largura || null,
-                valor_hora: formData.valor_hora ? parseFloat(formData.valor_hora) : null,
-                coberta: formData.coberta,
-                iluminacao: formData.iluminacao,
-                ativa: formData.ativa,
-                observacoes: formData.observacoes.trim() || null,
+                descricao: formData.descricao.trim() || null,
+                cnpj: formData.cnpj.replace(/\D/g, '') || null,
+                endereco: formData.endereco.trim(),
+                cidade: formData.cidade.trim(),
+                estado: formData.estado.trim().toUpperCase(),
+                cep: formData.cep.replace(/\D/g, '') || null,
+                telefone: formData.telefone.replace(/\D/g, '') || null,
+                whatsapp: formData.whatsapp.replace(/\D/g, '') || null,
             };
 
-            // Faz a requisição
-            const response = await apiRequest('/api/quadras', {
+            const response = await apiRequest('/api/Arenas', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -95,24 +165,24 @@ export default function NovaQuadraScreen() {
                 body: JSON.stringify(dataToSend),
             });
 
-            console.log('✅ Quadra criada:', response);
+            console.log('✅ Arena criada:', response);
 
             Alert.alert(
                 'Sucesso',
-                'Quadra cadastrada com sucesso!',
+                'Arena cadastrada com sucesso!',
                 [
                     {
                         text: 'OK',
-                        onPress: () => router.back(),
+                        onPress: () => router.push('/src/screens/user_arena/HomeScreen')
                     },
                 ]
             );
 
         } catch (error) {
-            console.error('❌ Erro ao criar quadra:', error);
+            console.error('❌ Erro ao criar arena:', error);
             Alert.alert(
                 'Erro',
-                error.message || 'Não foi possível cadastrar a quadra. Tente novamente.'
+                error.message || 'Não foi possível cadastrar a arena. Tente novamente.'
             );
         } finally {
             setLoading(false);
@@ -141,113 +211,130 @@ export default function NovaQuadraScreen() {
                 <View style={styles.form}>
                     {/* Nome */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Nome da Quadra *</Text>
+                        <Text style={styles.label}>Nome da Arena *</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Ex: Quadra 1, Quadra Principal"
+                            placeholder="Ex: Arena Esportiva Central"
                             value={formData.nome}
                             onChangeText={(text) => handleInputChange('nome', text)}
-                            maxLength={50}
+                            maxLength={100}
                             placeholderTextColor="#999"
                         />
-                        <Text style={styles.helperText}>Máximo 50 caracteres</Text>
+                        <Text style={styles.helperText}>Máximo 100 caracteres</Text>
                     </View>
 
-                    {/* Dimensões */}
-                    <View style={styles.row}>
-                        <View style={[styles.inputGroup, styles.halfWidth]}>
-                            <Text style={styles.label}>Comprimento (m)</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Ex: 18"
-                                value={formData.comprimento}
-                                onChangeText={(text) => handleInputChange('comprimento', text)}
-                                keyboardType="numeric"
-                                placeholderTextColor="#999"
-                            />
-                        </View>
-
-                        <View style={[styles.inputGroup, styles.halfWidth]}>
-                            <Text style={styles.label}>Largura (m)</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Ex: 9"
-                                value={formData.largura}
-                                onChangeText={(text) => handleInputChange('largura', text)}
-                                keyboardType="numeric"
-                                placeholderTextColor="#999"
-                            />
-                        </View>
-                    </View>
-
-                    {/* Valor por hora */}
+                    {/* Descrição */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Valor por Hora (R$)</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Ex: 150.00"
-                            value={formData.valor_hora}
-                            onChangeText={(text) => handleInputChange('valor_hora', text)}
-                            keyboardType="decimal-pad"
-                            placeholderTextColor="#999"
-                        />
-                    </View>
-
-                    {/* Switches */}
-                    <View style={styles.switchGroup}>
-                        <View style={styles.switchItem}>
-                            <View>
-                                <Text style={styles.switchLabel}>Quadra Coberta</Text>
-                                <Text style={styles.switchDescription}>A quadra possui cobertura</Text>
-                            </View>
-                            <Switch
-                                value={formData.coberta}
-                                onValueChange={(value) => handleInputChange('coberta', value)}
-                                trackColor={{ false: '#ddd', true: '#007AFF' }}
-                                thumbColor="#fff"
-                            />
-                        </View>
-
-                        <View style={styles.switchItem}>
-                            <View>
-                                <Text style={styles.switchLabel}>Iluminação</Text>
-                                <Text style={styles.switchDescription}>A quadra possui iluminação</Text>
-                            </View>
-                            <Switch
-                                value={formData.iluminacao}
-                                onValueChange={(value) => handleInputChange('iluminacao', value)}
-                                trackColor={{ false: '#ddd', true: '#007AFF' }}
-                                thumbColor="#fff"
-                            />
-                        </View>
-
-                        <View style={styles.switchItem}>
-                            <View>
-                                <Text style={styles.switchLabel}>Quadra Ativa</Text>
-                                <Text style={styles.switchDescription}>Disponível para agendamentos</Text>
-                            </View>
-                            <Switch
-                                value={formData.ativa}
-                                onValueChange={(value) => handleInputChange('ativa', value)}
-                                trackColor={{ false: '#ddd', true: '#007AFF' }}
-                                thumbColor="#fff"
-                            />
-                        </View>
-                    </View>
-
-                    {/* Observações */}
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Observações</Text>
+                        <Text style={styles.label}>Descrição</Text>
                         <TextInput
                             style={[styles.input, styles.textArea]}
-                            placeholder="Informações adicionais sobre a quadra..."
-                            value={formData.observacoes}
-                            onChangeText={(text) => handleInputChange('observacoes', text)}
+                            placeholder="Descreva a arena, suas características e diferenciais..."
+                            value={formData.descricao}
+                            onChangeText={(text) => handleInputChange('descricao', text)}
                             multiline
                             numberOfLines={4}
                             textAlignVertical="top"
                             placeholderTextColor="#999"
                         />
+                    </View>
+
+                    {/* CNPJ */}
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>CNPJ</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="00.000.000/0000-00"
+                            value={formData.cnpj}
+                            onChangeText={handleCNPJChange}
+                            keyboardType="numeric"
+                            maxLength={18}
+                            placeholderTextColor="#999"
+                        />
+                    </View>
+
+                    {/* Endereço */}
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Endereço *</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Rua, número, bairro"
+                            value={formData.endereco}
+                            onChangeText={(text) => handleInputChange('endereco', text)}
+                            placeholderTextColor="#999"
+                        />
+                    </View>
+
+                    {/* Cidade e Estado */}
+                    <View style={styles.row}>
+                        <View style={[styles.inputGroup, { flex: 2 }]}>
+                            <Text style={styles.label}>Cidade *</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Ex: São Paulo"
+                                value={formData.cidade}
+                                onChangeText={(text) => handleInputChange('cidade', text)}
+                                maxLength={100}
+                                placeholderTextColor="#999"
+                            />
+                        </View>
+
+                        <View style={[styles.inputGroup, { flex: 1 }]}>
+                            <Text style={styles.label}>Estado *</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="SP"
+                                value={formData.estado}
+                                onChangeText={(text) => handleInputChange('estado', text.toUpperCase())}
+                                maxLength={2}
+                                autoCapitalize="characters"
+                                placeholderTextColor="#999"
+                            />
+                        </View>
+                    </View>
+
+                    {/* CEP */}
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>CEP</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="00000-000"
+                            value={formData.cep}
+                            onChangeText={handleCEPChange}
+                            keyboardType="numeric"
+                            maxLength={9}
+                            placeholderTextColor="#999"
+                        />
+                    </View>
+
+                    {/* Telefone */}
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Telefone</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="(00) 0000-0000"
+                            value={formData.telefone}
+                            onChangeText={handlePhoneChange}
+                            keyboardType="phone-pad"
+                            maxLength={15}
+                            placeholderTextColor="#999"
+                        />
+                    </View>
+
+                    {/* WhatsApp */}
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>WhatsApp</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="(00) 00000-0000"
+                            value={formData.whatsapp}
+                            onChangeText={handleWhatsAppChange}
+                            keyboardType="phone-pad"
+                            maxLength={15}
+                            placeholderTextColor="#999"
+                        />
+                        <Text style={styles.helperText}>
+                            Número para contato via WhatsApp
+                        </Text>
                     </View>
 
                     {/* Botão de Submit */}
@@ -259,7 +346,7 @@ export default function NovaQuadraScreen() {
                         {loading ? (
                             <ActivityIndicator color="#fff" size="small" />
                         ) : (
-                            <Text style={styles.submitButtonText}>Cadastrar Quadra</Text>
+                            <Text style={styles.submitButtonText}>Cadastrar Arena</Text>
                         )}
                     </TouchableOpacity>
                 </View>
@@ -338,30 +425,6 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
         gap: 12,
-    },
-    halfWidth: {
-        flex: 1,
-    },
-    switchGroup: {
-        marginBottom: 20,
-    },
-    switchItem: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: '#e0e0e0',
-    },
-    switchLabel: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#1b1b18',
-        marginBottom: 4,
-    },
-    switchDescription: {
-        fontSize: 14,
-        color: '#666',
     },
     submitButton: {
         backgroundColor: '#007AFF',
