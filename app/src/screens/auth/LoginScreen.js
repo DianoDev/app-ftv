@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
     View,
     Text,
@@ -10,10 +10,10 @@ import {
     ActivityIndicator,
     SafeAreaView,
 } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import { useRouter } from 'expo-router';
-import { apiRequest } from '../../config/api.config';
-import { StorageService } from '../../services/storage';
+import {StatusBar} from 'expo-status-bar';
+import {useRouter} from 'expo-router';
+import {apiRequest} from '../../config/api.config';
+import {StorageService} from '../../services/storage';
 
 export default function LoginScreen() {
     const router = useRouter();
@@ -61,22 +61,40 @@ export default function LoginScreen() {
 
             // Redirecionar baseado no tipo de usuário
             let rota = '';
-
-            switch (tipoUsuario) {
-                case 'arena':
-                    rota = '/src/screens/user_arena/HomeScreen';
-                    break;
-                case 'jogador':
-                    rota = '/src/screens/user_jogador/HomeScreen';
-                    break;
-                case 'professor':
-                    rota = '/src/screens/user_professor/HomeScreen';
-                    break;
-                default:
-                    console.warn('⚠️ Tipo de usuário desconhecido:', tipoUsuario);
-                    Alert.alert('Erro', 'Tipo de usuário não reconhecido');
-                    return;
+            if (data.data.user.subtipo === null) {
+                switch (tipoUsuario) {
+                    case 'arena':
+                        rota = '/src/screens/user_arena/arena/CreateArenaScreen';
+                        break;
+                    case 'jogador':
+                        rota = '/src/screens/user_jogador/jogador/CreateJogadorScreen';
+                        break;
+                    case 'professor':
+                        rota = '/src/screens/user_professor/professor/CreateProfessorScreen';
+                        break;
+                    default:
+                        console.warn('⚠️ Tipo de usuário desconhecido:', tipoUsuario);
+                        Alert.alert('Erro', 'Tipo de usuário não reconhecido');
+                        return;
+                }
+            } else {
+                switch (tipoUsuario) {
+                    case 'arena':
+                        rota = '/src/screens/user_arena/HomeScreen';
+                        break;
+                    case 'jogador':
+                        rota = '/src/screens/user_jogador/HomeScreen';
+                        break;
+                    case 'professor':
+                        rota = '/src/screens/user_professor/HomeScreen';
+                        break;
+                    default:
+                        console.warn('⚠️ Tipo de usuário desconhecido:', tipoUsuario);
+                        Alert.alert('Erro', 'Tipo de usuário não reconhecido');
+                        return;
+                }
             }
+
 
             console.log('📍 Redirecionando para:', rota);
 
@@ -112,17 +130,17 @@ export default function LoginScreen() {
         Alert.alert(
             'Recuperar Senha',
             'Funcionalidade em desenvolvimento',
-            [{ text: 'OK' }]
+            [{text: 'OK'}]
         );
     };
 
     const handleCadastro = () => {
-        router.push('/register');
+        router.push('/src/screens/auth/RegisterScreen');
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="auto" />
+            <StatusBar style="auto"/>
             <ScrollView
                 contentContainerStyle={styles.scrollContainer}
                 keyboardShouldPersistTaps="handled"
@@ -189,8 +207,8 @@ export default function LoginScreen() {
                     >
                         {loading ? (
                             <View style={styles.buttonContent}>
-                                <ActivityIndicator color="#fff" size="small" />
-                                <Text style={[styles.buttonText, { marginLeft: 10 }]}>
+                                <ActivityIndicator color="#fff" size="small"/>
+                                <Text style={[styles.buttonText, {marginLeft: 10}]}>
                                     Entrando...
                                 </Text>
                             </View>

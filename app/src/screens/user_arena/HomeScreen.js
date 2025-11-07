@@ -59,6 +59,11 @@ export default function ArenaHomeScreen() {
         );
     };
 
+    // Função para navegar para a tela de nova quadra
+    const handleNovaQuadra = () => {
+        router.push('/src/screens/user_arena/quadras/CreateQuadraScreen');
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -92,7 +97,11 @@ export default function ArenaHomeScreen() {
                             <Text style={styles.cardDescription}>Gerenciar reservas</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.card, styles.cardSecondary]}>
+                        {/* CARD ATUALIZADO - Agora com navegação */}
+                        <TouchableOpacity
+                            style={[styles.card, styles.cardSecondary]}
+                            onPress={handleNovaQuadra}
+                        >
                             <Text style={styles.cardIcon}>🏐</Text>
                             <Text style={styles.cardTitle}>Quadras</Text>
                             <Text style={styles.cardDescription}>Ver disponibilidade</Text>
@@ -111,6 +120,20 @@ export default function ArenaHomeScreen() {
                         </TouchableOpacity>
                     </View>
                 </View>
+
+                {/* Botão destaque para adicionar quadra */}
+                <TouchableOpacity
+                    style={styles.addQuadraButton}
+                    onPress={handleNovaQuadra}
+                >
+                    <Text style={styles.addQuadraIcon}>➕</Text>
+                    <View style={styles.addQuadraContent}>
+                        <Text style={styles.addQuadraTitle}>Cadastrar Nova Quadra</Text>
+                        <Text style={styles.addQuadraDescription}>
+                            Adicione uma nova quadra à sua arena
+                        </Text>
+                    </View>
+                </TouchableOpacity>
 
                 {/* Estatísticas Rápidas */}
                 <View style={styles.statsSection}>
@@ -246,6 +269,40 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#fff',
         opacity: 0.9,
+    },
+    // NOVO: Botão destaque para adicionar quadra
+    addQuadraButton: {
+        flexDirection: 'row',
+        backgroundColor: '#fff',
+        padding: 16,
+        borderRadius: 12,
+        marginBottom: 30,
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#34C759',
+        borderStyle: 'dashed',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    addQuadraIcon: {
+        fontSize: 36,
+        marginRight: 16,
+    },
+    addQuadraContent: {
+        flex: 1,
+    },
+    addQuadraTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#34C759',
+        marginBottom: 4,
+    },
+    addQuadraDescription: {
+        fontSize: 14,
+        color: '#666',
     },
     statsSection: {
         marginBottom: 30,

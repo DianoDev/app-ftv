@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { apiRequest } from '../../config/api.config';
-
+import {router} from 'expo-router';
 export default function RegisterScreen() {
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
@@ -20,7 +20,9 @@ export default function RegisterScreen() {
     const [confirmarSenha, setConfirmarSenha] = useState('');
     const [tipoUsuario, setTipoUsuario] = useState('jogador');
     const [loading, setLoading] = useState(false);
-
+    const handleLogin = () => {
+        router.push( '/src/screens/auth/LoginScreen');
+    };
     const handleRegister = async () => {
         // Validações
         if (!nome || !email || !senha || !confirmarSenha) {
@@ -67,7 +69,7 @@ export default function RegisterScreen() {
                 [
                     {
                         text: 'OK',
-                        /*
+
                         onPress: () => {
                             // Limpar formulário
                             setNome('');
@@ -75,12 +77,8 @@ export default function RegisterScreen() {
                             setSenha('');
                             setConfirmarSenha('');
                             setTipoUsuario('jogador');
-
-                            // TODO: Navegar para tela de login ou home
-                            console.log('👤 Dados do usuário:', data.data);
+                            handleLogin()
                         },
-
-                         */
                     },
                 ]
             );
