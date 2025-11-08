@@ -63,6 +63,10 @@ export default function ArenaHomeScreen() {
     const handleNovaQuadra = () => {
         router.push('/src/screens/user_arena/quadras/CreateQuadraScreen');
     };
+    const handleListQuadra = () => {
+        router.push('/src/screens/user_arena/quadras/ListQuadrasScreen');
+    };
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -100,7 +104,7 @@ export default function ArenaHomeScreen() {
                         {/* CARD ATUALIZADO - Agora com navegação */}
                         <TouchableOpacity
                             style={[styles.card, styles.cardSecondary]}
-                            onPress={handleNovaQuadra}
+                            onPress={handleListQuadra}
                         >
                             <Text style={styles.cardIcon}>🏐</Text>
                             <Text style={styles.cardTitle}>Quadras</Text>

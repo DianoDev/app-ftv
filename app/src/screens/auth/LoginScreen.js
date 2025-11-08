@@ -61,6 +61,7 @@ export default function LoginScreen() {
 
             // Redirecionar baseado no tipo de usuário
             let rota = '';
+            console.log(data.data.user,'data.data.user.subtipo')
             if (data.data.user.subtipo === null) {
                 switch (tipoUsuario) {
                     case 'arena':
