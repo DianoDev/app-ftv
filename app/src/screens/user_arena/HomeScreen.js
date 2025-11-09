@@ -67,6 +67,10 @@ export default function ArenaHomeScreen() {
         router.push('/src/screens/user_arena/quadras/ListQuadrasScreen');
     };
 
+    const handleListCampeonato = () => {
+        router.push('/src/screens/user_arena/campeonato/ListCampeonatoScreen');
+    };
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -111,9 +115,10 @@ export default function ArenaHomeScreen() {
                             <Text style={styles.cardDescription}>Ver disponibilidade</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.card, styles.cardSuccess]}>
+                        <TouchableOpacity style={[styles.card, styles.cardSuccess]}
+                                          onPress={handleListCampeonato}>
                             <Text style={styles.cardIcon}>💰</Text>
-                            <Text style={styles.cardTitle}>Financeiro</Text>
+                            <Text style={styles.cardTitle}>Campeonato</Text>
                             <Text style={styles.cardDescription}>Receitas e pagamentos</Text>
                         </TouchableOpacity>
 
