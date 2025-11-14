@@ -10,7 +10,10 @@ import {
     ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
 import { StorageService } from '../../services/storage';
+import { Colors, Typography, Spacing, BorderRadius, ComponentStyles, Icons } from '../../styles/theme';
 
 export default function ArenaHomeScreen() {
     const router = useRouter();
@@ -74,22 +77,24 @@ export default function ArenaHomeScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+            <StatusBar style="dark" />
+            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 {/* Header */}
                 <View style={styles.header}>
                     <View>
-                        <Text style={styles.greeting}>Olá, Arena! 🏟️</Text>
+                        <Text style={styles.greeting}>Olá, Arena!</Text>
                         <Text style={styles.subtitle}>Bem-vindo ao painel da arena</Text>
                     </View>
                     <TouchableOpacity
                         style={styles.logoutButton}
                         onPress={confirmLogout}
                         disabled={isLoggingOut}
+                        activeOpacity={0.8}
                     >
                         {isLoggingOut ? (
-                            <ActivityIndicator color="#fff" size="small" />
+                            <ActivityIndicator color={Colors.neutral.white} size="small" />
                         ) : (
-                            <Text style={styles.logoutText}>Sair</Text>
+                            <Ionicons name="log-out-outline" size={20} color={Colors.neutral.white} />
                         )}
                     </TouchableOpacity>
                 </View>
@@ -99,31 +104,42 @@ export default function ArenaHomeScreen() {
                     <Text style={styles.sectionTitle}>Ações Rápidas</Text>
 
                     <View style={styles.cardsContainer}>
-                        <TouchableOpacity style={[styles.card, styles.cardPrimary]}>
-                            <Text style={styles.cardIcon}>📅</Text>
+                        <TouchableOpacity style={[styles.card, styles.cardPrimary]} activeOpacity={0.8}>
+                            <View style={styles.cardIconContainer}>
+                                <Ionicons name="calendar" size={28} color={Colors.neutral.navyDeep} />
+                            </View>
                             <Text style={styles.cardTitle}>Agendamentos</Text>
                             <Text style={styles.cardDescription}>Gerenciar reservas</Text>
                         </TouchableOpacity>
 
-                        {/* CARD ATUALIZADO - Agora com navegação */}
                         <TouchableOpacity
                             style={[styles.card, styles.cardSecondary]}
                             onPress={handleListQuadra}
+                            activeOpacity={0.8}
                         >
-                            <Text style={styles.cardIcon}>🏐</Text>
+                            <View style={styles.cardIconContainer}>
+                                <Ionicons name="grid" size={28} color={Colors.neutral.white} />
+                            </View>
                             <Text style={styles.cardTitle}>Quadras</Text>
                             <Text style={styles.cardDescription}>Ver disponibilidade</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.card, styles.cardSuccess]}
-                                          onPress={handleListCampeonato}>
-                            <Text style={styles.cardIcon}>💰</Text>
+                        <TouchableOpacity
+                            style={[styles.card, styles.cardSuccess]}
+                            onPress={handleListCampeonato}
+                            activeOpacity={0.8}
+                        >
+                            <View style={styles.cardIconContainer}>
+                                <Ionicons name="trophy" size={28} color={Colors.neutral.white} />
+                            </View>
                             <Text style={styles.cardTitle}>Campeonato</Text>
-                            <Text style={styles.cardDescription}>Receitas e pagamentos</Text>
+                            <Text style={styles.cardDescription}>Gerenciar torneios</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.card, styles.cardWarning]}>
-                            <Text style={styles.cardIcon}>⚙️</Text>
+                        <TouchableOpacity style={[styles.card, styles.cardWarning]} activeOpacity={0.8}>
+                            <View style={styles.cardIconContainer}>
+                                <Ionicons name="settings" size={28} color={Colors.neutral.white} />
+                            </View>
                             <Text style={styles.cardTitle}>Configurações</Text>
                             <Text style={styles.cardDescription}>Perfil da arena</Text>
                         </TouchableOpacity>
@@ -134,14 +150,18 @@ export default function ArenaHomeScreen() {
                 <TouchableOpacity
                     style={styles.addQuadraButton}
                     onPress={handleNovaQuadra}
+                    activeOpacity={0.8}
                 >
-                    <Text style={styles.addQuadraIcon}>➕</Text>
+                    <View style={styles.addQuadraIconContainer}>
+                        <Ionicons name="add-circle" size={40} color={Colors.accent.lime} />
+                    </View>
                     <View style={styles.addQuadraContent}>
                         <Text style={styles.addQuadraTitle}>Cadastrar Nova Quadra</Text>
                         <Text style={styles.addQuadraDescription}>
                             Adicione uma nova quadra à sua arena
                         </Text>
                     </View>
+                    <Ionicons name="chevron-forward" size={24} color={Colors.neutral.charcoal} />
                 </TouchableOpacity>
 
                 {/* Estatísticas Rápidas */}
@@ -172,22 +192,26 @@ export default function ArenaHomeScreen() {
 
                     <View style={styles.appointmentCard}>
                         <View style={styles.appointmentTime}>
+                            <Ionicons name="time" size={20} color={Colors.neutral.white} style={{ marginBottom: 4 }} />
                             <Text style={styles.appointmentHour}>14:00</Text>
                         </View>
                         <View style={styles.appointmentInfo}>
                             <Text style={styles.appointmentTitle}>Quadra 1 - Jogo Amistoso</Text>
                             <Text style={styles.appointmentDetail}>João Silva e equipe</Text>
                         </View>
+                        <Ionicons name="chevron-forward" size={20} color={Colors.neutral.charcoal} />
                     </View>
 
                     <View style={styles.appointmentCard}>
                         <View style={styles.appointmentTime}>
+                            <Ionicons name="time" size={20} color={Colors.neutral.white} style={{ marginBottom: 4 }} />
                             <Text style={styles.appointmentHour}>16:00</Text>
                         </View>
                         <View style={styles.appointmentInfo}>
                             <Text style={styles.appointmentTitle}>Quadra 2 - Treino</Text>
                             <Text style={styles.appointmentDetail}>Time Águias</Text>
                         </View>
+                        <Ionicons name="chevron-forward" size={20} color={Colors.neutral.charcoal} />
                     </View>
                 </View>
             </ScrollView>
@@ -198,191 +222,178 @@ export default function ArenaHomeScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: Colors.neutral.sandLight,
     },
     scrollContent: {
-        padding: 20,
+        padding: Spacing.lg,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 30,
+        marginBottom: Spacing.xxxl,
     },
     greeting: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#1b1b18',
+        fontSize: Typography.sizes.h2,
+        fontWeight: Typography.fonts.displayWeight,
+        color: Colors.neutral.navyDeep,
     },
     subtitle: {
-        fontSize: 14,
-        color: '#666',
-        marginTop: 4,
+        fontSize: Typography.sizes.bodySmall,
+        color: Colors.neutral.charcoal,
+        marginTop: Spacing.xs,
     },
     logoutButton: {
-        backgroundColor: '#ff4444',
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 8,
-        minWidth: 60,
+        backgroundColor: Colors.accent.coral,
+        paddingHorizontal: Spacing.base,
+        paddingVertical: Spacing.sm,
+        borderRadius: BorderRadius.button,
+        minWidth: 44,
+        height: 44,
         alignItems: 'center',
         justifyContent: 'center',
     },
-    logoutText: {
-        color: '#fff',
-        fontWeight: '600',
-    },
     quickActions: {
-        marginBottom: 30,
+        marginBottom: Spacing.xxxl,
     },
     sectionTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#1b1b18',
-        marginBottom: 16,
+        fontSize: Typography.sizes.h3,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.navyDeep,
+        marginBottom: Spacing.base,
     },
     cardsContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 12,
+        gap: Spacing.md,
     },
     card: {
         width: '48%',
-        padding: 20,
-        borderRadius: 12,
+        padding: Spacing.lg,
+        borderRadius: BorderRadius.card,
         alignItems: 'center',
+        ...ComponentStyles.card,
     },
     cardPrimary: {
-        backgroundColor: '#007AFF',
+        backgroundColor: Colors.primary.mikasaBright,
     },
     cardSecondary: {
-        backgroundColor: '#34C759',
+        backgroundColor: Colors.secondary.ocean,
     },
     cardSuccess: {
-        backgroundColor: '#FF9500',
+        backgroundColor: Colors.accent.coral,
     },
     cardWarning: {
-        backgroundColor: '#AF52DE',
+        backgroundColor: Colors.accent.lime,
     },
-    cardIcon: {
-        fontSize: 32,
-        marginBottom: 8,
+    cardIconContainer: {
+        marginBottom: Spacing.sm,
     },
     cardTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#fff',
-        marginBottom: 4,
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.white,
+        marginBottom: Spacing.xs,
+        textAlign: 'center',
     },
     cardDescription: {
-        fontSize: 12,
-        color: '#fff',
+        fontSize: Typography.sizes.caption,
+        color: Colors.neutral.white,
         opacity: 0.9,
+        textAlign: 'center',
     },
-    // NOVO: Botão destaque para adicionar quadra
     addQuadraButton: {
         flexDirection: 'row',
-        backgroundColor: '#fff',
-        padding: 16,
-        borderRadius: 12,
-        marginBottom: 30,
+        backgroundColor: Colors.neutral.white,
+        padding: Spacing.base,
+        borderRadius: BorderRadius.card,
+        marginBottom: Spacing.xxxl,
         alignItems: 'center',
         borderWidth: 2,
-        borderColor: '#34C759',
+        borderColor: Colors.accent.lime,
         borderStyle: 'dashed',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
+        ...ComponentStyles.card,
     },
-    addQuadraIcon: {
-        fontSize: 36,
-        marginRight: 16,
+    addQuadraIconContainer: {
+        marginRight: Spacing.base,
     },
     addQuadraContent: {
         flex: 1,
     },
     addQuadraTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#34C759',
-        marginBottom: 4,
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.accent.lime,
+        marginBottom: Spacing.xs,
     },
     addQuadraDescription: {
-        fontSize: 14,
-        color: '#666',
+        fontSize: Typography.sizes.bodySmall,
+        color: Colors.neutral.charcoal,
     },
     statsSection: {
-        marginBottom: 30,
+        marginBottom: Spacing.xxxl,
     },
     statsContainer: {
         flexDirection: 'row',
-        gap: 12,
+        gap: Spacing.md,
     },
     statCard: {
         flex: 1,
-        backgroundColor: '#fff',
-        padding: 16,
-        borderRadius: 12,
+        backgroundColor: Colors.neutral.white,
+        padding: Spacing.base,
+        borderRadius: BorderRadius.card,
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
+        ...ComponentStyles.card,
     },
     statNumber: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#007AFF',
-        marginBottom: 4,
+        fontSize: Typography.sizes.h2,
+        fontWeight: Typography.fonts.numbersWeight,
+        color: Colors.primary.mikasaBright,
+        marginBottom: Spacing.xs,
     },
     statLabel: {
-        fontSize: 12,
-        color: '#666',
+        fontSize: Typography.sizes.caption,
+        color: Colors.neutral.charcoal,
         textAlign: 'center',
     },
     appointmentsSection: {
-        marginBottom: 30,
+        marginBottom: Spacing.xxxl,
     },
     appointmentCard: {
         flexDirection: 'row',
-        backgroundColor: '#fff',
-        padding: 16,
-        borderRadius: 12,
-        marginBottom: 12,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
+        backgroundColor: Colors.neutral.white,
+        padding: Spacing.base,
+        borderRadius: BorderRadius.card,
+        marginBottom: Spacing.md,
+        alignItems: 'center',
+        ...ComponentStyles.card,
     },
     appointmentTime: {
-        backgroundColor: '#007AFF',
-        padding: 12,
-        borderRadius: 8,
-        marginRight: 16,
+        backgroundColor: Colors.secondary.ocean,
+        padding: Spacing.md,
+        borderRadius: BorderRadius.sm,
+        marginRight: Spacing.base,
         justifyContent: 'center',
         alignItems: 'center',
+        minWidth: 60,
     },
     appointmentHour: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#fff',
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.numbersWeight,
+        color: Colors.neutral.white,
     },
     appointmentInfo: {
         flex: 1,
         justifyContent: 'center',
     },
     appointmentTitle: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#1b1b18',
-        marginBottom: 4,
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.navyDeep,
+        marginBottom: Spacing.xs,
     },
     appointmentDetail: {
-        fontSize: 14,
-        color: '#666',
+        fontSize: Typography.sizes.bodySmall,
+        color: Colors.neutral.charcoal,
     },
 });

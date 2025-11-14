@@ -10,10 +10,13 @@ import {
     Alert,
     ActivityIndicator,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { StorageService } from '../../../../services/storage';
 import { API_CONFIG } from '../../../../config/api.config';
 import { formatCurrency, unformatCurrency } from '../../../../utils/formatters';
+import { Colors, Typography, Spacing, BorderRadius, ComponentStyles } from '../../../../styles/theme';
 
 export default function EditCategoriaScreen() {
     const router = useRouter();
@@ -235,8 +238,9 @@ export default function EditCategoriaScreen() {
     if (loading) {
         return (
             <SafeAreaView style={styles.container}>
+                <StatusBar style="dark" />
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#007AFF" />
+                    <ActivityIndicator size="large" color={Colors.primary.mikasaBright} />
                     <Text style={styles.loadingText}>Carregando dados...</Text>
                 </View>
             </SafeAreaView>
@@ -245,14 +249,16 @@ export default function EditCategoriaScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+            <StatusBar style="dark" />
+            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 {/* Header */}
                 <View style={styles.header}>
                     <TouchableOpacity
                         style={styles.backButton}
                         onPress={() => router.back()}
                     >
-                        <Text style={styles.backButtonText}>← Voltar</Text>
+                        <Ionicons name="arrow-back" size={24} color={Colors.secondary.ocean} />
+                        <Text style={styles.backButtonText}>Voltar</Text>
                     </TouchableOpacity>
                     <Text style={styles.headerTitle}>Editar Categoria</Text>
                 </View>
@@ -264,13 +270,16 @@ export default function EditCategoriaScreen() {
                         <Text style={styles.label}>
                             Nome da Categoria <Text style={styles.required}>*</Text>
                         </Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Ex: Masculino A, Feminino B"
-                            value={nome}
-                            onChangeText={setNome}
-                            maxLength={100}
-                        />
+                        <View style={styles.inputContainer}>
+                            <Ionicons name="pricetag" size={20} color={Colors.text.secondary} style={styles.inputIcon} />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Ex: Masculino A, Feminino B"
+                                value={nome}
+                                onChangeText={setNome}
+                                maxLength={100}
+                            />
+                        </View>
                     </View>
 
                     {/* Gênero */}
@@ -325,25 +334,31 @@ export default function EditCategoriaScreen() {
                     <View style={styles.row}>
                         <View style={[styles.inputGroup, styles.halfWidth]}>
                             <Text style={styles.label}>Máximo de Duplas</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Ex: 16"
-                                value={maxDuplas}
-                                onChangeText={setMaxDuplas}
-                                keyboardType="numeric"
-                                maxLength={3}
-                            />
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="options" size={20} color={Colors.text.secondary} style={styles.inputIcon} />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Ex: 16"
+                                    value={maxDuplas}
+                                    onChangeText={setMaxDuplas}
+                                    keyboardType="numeric"
+                                    maxLength={3}
+                                />
+                            </View>
                         </View>
 
                         <View style={[styles.inputGroup, styles.halfWidth]}>
                             <Text style={styles.label}>Valor da Inscrição</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="R$ 0,00"
-                                value={valorInscricao}
-                                onChangeText={handleValorInscricaoChange}
-                                keyboardType="numeric"
-                            />
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="cash-outline" size={20} color={Colors.text.secondary} style={styles.inputIcon} />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="R$ 0,00"
+                                    value={valorInscricao}
+                                    onChangeText={handleValorInscricaoChange}
+                                    keyboardType="numeric"
+                                />
+                            </View>
                         </View>
                     </View>
 
@@ -373,39 +388,51 @@ export default function EditCategoriaScreen() {
 
                     {/* Premiação */}
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>💰 Premiação</Text>
+                        <View style={styles.sectionTitleContainer}>
+                            <Ionicons name="trophy" size={24} color={Colors.primary.mikasaBright} />
+                            <Text style={styles.sectionTitle}>Premiação</Text>
+                        </View>
 
                         <View style={styles.inputGroup}>
                             <Text style={styles.label}>1º Lugar</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="R$ 0,00"
-                                value={premiacao1Lugar}
-                                onChangeText={(text) => handlePremiacaoChange(text, setPremiacao1Lugar)}
-                                keyboardType="numeric"
-                            />
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="cash-outline" size={20} color={Colors.text.secondary} style={styles.inputIcon} />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="R$ 0,00"
+                                    value={premiacao1Lugar}
+                                    onChangeText={(text) => handlePremiacaoChange(text, setPremiacao1Lugar)}
+                                    keyboardType="numeric"
+                                />
+                            </View>
                         </View>
 
                         <View style={styles.inputGroup}>
                             <Text style={styles.label}>2º Lugar</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="R$ 0,00"
-                                value={premiacao2Lugar}
-                                onChangeText={(text) => handlePremiacaoChange(text, setPremiacao2Lugar)}
-                                keyboardType="numeric"
-                            />
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="cash-outline" size={20} color={Colors.text.secondary} style={styles.inputIcon} />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="R$ 0,00"
+                                    value={premiacao2Lugar}
+                                    onChangeText={(text) => handlePremiacaoChange(text, setPremiacao2Lugar)}
+                                    keyboardType="numeric"
+                                />
+                            </View>
                         </View>
 
                         <View style={styles.inputGroup}>
                             <Text style={styles.label}>3º Lugar</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="R$ 0,00"
-                                value={premiacao3Lugar}
-                                onChangeText={(text) => handlePremiacaoChange(text, setPremiacao3Lugar)}
-                                keyboardType="numeric"
-                            />
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="cash-outline" size={20} color={Colors.text.secondary} style={styles.inputIcon} />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="R$ 0,00"
+                                    value={premiacao3Lugar}
+                                    onChangeText={(text) => handlePremiacaoChange(text, setPremiacao3Lugar)}
+                                    keyboardType="numeric"
+                                />
+                            </View>
                         </View>
                     </View>
 
@@ -440,7 +467,7 @@ export default function EditCategoriaScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: Colors.neutral.sandLight,
     },
     loadingContainer: {
         flex: 1,
@@ -448,59 +475,73 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     loadingText: {
-        marginTop: 12,
-        fontSize: 16,
-        color: '#666',
+        marginTop: Spacing.sm,
+        ...Typography.body,
+        color: Colors.text.primary,
     },
     scrollContent: {
-        paddingBottom: 40,
+        paddingBottom: Spacing.xl,
     },
     header: {
-        backgroundColor: '#fff',
-        padding: 20,
+        backgroundColor: Colors.neutral.white,
+        padding: Spacing.lg,
         borderBottomWidth: 1,
-        borderBottomColor: '#e0e0e0',
+        borderBottomColor: Colors.neutral.border,
     },
     backButton: {
-        marginBottom: 12,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: Spacing.sm,
+        gap: Spacing.xs,
     },
     backButtonText: {
-        fontSize: 16,
-        color: '#007AFF',
+        ...Typography.body,
+        color: Colors.secondary.ocean,
         fontWeight: '600',
     },
     headerTitle: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#1b1b18',
+        ...Typography.h2,
+        color: Colors.text.primary,
     },
     form: {
-        padding: 20,
+        backgroundColor: Colors.neutral.white,
+        margin: Spacing.lg,
+        padding: Spacing.lg,
+        ...ComponentStyles.card,
     },
     inputGroup: {
-        marginBottom: 20,
+        marginBottom: Spacing.lg,
     },
     label: {
-        fontSize: 16,
+        ...Typography.body,
         fontWeight: '600',
-        color: '#1b1b18',
-        marginBottom: 8,
+        color: Colors.text.primary,
+        marginBottom: Spacing.xs,
     },
     required: {
-        color: '#FF3B30',
+        color: Colors.accent.error,
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: Colors.neutral.white,
+        borderWidth: 1,
+        borderColor: Colors.neutral.border,
+        borderRadius: BorderRadius.md,
+        paddingHorizontal: Spacing.md,
+    },
+    inputIcon: {
+        marginRight: Spacing.sm,
     },
     input: {
-        backgroundColor: '#fff',
-        borderWidth: 1,
-        borderColor: '#d0d0d0',
-        borderRadius: 8,
-        padding: 14,
+        flex: 1,
+        paddingVertical: Spacing.md,
         fontSize: 16,
-        color: '#1b1b18',
+        color: Colors.text.primary,
     },
     row: {
         flexDirection: 'row',
-        gap: 12,
+        gap: Spacing.md,
     },
     halfWidth: {
         flex: 1,
@@ -508,70 +549,71 @@ const styles = StyleSheet.create({
     optionsContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 8,
+        gap: Spacing.sm,
     },
     optionButton: {
-        paddingHorizontal: 16,
-        paddingVertical: 10,
-        borderRadius: 8,
-        backgroundColor: '#fff',
+        paddingHorizontal: Spacing.md,
+        paddingVertical: Spacing.sm,
+        borderRadius: BorderRadius.md,
+        backgroundColor: Colors.neutral.white,
         borderWidth: 1,
-        borderColor: '#d0d0d0',
+        borderColor: Colors.neutral.border,
     },
     optionButtonActive: {
-        backgroundColor: '#007AFF',
-        borderColor: '#007AFF',
+        backgroundColor: Colors.primary.mikasaBright,
+        borderColor: Colors.primary.mikasaBright,
     },
     optionButtonText: {
-        fontSize: 14,
+        ...Typography.small,
         fontWeight: '600',
-        color: '#666',
+        color: Colors.text.secondary,
     },
     optionButtonTextActive: {
-        color: '#fff',
+        color: Colors.neutral.white,
     },
     section: {
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        padding: 16,
-        marginBottom: 20,
+        backgroundColor: Colors.neutral.white,
+        borderRadius: BorderRadius.lg,
+        padding: Spacing.lg,
+        marginBottom: Spacing.lg,
         borderWidth: 1,
-        borderColor: '#d0d0d0',
+        borderColor: Colors.neutral.border,
+    },
+    sectionTitleContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: Spacing.md,
+        gap: Spacing.sm,
     },
     sectionTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#1b1b18',
-        marginBottom: 16,
+        ...Typography.h4,
+        color: Colors.text.primary,
     },
     buttonContainer: {
         flexDirection: 'row',
-        gap: 12,
-        marginTop: 20,
+        gap: Spacing.md,
+        marginTop: Spacing.lg,
     },
     button: {
         flex: 1,
-        paddingVertical: 16,
-        borderRadius: 8,
-        alignItems: 'center',
-        justifyContent: 'center',
+        ...ComponentStyles.buttonPrimary,
     },
     cancelButton: {
-        backgroundColor: '#fff',
+        backgroundColor: Colors.neutral.white,
         borderWidth: 1,
-        borderColor: '#d0d0d0',
+        borderColor: Colors.neutral.border,
     },
     cancelButtonText: {
-        fontSize: 16,
+        ...Typography.body,
         fontWeight: '600',
-        color: '#666',
+        color: Colors.text.secondary,
     },
     submitButton: {
-        backgroundColor: '#007AFF',
+        backgroundColor: Colors.primary.mikasaBright,
     },
     submitButtonText: {
-        fontSize: 16,
+        ...Typography.body,
         fontWeight: '600',
-        color: '#fff',
+        color: Colors.neutral.white,
     },
 });

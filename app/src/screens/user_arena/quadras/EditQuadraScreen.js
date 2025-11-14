@@ -11,10 +11,13 @@ import {
     ActivityIndicator,
     Switch,
 } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { StorageService } from '../../../services/storage';
 import { API_CONFIG } from '../../../config/api.config';
 import { formatCurrency, unformatCurrency } from '../../../utils/formatters';
+import { Colors, Typography, Spacing, BorderRadius, ComponentStyles } from '../../../styles/theme';
 
 export default function EditQuadraScreen() {
     const router = useRouter();
@@ -169,8 +172,9 @@ export default function EditQuadraScreen() {
     if (loading) {
         return (
             <SafeAreaView style={styles.container}>
+                <StatusBar style="dark" />
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#007AFF" />
+                    <ActivityIndicator size="large" color={Colors.primary.mikasaBright} />
                     <Text style={styles.loadingText}>Carregando dados...</Text>
                 </View>
             </SafeAreaView>
@@ -179,16 +183,21 @@ export default function EditQuadraScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+            <StatusBar style="dark" />
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+            >
                 {/* Header */}
                 <View style={styles.header}>
                     <TouchableOpacity
                         style={styles.backButton}
                         onPress={() => router.back()}
                     >
-                        <Text style={styles.backButtonText}>← Voltar</Text>
+                        <Ionicons name="arrow-back" size={24} color={Colors.secondary.ocean} />
+                        <Text style={styles.backButtonText}>Voltar</Text>
                     </TouchableOpacity>
-                    <Text style={styles.headerTitle}>Editar Quadra</Text>
+                    <Text style={styles.title}>Editar Quadra</Text>
                 </View>
 
                 {/* Formulário */}
@@ -198,79 +207,124 @@ export default function EditQuadraScreen() {
                         <Text style={styles.label}>
                             Nome da Quadra <Text style={styles.required}>*</Text>
                         </Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Ex: Quadra 1"
-                            value={nome}
-                            onChangeText={setNome}
-                            maxLength={50}
-                        />
+                        <View style={styles.inputContainer}>
+                            <Ionicons
+                                name="grid"
+                                size={20}
+                                color={Colors.neutral.charcoal}
+                                style={styles.inputIcon}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Ex: Quadra 1"
+                                value={nome}
+                                onChangeText={setNome}
+                                maxLength={50}
+                                placeholderTextColor={Colors.neutral.charcoal}
+                            />
+                        </View>
                     </View>
 
                     {/* Dimensões */}
                     <View style={styles.row}>
                         <View style={[styles.inputGroup, styles.halfWidth]}>
                             <Text style={styles.label}>Comprimento</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Ex: 40m"
-                                value={comprimento}
-                                onChangeText={setComprimento}
-                            />
+                            <View style={styles.inputContainer}>
+                                <Ionicons
+                                    name="resize"
+                                    size={20}
+                                    color={Colors.neutral.charcoal}
+                                    style={styles.inputIcon}
+                                />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Ex: 40m"
+                                    value={comprimento}
+                                    onChangeText={setComprimento}
+                                    placeholderTextColor={Colors.neutral.charcoal}
+                                />
+                            </View>
                         </View>
 
                         <View style={[styles.inputGroup, styles.halfWidth]}>
                             <Text style={styles.label}>Largura</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Ex: 20m"
-                                value={largura}
-                                onChangeText={setLargura}
-                            />
+                            <View style={styles.inputContainer}>
+                                <Ionicons
+                                    name="resize"
+                                    size={20}
+                                    color={Colors.neutral.charcoal}
+                                    style={styles.inputIcon}
+                                />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Ex: 20m"
+                                    value={largura}
+                                    onChangeText={setLargura}
+                                    placeholderTextColor={Colors.neutral.charcoal}
+                                />
+                            </View>
                         </View>
                     </View>
 
                     {/* Valor por Hora */}
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Valor por Hora</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="R$ 0,00"
-                            value={valorHora}
-                            onChangeText={handleValorHoraChange}
-                            keyboardType="numeric"
-                        />
+                        <View style={styles.inputContainer}>
+                            <Ionicons
+                                name="cash"
+                                size={20}
+                                color={Colors.neutral.charcoal}
+                                style={styles.inputIcon}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="R$ 0,00"
+                                value={valorHora}
+                                onChangeText={handleValorHoraChange}
+                                keyboardType="numeric"
+                                placeholderTextColor={Colors.neutral.charcoal}
+                            />
+                        </View>
                     </View>
 
                     {/* Switches */}
                     <View style={styles.switchGroup}>
-                        <View style={styles.switchRow}>
-                            <Text style={styles.switchLabel}>Quadra Coberta</Text>
+                        <View style={styles.switchItem}>
+                            <View>
+                                <Text style={styles.switchLabel}>Quadra Coberta</Text>
+                                <Text style={styles.switchDescription}>A quadra possui cobertura</Text>
+                            </View>
                             <Switch
                                 value={coberta}
                                 onValueChange={setCoberta}
-                                trackColor={{ false: '#d0d0d0', true: '#34C759' }}
-                                thumbColor="#fff"
+                                trackColor={{ false: Colors.neutral.greyLight, true: Colors.primary.mikasaBright }}
+                                thumbColor={Colors.neutral.white}
                             />
                         </View>
 
-                        <View style={styles.switchRow}>
-                            <Text style={styles.switchLabel}>Iluminação</Text>
+                        <View style={styles.switchItem}>
+                            <View>
+                                <Text style={styles.switchLabel}>Iluminação</Text>
+                                <Text style={styles.switchDescription}>A quadra possui iluminação</Text>
+                            </View>
                             <Switch
                                 value={iluminacao}
                                 onValueChange={setIluminacao}
-                                trackColor={{ false: '#d0d0d0', true: '#34C759' }}
-                                thumbColor="#fff"
+                                trackColor={{ false: Colors.neutral.greyLight, true: Colors.primary.mikasaBright }}
+                                thumbColor={Colors.neutral.white}
                             />
                         </View>
 
-                        <View style={styles.switchRow}>
-                            <Text style={styles.switchLabel}>Quadra Ativa</Text>
+                        <View style={styles.switchItem}>
+                            <View>
+                                <Text style={styles.switchLabel}>Quadra Ativa</Text>
+                                <Text style={styles.switchDescription}>Disponível para agendamentos</Text>
+                            </View>
                             <Switch
                                 value={ativa}
                                 onValueChange={setAtiva}
-                                trackColor={{ false: '#d0d0d0', true: '#34C759' }}
-                                thumbColor="#fff"
+                                trackColor={{ false: Colors.neutral.greyLight, true: Colors.primary.mikasaBright }}
+                                thumbColor={Colors.neutral.white}
                             />
                         </View>
                     </View>
@@ -278,15 +332,24 @@ export default function EditQuadraScreen() {
                     {/* Observações */}
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Observações</Text>
-                        <TextInput
-                            style={[styles.input, styles.textArea]}
-                            placeholder="Informações adicionais sobre a quadra..."
-                            value={observacoes}
-                            onChangeText={setObservacoes}
-                            multiline
-                            numberOfLines={4}
-                            textAlignVertical="top"
-                        />
+                        <View style={[styles.inputContainer, styles.textAreaContainer]}>
+                            <Ionicons
+                                name="document-text"
+                                size={20}
+                                color={Colors.neutral.charcoal}
+                                style={styles.inputIcon}
+                            />
+                            <TextInput
+                                style={[styles.input, styles.textArea]}
+                                placeholder="Informações adicionais sobre a quadra..."
+                                value={observacoes}
+                                onChangeText={setObservacoes}
+                                multiline
+                                numberOfLines={4}
+                                textAlignVertical="top"
+                                placeholderTextColor={Colors.neutral.charcoal}
+                            />
+                        </View>
                     </View>
 
                     {/* Botões */}
@@ -296,6 +359,7 @@ export default function EditQuadraScreen() {
                             onPress={() => router.back()}
                             disabled={saving}
                         >
+                            <Ionicons name="close-circle" size={20} color={Colors.neutral.charcoal} />
                             <Text style={styles.cancelButtonText}>Cancelar</Text>
                         </TouchableOpacity>
 
@@ -305,9 +369,12 @@ export default function EditQuadraScreen() {
                             disabled={saving}
                         >
                             {saving ? (
-                                <ActivityIndicator color="#fff" size="small" />
+                                <ActivityIndicator color={Colors.neutral.navyDeep} size="small" />
                             ) : (
-                                <Text style={styles.submitButtonText}>Salvar Alterações</Text>
+                                <>
+                                    <Ionicons name="checkmark-circle" size={20} color={Colors.neutral.navyDeep} />
+                                    <Text style={styles.submitButtonText}>Salvar Alterações</Text>
+                                </>
                             )}
                         </TouchableOpacity>
                     </View>
@@ -320,7 +387,7 @@ export default function EditQuadraScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: Colors.neutral.sandLight,
     },
     loadingContainer: {
         flex: 1,
@@ -328,116 +395,137 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     loadingText: {
-        marginTop: 12,
-        fontSize: 16,
-        color: '#666',
+        marginTop: Spacing.md,
+        fontSize: Typography.sizes.body,
+        color: Colors.neutral.charcoal,
     },
     scrollContent: {
-        paddingBottom: 40,
+        padding: Spacing.lg,
+        paddingBottom: Spacing.huge,
     },
     header: {
-        backgroundColor: '#fff',
-        padding: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: '#e0e0e0',
+        marginBottom: Spacing.xxxl,
     },
     backButton: {
-        marginBottom: 12,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.xs,
+        marginBottom: Spacing.base,
     },
     backButtonText: {
-        fontSize: 16,
-        color: '#007AFF',
-        fontWeight: '600',
+        fontSize: Typography.sizes.body,
+        color: Colors.secondary.ocean,
+        fontWeight: Typography.fonts.headingWeight,
     },
-    headerTitle: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#1b1b18',
+    title: {
+        fontSize: Typography.sizes.h1,
+        fontWeight: Typography.fonts.displayWeight,
+        color: Colors.neutral.navyDeep,
+        marginBottom: Spacing.sm,
     },
     form: {
-        padding: 20,
+        backgroundColor: Colors.neutral.white,
+        borderRadius: BorderRadius.card,
+        padding: Spacing.lg,
+        ...ComponentStyles.card,
     },
     inputGroup: {
-        marginBottom: 20,
+        marginBottom: Spacing.lg,
     },
     label: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#1b1b18',
-        marginBottom: 8,
+        fontSize: Typography.sizes.label,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.navyDeep,
+        marginBottom: Spacing.sm,
     },
     required: {
-        color: '#FF3B30',
+        color: Colors.status.error,
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: Colors.neutral.white,
+        borderWidth: 1,
+        borderColor: Colors.neutral.greyLight,
+        borderRadius: BorderRadius.input,
+        paddingHorizontal: Spacing.md,
+    },
+    inputIcon: {
+        marginRight: Spacing.sm,
     },
     input: {
-        backgroundColor: '#fff',
-        borderWidth: 1,
-        borderColor: '#d0d0d0',
-        borderRadius: 8,
-        padding: 14,
-        fontSize: 16,
-        color: '#1b1b18',
+        flex: 1,
+        paddingVertical: Spacing.md,
+        fontSize: Typography.sizes.body,
+        color: Colors.neutral.navyDeep,
+    },
+    textAreaContainer: {
+        alignItems: 'flex-start',
+        paddingTop: Spacing.md,
     },
     textArea: {
         minHeight: 100,
-        paddingTop: 14,
+        textAlignVertical: 'top',
     },
     row: {
         flexDirection: 'row',
-        gap: 12,
+        gap: Spacing.md,
     },
     halfWidth: {
         flex: 1,
     },
     switchGroup: {
-        backgroundColor: '#fff',
-        borderRadius: 8,
-        padding: 16,
-        marginBottom: 20,
-        borderWidth: 1,
-        borderColor: '#d0d0d0',
+        marginBottom: Spacing.lg,
     },
-    switchRow: {
+    switchItem: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: 12,
+        paddingVertical: Spacing.md,
         borderBottomWidth: 1,
-        borderBottomColor: '#f0f0f0',
+        borderBottomColor: Colors.neutral.greyLight,
     },
     switchLabel: {
-        fontSize: 16,
-        color: '#1b1b18',
-        fontWeight: '500',
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.navyDeep,
+        marginBottom: Spacing.xs,
+    },
+    switchDescription: {
+        fontSize: Typography.sizes.bodySmall,
+        color: Colors.neutral.charcoal,
     },
     buttonContainer: {
         flexDirection: 'row',
-        gap: 12,
-        marginTop: 20,
+        gap: Spacing.md,
+        marginTop: Spacing.lg,
     },
     button: {
         flex: 1,
-        paddingVertical: 16,
-        borderRadius: 8,
+        paddingVertical: Spacing.base,
+        borderRadius: BorderRadius.button,
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+        gap: Spacing.xs,
     },
     cancelButton: {
-        backgroundColor: '#fff',
+        backgroundColor: Colors.neutral.white,
         borderWidth: 1,
-        borderColor: '#d0d0d0',
+        borderColor: Colors.neutral.greyLight,
     },
     cancelButtonText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#666',
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.charcoal,
     },
     submitButton: {
-        backgroundColor: '#007AFF',
+        backgroundColor: Colors.primary.mikasaBright,
+        ...ComponentStyles.buttonPrimary,
     },
     submitButtonText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#fff',
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.navyDeep,
     },
 });

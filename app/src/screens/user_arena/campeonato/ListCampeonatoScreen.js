@@ -10,10 +10,13 @@ import {
     ActivityIndicator,
     RefreshControl,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { StorageService } from '../../../services/storage';
 import { API_CONFIG } from '../../../config/api.config';
 import { dateFromISO } from '../../../utils/formatters';
+import { Colors, Typography, Spacing, BorderRadius, ComponentStyles } from '../../../styles/theme';
 
 export default function CampeonatosListScreen() {
     const router = useRouter();
@@ -177,15 +180,15 @@ export default function CampeonatosListScreen() {
     const getStatusColor = (status) => {
         switch (status) {
             case 'inscricoes_abertas':
-                return '#34C759';
+                return Colors.accent.lime;
             case 'em_andamento':
-                return '#007AFF';
+                return Colors.secondary.ocean;
             case 'finalizado':
-                return '#666';
+                return Colors.neutral.charcoal;
             case 'cancelado':
-                return '#FF3B30';
+                return Colors.status.error;
             default:
-                return '#999';
+                return Colors.neutral.charcoal;
         }
     };
 
@@ -233,7 +236,7 @@ export default function CampeonatosListScreen() {
 
             <View style={styles.campeonatoDetails}>
                 <View style={styles.detailRow}>
-                    <Text style={styles.detailIcon}>📅</Text>
+                    <Ionicons name="calendar" size={18} color={Colors.neutral.charcoal} />
                     <View style={styles.detailContent}>
                         <Text style={styles.detailLabel}>Período:</Text>
                         <Text style={styles.detailValue}>
@@ -244,7 +247,7 @@ export default function CampeonatosListScreen() {
 
                 {item.tipo && (
                     <View style={styles.detailRow}>
-                        <Text style={styles.detailIcon}>🏆</Text>
+                        <Ionicons name="trophy" size={18} color={Colors.neutral.charcoal} />
                         <View style={styles.detailContent}>
                             <Text style={styles.detailLabel}>Tipo:</Text>
                             <Text style={styles.detailValue}>{item.tipo}</Text>
@@ -254,7 +257,7 @@ export default function CampeonatosListScreen() {
 
                 {item.arena_id && (
                     <View style={styles.detailRow}>
-                        <Text style={styles.detailIcon}>🏟️</Text>
+                        <Ionicons name="grid" size={18} color={Colors.neutral.charcoal} />
                         <View style={styles.detailContent}>
                             <Text style={styles.detailLabel}>Arena Definida</Text>
                         </View>
@@ -267,21 +270,23 @@ export default function CampeonatosListScreen() {
                     style={[styles.actionButton, styles.categoriesButton]}
                     onPress={() => handleCategorias(item)}
                 >
-                    <Text style={styles.actionButtonText}>📋 Categorias</Text>
+                    <Ionicons name="list" size={16} color={Colors.neutral.white} />
+                    <Text style={styles.actionButtonText}>Categorias</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     style={[styles.actionButton, styles.editButton]}
                     onPress={() => handleEdit(item)}
                 >
-                    <Text style={styles.actionButtonText}>✏️ Editar</Text>
+                    <Ionicons name="pencil" size={16} color={Colors.neutral.white} />
+                    <Text style={styles.actionButtonText}>Editar</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     style={[styles.actionButton, styles.deleteButton]}
                     onPress={() => confirmDelete(item)}
                 >
-                    <Text style={styles.actionButtonText}>🗑️</Text>
+                    <Ionicons name="trash" size={16} color={Colors.neutral.white} />
                 </TouchableOpacity>
             </View>
         </View>
@@ -293,7 +298,7 @@ export default function CampeonatosListScreen() {
 
         return (
             <View style={styles.footerLoader}>
-                <ActivityIndicator size="small" color="#007AFF" />
+                <ActivityIndicator size="small" color={Colors.primary.mikasaBright} />
             </View>
         );
     };
@@ -304,7 +309,7 @@ export default function CampeonatosListScreen() {
 
         return (
             <View style={styles.emptyContainer}>
-                <Text style={styles.emptyIcon}>🏆</Text>
+                <Ionicons name="trophy-outline" size={64} color={Colors.neutral.charcoal} />
                 <Text style={styles.emptyTitle}>Nenhum campeonato cadastrado</Text>
                 <Text style={styles.emptyDescription}>
                     Comece criando seu primeiro campeonato
@@ -313,7 +318,8 @@ export default function CampeonatosListScreen() {
                     style={styles.emptyButton}
                     onPress={handleCreateCampeonato}
                 >
-                    <Text style={styles.emptyButtonText}>+ Criar Campeonato</Text>
+                    <Ionicons name="add-circle" size={20} color={Colors.neutral.navyDeep} />
+                    <Text style={styles.emptyButtonText}>Criar Campeonato</Text>
                 </TouchableOpacity>
             </View>
         );
@@ -322,8 +328,9 @@ export default function CampeonatosListScreen() {
     if (loading && page === 1) {
         return (
             <SafeAreaView style={styles.container}>
+                <StatusBar style="dark" />
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#007AFF" />
+                    <ActivityIndicator size="large" color={Colors.primary.mikasaBright} />
                     <Text style={styles.loadingText}>Carregando campeonatos...</Text>
                 </View>
             </SafeAreaView>
@@ -332,6 +339,7 @@ export default function CampeonatosListScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
+            <StatusBar style="dark" />
             {/* Header */}
             <View style={styles.header}>
                 <View style={styles.headerLeft}>
@@ -339,7 +347,8 @@ export default function CampeonatosListScreen() {
                         style={styles.backButton}
                         onPress={() => router.back()}
                     >
-                        <Text style={styles.backButtonText}>← Voltar</Text>
+                        <Ionicons name="arrow-back" size={24} color={Colors.secondary.ocean} />
+                        <Text style={styles.backButtonText}>Voltar</Text>
                     </TouchableOpacity>
                     <View style={styles.headerInfo}>
                         <Text style={styles.headerTitle}>Campeonatos</Text>
@@ -348,12 +357,6 @@ export default function CampeonatosListScreen() {
                         </Text>
                     </View>
                 </View>
-                <TouchableOpacity
-                    style={styles.addButton}
-                    onPress={handleCreateCampeonato}
-                >
-                    <Text style={styles.addButtonText}>+ Novo</Text>
-                </TouchableOpacity>
             </View>
 
             {/* Lista de Campeonatos */}
@@ -362,11 +365,13 @@ export default function CampeonatosListScreen() {
                 renderItem={renderCampeonatoItem}
                 keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={styles.listContent}
+                showsVerticalScrollIndicator={false}
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
                         onRefresh={onRefresh}
-                        colors={['#007AFF']}
+                        colors={[Colors.primary.mikasaBright]}
+                        tintColor={Colors.primary.mikasaBright}
                     />
                 }
                 onEndReached={loadMore}
@@ -374,6 +379,14 @@ export default function CampeonatosListScreen() {
                 ListFooterComponent={renderFooter}
                 ListEmptyComponent={renderEmpty}
             />
+
+            {/* FAB Button */}
+            <TouchableOpacity
+                style={styles.fab}
+                onPress={handleCreateCampeonato}
+            >
+                <Ionicons name="add" size={28} color={Colors.neutral.navyDeep} />
+            </TouchableOpacity>
         </SafeAreaView>
     );
 }
@@ -381,7 +394,7 @@ export default function CampeonatosListScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: Colors.neutral.sandLight,
     },
     loadingContainer: {
         flex: 1,
@@ -389,166 +402,153 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     loadingText: {
-        marginTop: 12,
-        fontSize: 16,
-        color: '#666',
+        marginTop: Spacing.md,
+        fontSize: Typography.sizes.body,
+        color: Colors.neutral.charcoal,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 20,
-        backgroundColor: '#fff',
+        padding: Spacing.lg,
+        backgroundColor: Colors.neutral.white,
         borderBottomWidth: 1,
-        borderBottomColor: '#e0e0e0',
+        borderBottomColor: Colors.neutral.greyLight,
     },
     headerLeft: {
         flex: 1,
     },
     backButton: {
-        marginBottom: 8,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: Spacing.sm,
+        gap: Spacing.sm,
     },
     backButtonText: {
-        fontSize: 16,
-        color: '#007AFF',
-        fontWeight: '600',
+        fontSize: Typography.sizes.body,
+        color: Colors.secondary.ocean,
+        fontWeight: Typography.fonts.headingWeight,
     },
     headerInfo: {
-        marginTop: 4,
+        marginTop: Spacing.xs,
     },
     headerTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#1b1b18',
+        fontSize: Typography.sizes.h3,
+        fontWeight: Typography.fonts.displayWeight,
+        color: Colors.neutral.navyDeep,
     },
     headerSubtitle: {
-        fontSize: 14,
-        color: '#666',
-        marginTop: 4,
-    },
-    addButton: {
-        backgroundColor: '#34C759',
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        borderRadius: 8,
-        marginLeft: 12,
-    },
-    addButtonText: {
-        color: '#fff',
-        fontWeight: '600',
-        fontSize: 16,
+        fontSize: Typography.sizes.bodySmall,
+        color: Colors.neutral.charcoal,
+        marginTop: Spacing.xs,
     },
     listContent: {
-        padding: 16,
-        paddingBottom: 32,
+        padding: Spacing.base,
+        paddingBottom: 80,
     },
     campeonatoCard: {
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        padding: 16,
-        marginBottom: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        backgroundColor: Colors.neutral.white,
+        borderRadius: BorderRadius.card,
+        padding: Spacing.base,
+        marginBottom: Spacing.base,
+        ...ComponentStyles.card,
     },
     campeonatoHeader: {
-        marginBottom: 12,
+        marginBottom: Spacing.md,
     },
     campeonatoInfo: {
         flex: 1,
     },
     campeonatoNome: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#1b1b18',
-        marginBottom: 8,
+        fontSize: Typography.sizes.h5,
+        fontWeight: Typography.fonts.displayWeight,
+        color: Colors.neutral.navyDeep,
+        marginBottom: Spacing.sm,
     },
     statusBadge: {
         flexDirection: 'row',
         alignItems: 'center',
         alignSelf: 'flex-start',
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-        borderRadius: 12,
-        backgroundColor: '#f0f0f0',
+        paddingHorizontal: Spacing.sm + 2,
+        paddingVertical: Spacing.xs,
+        borderRadius: BorderRadius.full,
+        backgroundColor: Colors.neutral.greyLight,
     },
     statusDot: {
         width: 8,
         height: 8,
         borderRadius: 4,
-        marginRight: 6,
+        marginRight: Spacing.xs + 2,
     },
     statusText: {
-        fontSize: 12,
-        fontWeight: '600',
+        fontSize: Typography.sizes.caption,
+        fontWeight: Typography.fonts.headingWeight,
     },
     descricao: {
-        fontSize: 14,
-        color: '#666',
-        marginBottom: 12,
+        fontSize: Typography.sizes.bodySmall,
+        color: Colors.neutral.charcoal,
+        marginBottom: Spacing.md,
         fontStyle: 'italic',
+        lineHeight: Typography.sizes.bodySmall * Typography.lineHeights.normal,
     },
     campeonatoDetails: {
-        marginBottom: 12,
-        paddingTop: 12,
+        marginBottom: Spacing.md,
+        paddingTop: Spacing.md,
         borderTopWidth: 1,
-        borderTopColor: '#f0f0f0',
+        borderTopColor: Colors.neutral.greyLight,
     },
     detailRow: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        marginBottom: 8,
-    },
-    detailIcon: {
-        fontSize: 18,
-        marginRight: 8,
+        marginBottom: Spacing.sm,
+        gap: Spacing.sm,
     },
     detailContent: {
         flex: 1,
     },
     detailLabel: {
-        fontSize: 13,
-        color: '#666',
-        fontWeight: '600',
+        fontSize: Typography.sizes.caption,
+        color: Colors.neutral.charcoal,
+        fontWeight: Typography.fonts.headingWeight,
     },
     detailValue: {
-        fontSize: 14,
-        color: '#1b1b18',
+        fontSize: Typography.sizes.bodySmall,
+        color: Colors.neutral.navyDeep,
         marginTop: 2,
     },
     actionsContainer: {
         flexDirection: 'row',
-        gap: 8,
-        marginTop: 12,
+        gap: Spacing.sm,
+        marginTop: Spacing.md,
     },
     actionButton: {
-        paddingVertical: 10,
-        paddingHorizontal: 12,
-        borderRadius: 8,
+        flexDirection: 'row',
+        gap: Spacing.xs,
+        paddingVertical: Spacing.sm + 2,
+        paddingHorizontal: Spacing.md,
+        borderRadius: BorderRadius.button,
         alignItems: 'center',
         justifyContent: 'center',
     },
     categoriesButton: {
-        backgroundColor: '#AF52DE',
+        backgroundColor: Colors.secondary.ocean,
         flex: 1,
     },
     editButton: {
-        backgroundColor: '#007AFF',
+        backgroundColor: Colors.accent.lime,
         flex: 1,
     },
     deleteButton: {
-        backgroundColor: '#FF3B30',
+        backgroundColor: Colors.status.error,
         minWidth: 50,
     },
     actionButtonText: {
-        color: '#fff',
-        fontWeight: '600',
-        fontSize: 14,
+        color: Colors.neutral.white,
+        fontWeight: Typography.fonts.headingWeight,
+        fontSize: Typography.sizes.bodySmall,
     },
     footerLoader: {
-        paddingVertical: 20,
+        paddingVertical: Spacing.lg,
         alignItems: 'center',
     },
     emptyContainer: {
@@ -556,34 +556,46 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingVertical: 60,
-        paddingHorizontal: 40,
-    },
-    emptyIcon: {
-        fontSize: 64,
-        marginBottom: 16,
+        paddingHorizontal: Spacing.xxxl,
     },
     emptyTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#1b1b18',
-        marginBottom: 8,
+        fontSize: Typography.sizes.h4,
+        fontWeight: Typography.fonts.displayWeight,
+        color: Colors.neutral.navyDeep,
+        marginTop: Spacing.base,
+        marginBottom: Spacing.sm,
         textAlign: 'center',
     },
     emptyDescription: {
-        fontSize: 14,
-        color: '#666',
+        fontSize: Typography.sizes.bodySmall,
+        color: Colors.neutral.charcoal,
         textAlign: 'center',
-        marginBottom: 24,
+        marginBottom: Spacing.xl,
     },
     emptyButton: {
-        backgroundColor: '#34C759',
-        paddingHorizontal: 24,
-        paddingVertical: 12,
-        borderRadius: 8,
+        flexDirection: 'row',
+        gap: Spacing.sm,
+        backgroundColor: Colors.primary.mikasaBright,
+        paddingHorizontal: Spacing.xl,
+        paddingVertical: Spacing.md,
+        borderRadius: BorderRadius.button,
+        alignItems: 'center',
     },
     emptyButtonText: {
-        color: '#fff',
-        fontWeight: '600',
-        fontSize: 16,
+        color: Colors.neutral.navyDeep,
+        fontWeight: Typography.fonts.headingWeight,
+        fontSize: Typography.sizes.body,
+    },
+    fab: {
+        position: 'absolute',
+        right: Spacing.base,
+        bottom: Spacing.base,
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: Colors.primary.mikasaBright,
+        alignItems: 'center',
+        justifyContent: 'center',
+        ...ComponentStyles.card,
     },
 });

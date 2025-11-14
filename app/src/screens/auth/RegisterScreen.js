@@ -9,10 +9,13 @@ import {
     Alert,
     ActivityIndicator,
     SafeAreaView,
+    Image,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { Ionicons } from '@expo/vector-icons';
 import { apiRequest } from '../../config/api.config';
-import {router} from 'expo-router';
+import { router } from 'expo-router';
+import { Colors, Typography, Spacing, BorderRadius, ComponentStyles, Icons } from '../../styles/theme';
 export default function RegisterScreen() {
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
@@ -103,13 +106,20 @@ export default function RegisterScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="auto" />
+            <StatusBar style="dark" />
             <ScrollView
                 contentContainerStyle={styles.scrollContainer}
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}
             >
                 <View style={styles.header}>
+                    <View style={styles.logoContainer}>
+                        <Image
+                            source={require('../../images/logo2.png')}
+                            style={styles.logo}
+                            resizeMode="contain"
+                        />
+                    </View>
                     <Text style={styles.title}>Criar Conta</Text>
                     <Text style={styles.subtitle}>Cadastre-se no Futevôlei</Text>
                 </View>
@@ -117,94 +127,135 @@ export default function RegisterScreen() {
                 <View style={styles.form}>
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Nome Completo</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Digite seu nome"
-                            placeholderTextColor="#999"
-                            value={nome}
-                            onChangeText={setNome}
-                            autoCapitalize="words"
-                            editable={!loading}
-                        />
+                        <View style={styles.inputContainer}>
+                            <Ionicons
+                                name="person-outline"
+                                size={20}
+                                color={Colors.neutral.charcoal}
+                                style={styles.inputIcon}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Digite seu nome"
+                                placeholderTextColor={Colors.neutral.charcoal}
+                                value={nome}
+                                onChangeText={setNome}
+                                autoCapitalize="words"
+                                editable={!loading}
+                            />
+                        </View>
                     </View>
 
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Email</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="seu@email.com"
-                            placeholderTextColor="#999"
-                            value={email}
-                            onChangeText={setEmail}
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                            editable={!loading}
-                        />
+                        <View style={styles.inputContainer}>
+                            <Ionicons
+                                name="mail-outline"
+                                size={20}
+                                color={Colors.neutral.charcoal}
+                                style={styles.inputIcon}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="seu@email.com"
+                                placeholderTextColor={Colors.neutral.charcoal}
+                                value={email}
+                                onChangeText={setEmail}
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                editable={!loading}
+                            />
+                        </View>
                     </View>
 
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Tipo de Usuário</Text>
                         <View style={styles.radioGroup}>
                             <TouchableOpacity
-                                style={styles.radioButton}
+                                style={[styles.radioButton, tipoUsuario === 'jogador' && styles.radioButtonSelected]}
                                 onPress={() => setTipoUsuario('jogador')}
                                 disabled={loading}
+                                activeOpacity={0.7}
                             >
-                                <View style={styles.radio}>
-                                    {tipoUsuario === 'jogador' && <View style={styles.radioSelected} />}
-                                </View>
-                                <Text style={styles.radioLabel}>Jogador</Text>
+                                <Ionicons
+                                    name={tipoUsuario === 'jogador' ? 'radio-button-on' : 'radio-button-off'}
+                                    size={24}
+                                    color={tipoUsuario === 'jogador' ? Colors.primary.mikasaBright : Colors.neutral.charcoal}
+                                />
+                                <Text style={[styles.radioLabel, tipoUsuario === 'jogador' && styles.radioLabelSelected]}>Jogador</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                style={styles.radioButton}
+                                style={[styles.radioButton, tipoUsuario === 'arena' && styles.radioButtonSelected]}
                                 onPress={() => setTipoUsuario('arena')}
                                 disabled={loading}
+                                activeOpacity={0.7}
                             >
-                                <View style={styles.radio}>
-                                    {tipoUsuario === 'arena' && <View style={styles.radioSelected} />}
-                                </View>
-                                <Text style={styles.radioLabel}>Arena</Text>
+                                <Ionicons
+                                    name={tipoUsuario === 'arena' ? 'radio-button-on' : 'radio-button-off'}
+                                    size={24}
+                                    color={tipoUsuario === 'arena' ? Colors.primary.mikasaBright : Colors.neutral.charcoal}
+                                />
+                                <Text style={[styles.radioLabel, tipoUsuario === 'arena' && styles.radioLabelSelected]}>Arena</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                style={styles.radioButton}
+                                style={[styles.radioButton, tipoUsuario === 'professor' && styles.radioButtonSelected]}
                                 onPress={() => setTipoUsuario('professor')}
                                 disabled={loading}
+                                activeOpacity={0.7}
                             >
-                                <View style={styles.radio}>
-                                    {tipoUsuario === 'professor' && <View style={styles.radioSelected} />}
-                                </View>
-                                <Text style={styles.radioLabel}>Professor</Text>
+                                <Ionicons
+                                    name={tipoUsuario === 'professor' ? 'radio-button-on' : 'radio-button-off'}
+                                    size={24}
+                                    color={tipoUsuario === 'professor' ? Colors.primary.mikasaBright : Colors.neutral.charcoal}
+                                />
+                                <Text style={[styles.radioLabel, tipoUsuario === 'professor' && styles.radioLabelSelected]}>Professor</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
 
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Senha</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Digite sua senha"
-                            placeholderTextColor="#999"
-                            value={senha}
-                            onChangeText={setSenha}
-                            secureTextEntry
-                            editable={!loading}
-                        />
+                        <View style={styles.inputContainer}>
+                            <Ionicons
+                                name="lock-closed-outline"
+                                size={20}
+                                color={Colors.neutral.charcoal}
+                                style={styles.inputIcon}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Digite sua senha"
+                                placeholderTextColor={Colors.neutral.charcoal}
+                                value={senha}
+                                onChangeText={setSenha}
+                                secureTextEntry
+                                editable={!loading}
+                            />
+                        </View>
                     </View>
 
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Confirmar Senha</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Digite sua senha novamente"
-                            placeholderTextColor="#999"
-                            value={confirmarSenha}
-                            onChangeText={setConfirmarSenha}
-                            secureTextEntry
-                            editable={!loading}
-                        />
+                        <View style={styles.inputContainer}>
+                            <Ionicons
+                                name="lock-closed-outline"
+                                size={20}
+                                color={Colors.neutral.charcoal}
+                                style={styles.inputIcon}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Digite sua senha novamente"
+                                placeholderTextColor={Colors.neutral.charcoal}
+                                value={confirmarSenha}
+                                onChangeText={setConfirmarSenha}
+                                secureTextEntry
+                                editable={!loading}
+                            />
+                        </View>
                     </View>
 
                     <TouchableOpacity
@@ -240,122 +291,133 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: Colors.neutral.sandLight,
     },
     scrollContainer: {
         flexGrow: 1,
         justifyContent: 'center',
-        padding: 24,
+        padding: Spacing.xl,
     },
     header: {
         alignItems: 'center',
-        marginBottom: 32,
+        marginBottom: Spacing.xxxl,
+    },
+    logoContainer: {
+        marginBottom: Spacing.lg,
+    },
+    logo: {
+        width: 100,
+        height: 100,
     },
     title: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: '#1b1b18',
-        marginBottom: 8,
+        fontSize: Typography.sizes.h1,
+        fontWeight: Typography.fonts.displayWeight,
+        color: Colors.neutral.navyDeep,
+        marginBottom: Spacing.xs,
+        textAlign: 'center',
     },
     subtitle: {
-        fontSize: 16,
-        color: '#666',
+        fontSize: Typography.sizes.body,
+        color: Colors.neutral.charcoal,
+        textAlign: 'center',
     },
     form: {
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        padding: 24,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 3,
+        backgroundColor: Colors.neutral.white,
+        borderRadius: BorderRadius.card,
+        padding: Spacing.xl,
+        ...ComponentStyles.card,
     },
     inputGroup: {
-        marginBottom: 20,
+        marginBottom: Spacing.lg,
     },
     label: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#1b1b18',
-        marginBottom: 8,
+        fontSize: Typography.sizes.label,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.navyDeep,
+        marginBottom: Spacing.sm,
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: Colors.neutral.white,
+        borderWidth: 1,
+        borderColor: Colors.neutral.greyLight,
+        borderRadius: BorderRadius.input,
+        paddingHorizontal: Spacing.md,
+    },
+    inputIcon: {
+        marginRight: Spacing.sm,
     },
     input: {
-        backgroundColor: '#f9f9f9',
-        borderWidth: 1,
-        borderColor: '#e0e0e0',
-        borderRadius: 8,
-        padding: 12,
-        fontSize: 16,
-        color: '#1b1b18',
+        flex: 1,
+        paddingVertical: Spacing.md,
+        fontSize: Typography.sizes.body,
+        color: Colors.neutral.navyDeep,
     },
     radioGroup: {
-        flexDirection: 'row',
-        gap: 16,
+        flexDirection: 'column',
+        gap: Spacing.md,
     },
     radioButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
+        gap: Spacing.sm,
+        paddingVertical: Spacing.sm,
+        paddingHorizontal: Spacing.md,
+        borderWidth: 1,
+        borderColor: Colors.neutral.greyLight,
+        borderRadius: BorderRadius.sm,
+        backgroundColor: Colors.neutral.white,
     },
-    radio: {
-        width: 20,
-        height: 20,
-        borderRadius: 10,
-        borderWidth: 2,
-        borderColor: '#007AFF',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    radioSelected: {
-        width: 12,
-        height: 12,
-        borderRadius: 6,
-        backgroundColor: '#007AFF',
+    radioButtonSelected: {
+        borderColor: Colors.primary.mikasaBright,
+        backgroundColor: `${Colors.primary.mikasaBright}10`,
     },
     radioLabel: {
-        fontSize: 16,
-        color: '#1b1b18',
+        fontSize: Typography.sizes.body,
+        color: Colors.neutral.navyDeep,
+    },
+    radioLabelSelected: {
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.navyDeep,
     },
     button: {
-        backgroundColor: '#007AFF',
-        borderRadius: 8,
-        padding: 16,
+        backgroundColor: Colors.primary.mikasaBright,
+        borderRadius: BorderRadius.button,
+        padding: Spacing.base,
         alignItems: 'center',
-        marginTop: 8,
+        marginTop: Spacing.sm,
+        ...ComponentStyles.buttonPrimary,
     },
     buttonDisabled: {
-        backgroundColor: '#99c9ff',
+        opacity: 0.6,
     },
     buttonContent: {
         flexDirection: 'row',
         alignItems: 'center',
     },
     buttonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: '600',
+        color: Colors.neutral.navyDeep,
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
     },
     footer: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 20,
-        gap: 4,
+        marginTop: Spacing.lg,
+        gap: Spacing.xs,
     },
     footerText: {
-        fontSize: 14,
-        color: '#666',
+        fontSize: Typography.sizes.bodySmall,
+        color: Colors.neutral.charcoal,
     },
     linkText: {
-        fontSize: 14,
-        color: '#007AFF',
-        fontWeight: '600',
+        fontSize: Typography.sizes.bodySmall,
+        color: Colors.secondary.ocean,
+        fontWeight: Typography.fonts.headingWeight,
     },
     linkDisabled: {
-        color: '#99c9ff',
+        opacity: 0.5,
     },
 });

@@ -5,10 +5,15 @@ import {
     StyleSheet,
     SafeAreaView,
     ScrollView,
-    TouchableOpacity, Alert, ActivityIndicator,
+    TouchableOpacity,
+    Alert,
+    ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import {StorageService} from "../../services/storage";
+import { Ionicons } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
+import { StorageService } from "../../services/storage";
+import { Colors, Typography, Spacing, BorderRadius, ComponentStyles, Icons } from '../../styles/theme';
 
 export default function JogadorHomeScreen() {
     const router = useRouter();
@@ -59,22 +64,24 @@ export default function JogadorHomeScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+            <StatusBar style="dark" />
+            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 {/* Header */}
                 <View style={styles.header}>
                     <View>
-                        <Text style={styles.greeting}>Olá, Jogador! 🏐</Text>
+                        <Text style={styles.greeting}>Olá, Jogador!</Text>
                         <Text style={styles.subtitle}>Pronto para jogar?</Text>
                     </View>
                     <TouchableOpacity
                         style={styles.logoutButton}
                         onPress={confirmLogout}
                         disabled={isLoggingOut}
+                        activeOpacity={0.8}
                     >
                         {isLoggingOut ? (
-                            <ActivityIndicator color="#fff" size="small" />
+                            <ActivityIndicator color={Colors.neutral.white} size="small" />
                         ) : (
-                            <Text style={styles.logoutText}>Sair</Text>
+                            <Ionicons name="log-out-outline" size={20} color={Colors.neutral.white} />
                         )}
                     </TouchableOpacity>
                 </View>
@@ -84,26 +91,34 @@ export default function JogadorHomeScreen() {
                     <Text style={styles.sectionTitle}>Ações Rápidas</Text>
 
                     <View style={styles.cardsContainer}>
-                        <TouchableOpacity style={[styles.card, styles.cardPrimary]}>
-                            <Text style={styles.cardIcon}>🎮</Text>
+                        <TouchableOpacity style={[styles.card, styles.cardPrimary]} activeOpacity={0.8}>
+                            <View style={styles.cardIconContainer}>
+                                <Ionicons name="game-controller" size={28} color={Colors.neutral.white} />
+                            </View>
                             <Text style={styles.cardTitle}>Partidas</Text>
                             <Text style={styles.cardDescription}>Encontrar jogos</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.card, styles.cardSecondary]}>
-                            <Text style={styles.cardIcon}>👥</Text>
+                        <TouchableOpacity style={[styles.card, styles.cardSecondary]} activeOpacity={0.8}>
+                            <View style={styles.cardIconContainer}>
+                                <Ionicons name="people" size={28} color={Colors.neutral.white} />
+                            </View>
                             <Text style={styles.cardTitle}>Times</Text>
                             <Text style={styles.cardDescription}>Meus times</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.card, styles.cardSuccess]}>
-                            <Text style={styles.cardIcon}>🏆</Text>
+                        <TouchableOpacity style={[styles.card, styles.cardSuccess]} activeOpacity={0.8}>
+                            <View style={styles.cardIconContainer}>
+                                <Ionicons name="trophy" size={28} color={Colors.neutral.white} />
+                            </View>
                             <Text style={styles.cardTitle}>Torneios</Text>
                             <Text style={styles.cardDescription}>Ver competições</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.card, styles.cardWarning]}>
-                            <Text style={styles.cardIcon}>📊</Text>
+                        <TouchableOpacity style={[styles.card, styles.cardWarning]} activeOpacity={0.8}>
+                            <View style={styles.cardIconContainer}>
+                                <Ionicons name="bar-chart" size={28} color={Colors.neutral.white} />
+                            </View>
                             <Text style={styles.cardTitle}>Estatísticas</Text>
                             <Text style={styles.cardDescription}>Meu desempenho</Text>
                         </TouchableOpacity>
@@ -136,35 +151,61 @@ export default function JogadorHomeScreen() {
                 <View style={styles.matchesSection}>
                     <Text style={styles.sectionTitle}>Próximas Partidas</Text>
 
-                    <View style={styles.matchCard}>
+                    <TouchableOpacity style={styles.matchCard} activeOpacity={0.8}>
                         <View style={styles.matchHeader}>
-                            <Text style={styles.matchDate}>Sábado, 09/11</Text>
-                            <Text style={styles.matchTime}>14:00</Text>
+                            <View style={styles.matchDateBadge}>
+                                <Ionicons name="calendar" size={16} color={Colors.secondary.ocean} />
+                                <Text style={styles.matchDate}>Sábado, 09/11</Text>
+                            </View>
+                            <View style={styles.matchTimeBadge}>
+                                <Ionicons name="time" size={16} color={Colors.neutral.charcoal} />
+                                <Text style={styles.matchTime}>14:00</Text>
+                            </View>
                         </View>
                         <View style={styles.matchBody}>
                             <Text style={styles.matchTitle}>Jogo Amistoso</Text>
-                            <Text style={styles.matchLocation}>📍 Arena Praia do Forte</Text>
-                            <Text style={styles.matchPlayers}>👥 6/8 jogadores confirmados</Text>
+                            <View style={styles.matchInfo}>
+                                <Ionicons name="location" size={16} color={Colors.neutral.charcoal} />
+                                <Text style={styles.matchLocation}>Arena Praia do Forte</Text>
+                            </View>
+                            <View style={styles.matchInfo}>
+                                <Ionicons name="people" size={16} color={Colors.accent.lime} />
+                                <Text style={styles.matchPlayers}>6/8 jogadores confirmados</Text>
+                            </View>
                         </View>
-                        <TouchableOpacity style={styles.matchButton}>
+                        <TouchableOpacity style={styles.matchButton} activeOpacity={0.8}>
                             <Text style={styles.matchButtonText}>Ver Detalhes</Text>
+                            <Ionicons name="chevron-forward" size={16} color={Colors.neutral.navyDeep} />
                         </TouchableOpacity>
-                    </View>
+                    </TouchableOpacity>
 
-                    <View style={styles.matchCard}>
+                    <TouchableOpacity style={styles.matchCard} activeOpacity={0.8}>
                         <View style={styles.matchHeader}>
-                            <Text style={styles.matchDate}>Domingo, 10/11</Text>
-                            <Text style={styles.matchTime}>16:00</Text>
+                            <View style={styles.matchDateBadge}>
+                                <Ionicons name="calendar" size={16} color={Colors.secondary.ocean} />
+                                <Text style={styles.matchDate}>Domingo, 10/11</Text>
+                            </View>
+                            <View style={styles.matchTimeBadge}>
+                                <Ionicons name="time" size={16} color={Colors.neutral.charcoal} />
+                                <Text style={styles.matchTime}>16:00</Text>
+                            </View>
                         </View>
                         <View style={styles.matchBody}>
                             <Text style={styles.matchTitle}>Torneio Verão 2024</Text>
-                            <Text style={styles.matchLocation}>📍 Arena Beach Sports</Text>
-                            <Text style={styles.matchPlayers}>🏆 Fase Classificatória</Text>
+                            <View style={styles.matchInfo}>
+                                <Ionicons name="location" size={16} color={Colors.neutral.charcoal} />
+                                <Text style={styles.matchLocation}>Arena Beach Sports</Text>
+                            </View>
+                            <View style={styles.matchInfo}>
+                                <Ionicons name="trophy" size={16} color={Colors.accent.coral} />
+                                <Text style={styles.matchPlayers}>Fase Classificatória</Text>
+                            </View>
                         </View>
-                        <TouchableOpacity style={styles.matchButton}>
+                        <TouchableOpacity style={styles.matchButton} activeOpacity={0.8}>
                             <Text style={styles.matchButtonText}>Ver Detalhes</Text>
+                            <Ionicons name="chevron-forward" size={16} color={Colors.neutral.navyDeep} />
                         </TouchableOpacity>
-                    </View>
+                    </TouchableOpacity>
                 </View>
 
                 {/* Notificações */}
@@ -172,23 +213,29 @@ export default function JogadorHomeScreen() {
                     <Text style={styles.sectionTitle}>Notificações</Text>
 
                     <View style={styles.notificationCard}>
-                        <Text style={styles.notificationIcon}>🔔</Text>
+                        <View style={styles.notificationIconContainer}>
+                            <Ionicons name="notifications" size={24} color={Colors.accent.lime} />
+                        </View>
                         <View style={styles.notificationContent}>
                             <Text style={styles.notificationTitle}>Nova partida disponível!</Text>
                             <Text style={styles.notificationText}>
                                 Seu amigo João criou uma partida para amanhã
                             </Text>
                         </View>
+                        <Ionicons name="chevron-forward" size={20} color={Colors.neutral.charcoal} />
                     </View>
 
                     <View style={styles.notificationCard}>
-                        <Text style={styles.notificationIcon}>⚠️</Text>
+                        <View style={styles.notificationIconContainer}>
+                            <Ionicons name="alert-circle" size={24} color={Colors.accent.coral} />
+                        </View>
                         <View style={styles.notificationContent}>
                             <Text style={styles.notificationTitle}>Lembrete de partida</Text>
                             <Text style={styles.notificationText}>
                                 Você tem uma partida em 2 horas
                             </Text>
                         </View>
+                        <Ionicons name="chevron-forward" size={20} color={Colors.neutral.charcoal} />
                     </View>
                 </View>
             </ScrollView>
@@ -199,201 +246,210 @@ export default function JogadorHomeScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: Colors.neutral.sandLight,
     },
     scrollContent: {
-        padding: 20,
+        padding: Spacing.lg,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 30,
+        marginBottom: Spacing.xxxl,
     },
     greeting: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#1b1b18',
+        fontSize: Typography.sizes.h2,
+        fontWeight: Typography.fonts.displayWeight,
+        color: Colors.neutral.navyDeep,
     },
     subtitle: {
-        fontSize: 14,
-        color: '#666',
-        marginTop: 4,
+        fontSize: Typography.sizes.bodySmall,
+        color: Colors.neutral.charcoal,
+        marginTop: Spacing.xs,
     },
     logoutButton: {
-        backgroundColor: '#ff4444',
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 8,
-    },
-    logoutText: {
-        color: '#fff',
-        fontWeight: '600',
+        backgroundColor: Colors.accent.coral,
+        paddingHorizontal: Spacing.base,
+        paddingVertical: Spacing.sm,
+        borderRadius: BorderRadius.button,
+        minWidth: 44,
+        height: 44,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     quickActions: {
-        marginBottom: 30,
+        marginBottom: Spacing.xxxl,
     },
     sectionTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#1b1b18',
-        marginBottom: 16,
+        fontSize: Typography.sizes.h3,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.navyDeep,
+        marginBottom: Spacing.base,
     },
     cardsContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 12,
+        gap: Spacing.md,
     },
     card: {
         width: '48%',
-        padding: 20,
-        borderRadius: 12,
+        padding: Spacing.lg,
+        borderRadius: BorderRadius.card,
         alignItems: 'center',
+        ...ComponentStyles.card,
     },
     cardPrimary: {
-        backgroundColor: '#34C759',
+        backgroundColor: Colors.accent.lime,
     },
     cardSecondary: {
-        backgroundColor: '#007AFF',
+        backgroundColor: Colors.secondary.ocean,
     },
     cardSuccess: {
-        backgroundColor: '#FF9500',
+        backgroundColor: Colors.accent.coral,
     },
     cardWarning: {
-        backgroundColor: '#5856D6',
+        backgroundColor: Colors.primary.mikasaBright,
     },
-    cardIcon: {
-        fontSize: 32,
-        marginBottom: 8,
+    cardIconContainer: {
+        marginBottom: Spacing.sm,
     },
     cardTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#fff',
-        marginBottom: 4,
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.white,
+        marginBottom: Spacing.xs,
+        textAlign: 'center',
     },
     cardDescription: {
-        fontSize: 12,
-        color: '#fff',
+        fontSize: Typography.sizes.caption,
+        color: Colors.neutral.white,
         opacity: 0.9,
+        textAlign: 'center',
     },
     statsSection: {
-        marginBottom: 30,
+        marginBottom: Spacing.xxxl,
     },
     statsContainer: {
         flexDirection: 'row',
-        gap: 12,
+        gap: Spacing.md,
     },
     statCard: {
         flex: 1,
-        backgroundColor: '#fff',
-        padding: 16,
-        borderRadius: 12,
+        backgroundColor: Colors.neutral.white,
+        padding: Spacing.base,
+        borderRadius: BorderRadius.card,
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
+        ...ComponentStyles.card,
     },
     statNumber: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#34C759',
-        marginBottom: 4,
+        fontSize: Typography.sizes.h2,
+        fontWeight: Typography.fonts.numbersWeight,
+        color: Colors.accent.lime,
+        marginBottom: Spacing.xs,
     },
     statLabel: {
-        fontSize: 12,
-        color: '#666',
+        fontSize: Typography.sizes.caption,
+        color: Colors.neutral.charcoal,
         textAlign: 'center',
     },
     matchesSection: {
-        marginBottom: 30,
+        marginBottom: Spacing.xxxl,
     },
     matchCard: {
-        backgroundColor: '#fff',
-        padding: 16,
-        borderRadius: 12,
-        marginBottom: 12,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
+        backgroundColor: Colors.neutral.white,
+        padding: Spacing.base,
+        borderRadius: BorderRadius.card,
+        marginBottom: Spacing.md,
+        ...ComponentStyles.card,
     },
     matchHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 12,
+        marginBottom: Spacing.md,
+    },
+    matchDateBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.xs,
+    },
+    matchTimeBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.xs,
     },
     matchDate: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#007AFF',
+        fontSize: Typography.sizes.bodySmall,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.secondary.ocean,
     },
     matchTime: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#666',
+        fontSize: Typography.sizes.bodySmall,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.charcoal,
     },
     matchBody: {
-        marginBottom: 12,
+        marginBottom: Spacing.md,
     },
     matchTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#1b1b18',
-        marginBottom: 8,
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.navyDeep,
+        marginBottom: Spacing.sm,
+    },
+    matchInfo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.xs,
+        marginBottom: Spacing.xs,
     },
     matchLocation: {
-        fontSize: 14,
-        color: '#666',
-        marginBottom: 4,
+        fontSize: Typography.sizes.bodySmall,
+        color: Colors.neutral.charcoal,
     },
     matchPlayers: {
-        fontSize: 14,
-        color: '#666',
+        fontSize: Typography.sizes.bodySmall,
+        color: Colors.neutral.charcoal,
     },
     matchButton: {
-        backgroundColor: '#34C759',
-        padding: 12,
-        borderRadius: 8,
+        backgroundColor: Colors.primary.mikasaBright,
+        padding: Spacing.md,
+        borderRadius: BorderRadius.sm,
+        flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
+        gap: Spacing.xs,
     },
     matchButtonText: {
-        color: '#fff',
-        fontWeight: '600',
+        color: Colors.neutral.navyDeep,
+        fontWeight: Typography.fonts.headingWeight,
+        fontSize: Typography.sizes.bodySmall,
     },
     notificationsSection: {
-        marginBottom: 30,
+        marginBottom: Spacing.xxxl,
     },
     notificationCard: {
         flexDirection: 'row',
-        backgroundColor: '#fff',
-        padding: 16,
-        borderRadius: 12,
-        marginBottom: 12,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
+        backgroundColor: Colors.neutral.white,
+        padding: Spacing.base,
+        borderRadius: BorderRadius.card,
+        marginBottom: Spacing.md,
+        alignItems: 'center',
+        ...ComponentStyles.card,
     },
-    notificationIcon: {
-        fontSize: 24,
-        marginRight: 12,
+    notificationIconContainer: {
+        marginRight: Spacing.md,
     },
     notificationContent: {
         flex: 1,
     },
     notificationTitle: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#1b1b18',
-        marginBottom: 4,
+        fontSize: Typography.sizes.bodySmall,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.navyDeep,
+        marginBottom: Spacing.xs,
     },
     notificationText: {
-        fontSize: 12,
-        color: '#666',
+        fontSize: Typography.sizes.caption,
+        color: Colors.neutral.charcoal,
     },
 });

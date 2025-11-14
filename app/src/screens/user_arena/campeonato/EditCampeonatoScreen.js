@@ -10,11 +10,14 @@ import {
     Alert,
     ActivityIndicator,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { StorageService } from '../../../services/storage';
 import { API_CONFIG } from '../../../config/api.config';
 import { formatDate, dateToISO, dateFromISO } from '../../../utils/formatters';
 import { validateDate } from '../../../utils/validators';
+import { Colors, Typography, Spacing, BorderRadius, ComponentStyles } from '../../../styles/theme';
 
 export default function EditCampeonatoScreen() {
     const router = useRouter();
@@ -196,8 +199,9 @@ export default function EditCampeonatoScreen() {
     if (loading) {
         return (
             <SafeAreaView style={styles.container}>
+                <StatusBar style="dark" />
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#007AFF" />
+                    <ActivityIndicator size="large" color={Colors.primary.mikasaBright} />
                     <Text style={styles.loadingText}>Carregando dados...</Text>
                 </View>
             </SafeAreaView>
@@ -206,14 +210,16 @@ export default function EditCampeonatoScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+            <StatusBar style="dark" />
+            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 {/* Header */}
                 <View style={styles.header}>
                     <TouchableOpacity
                         style={styles.backButton}
                         onPress={() => router.back()}
                     >
-                        <Text style={styles.backButtonText}>← Voltar</Text>
+                        <Ionicons name="arrow-back" size={24} color={Colors.secondary.ocean} />
+                        <Text style={styles.backButtonText}>Voltar</Text>
                     </TouchableOpacity>
                     <Text style={styles.headerTitle}>Editar Campeonato</Text>
                 </View>
@@ -225,27 +231,33 @@ export default function EditCampeonatoScreen() {
                         <Text style={styles.label}>
                             Nome do Campeonato <Text style={styles.required}>*</Text>
                         </Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Ex: Torneio de Verão 2025"
-                            value={nome}
-                            onChangeText={setNome}
-                            maxLength={200}
-                        />
+                        <View style={styles.inputContainer}>
+                            <Ionicons name="trophy" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Ex: Torneio de Verão 2025"
+                                value={nome}
+                                onChangeText={setNome}
+                                maxLength={200}
+                            />
+                        </View>
                     </View>
 
                     {/* Descrição */}
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Descrição</Text>
-                        <TextInput
-                            style={[styles.input, styles.textArea]}
-                            placeholder="Descreva o campeonato..."
-                            value={descricao}
-                            onChangeText={setDescricao}
-                            multiline
-                            numberOfLines={4}
-                            textAlignVertical="top"
-                        />
+                        <View style={styles.inputContainer}>
+                            <Ionicons name="document-text" size={20} color={Colors.neutral.charcoal} style={styles.inputIconTop} />
+                            <TextInput
+                                style={[styles.input, styles.textArea]}
+                                placeholder="Descreva o campeonato..."
+                                value={descricao}
+                                onChangeText={setDescricao}
+                                multiline
+                                numberOfLines={4}
+                                textAlignVertical="top"
+                            />
+                        </View>
                     </View>
 
                     {/* Datas */}
@@ -254,41 +266,50 @@ export default function EditCampeonatoScreen() {
                             <Text style={styles.label}>
                                 Data Início <Text style={styles.required}>*</Text>
                             </Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="DD/MM/AAAA"
-                                value={dataInicio}
-                                onChangeText={handleDataInicioChange}
-                                keyboardType="numeric"
-                                maxLength={10}
-                            />
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="calendar" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="DD/MM/AAAA"
+                                    value={dataInicio}
+                                    onChangeText={handleDataInicioChange}
+                                    keyboardType="numeric"
+                                    maxLength={10}
+                                />
+                            </View>
                         </View>
 
                         <View style={[styles.inputGroup, styles.halfWidth]}>
                             <Text style={styles.label}>
                                 Data Fim <Text style={styles.required}>*</Text>
                             </Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="DD/MM/AAAA"
-                                value={dataFim}
-                                onChangeText={handleDataFimChange}
-                                keyboardType="numeric"
-                                maxLength={10}
-                            />
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="calendar" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="DD/MM/AAAA"
+                                    value={dataFim}
+                                    onChangeText={handleDataFimChange}
+                                    keyboardType="numeric"
+                                    maxLength={10}
+                                />
+                            </View>
                         </View>
                     </View>
 
                     {/* Tipo */}
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Tipo</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Ex: Eliminatória Simples, Round Robin"
-                            value={tipo}
-                            onChangeText={setTipo}
-                            maxLength={30}
-                        />
+                        <View style={styles.inputContainer}>
+                            <Ionicons name="list" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Ex: Eliminatória Simples, Round Robin"
+                                value={tipo}
+                                onChangeText={setTipo}
+                                maxLength={30}
+                            />
+                        </View>
                     </View>
 
                     {/* Status */}
@@ -318,15 +339,18 @@ export default function EditCampeonatoScreen() {
                     {/* Regras */}
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Regras</Text>
-                        <TextInput
-                            style={[styles.input, styles.textArea]}
-                            placeholder="Descreva as regras do campeonato..."
-                            value={regras}
-                            onChangeText={setRegras}
-                            multiline
-                            numberOfLines={6}
-                            textAlignVertical="top"
-                        />
+                        <View style={styles.inputContainer}>
+                            <Ionicons name="document-text" size={20} color={Colors.neutral.charcoal} style={styles.inputIconTop} />
+                            <TextInput
+                                style={[styles.input, styles.textArea]}
+                                placeholder="Descreva as regras do campeonato..."
+                                value={regras}
+                                onChangeText={setRegras}
+                                multiline
+                                numberOfLines={6}
+                                textAlignVertical="top"
+                            />
+                        </View>
                     </View>
 
                     {/* Botões */}
@@ -345,7 +369,7 @@ export default function EditCampeonatoScreen() {
                             disabled={saving}
                         >
                             {saving ? (
-                                <ActivityIndicator color="#fff" size="small" />
+                                <ActivityIndicator color={Colors.neutral.navyDeep} size="small" />
                             ) : (
                                 <Text style={styles.submitButtonText}>Salvar Alterações</Text>
                             )}
@@ -360,7 +384,7 @@ export default function EditCampeonatoScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: Colors.neutral.sandLight,
     },
     loadingContainer: {
         flex: 1,
@@ -368,63 +392,87 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     loadingText: {
-        marginTop: 12,
-        fontSize: 16,
-        color: '#666',
+        marginTop: Spacing.md,
+        fontSize: Typography.sizes.body,
+        color: Colors.neutral.charcoal,
     },
     scrollContent: {
-        paddingBottom: 40,
+        paddingBottom: Spacing.xxxl,
     },
     header: {
-        backgroundColor: '#fff',
-        padding: 20,
+        backgroundColor: Colors.neutral.white,
+        padding: Spacing.lg,
         borderBottomWidth: 1,
-        borderBottomColor: '#e0e0e0',
+        borderBottomColor: Colors.neutral.greyLight,
     },
     backButton: {
-        marginBottom: 12,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: Spacing.md,
+        gap: Spacing.sm,
     },
     backButtonText: {
-        fontSize: 16,
-        color: '#007AFF',
-        fontWeight: '600',
+        fontSize: Typography.sizes.body,
+        color: Colors.secondary.ocean,
+        fontWeight: Typography.fonts.headingWeight,
     },
     headerTitle: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#1b1b18',
+        fontSize: Typography.sizes.h2,
+        fontWeight: Typography.fonts.displayWeight,
+        color: Colors.neutral.navyDeep,
     },
     form: {
-        padding: 20,
+        backgroundColor: Colors.neutral.white,
+        margin: Spacing.base,
+        padding: Spacing.lg,
+        ...ComponentStyles.card,
     },
     inputGroup: {
-        marginBottom: 20,
+        marginBottom: Spacing.lg,
     },
     label: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#1b1b18',
-        marginBottom: 8,
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.navyDeep,
+        marginBottom: Spacing.sm,
     },
     required: {
-        color: '#FF3B30',
+        color: Colors.status.error,
+    },
+    inputContainer: {
+        position: 'relative',
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    inputIcon: {
+        position: 'absolute',
+        left: Spacing.md,
+        zIndex: 1,
+    },
+    inputIconTop: {
+        position: 'absolute',
+        left: Spacing.md,
+        top: Spacing.md,
+        zIndex: 1,
     },
     input: {
-        backgroundColor: '#fff',
+        flex: 1,
+        backgroundColor: Colors.neutral.white,
         borderWidth: 1,
-        borderColor: '#d0d0d0',
-        borderRadius: 8,
-        padding: 14,
-        fontSize: 16,
-        color: '#1b1b18',
+        borderColor: Colors.neutral.greyLight,
+        borderRadius: BorderRadius.input,
+        paddingVertical: Spacing.md,
+        paddingHorizontal: Spacing.xxxl + Spacing.sm,
+        fontSize: Typography.sizes.body,
+        color: Colors.neutral.navyDeep,
     },
     textArea: {
         minHeight: 100,
-        paddingTop: 14,
+        paddingTop: Spacing.md,
     },
     row: {
         flexDirection: 'row',
-        gap: 12,
+        gap: Spacing.md,
     },
     halfWidth: {
         flex: 1,
@@ -432,56 +480,56 @@ const styles = StyleSheet.create({
     statusButtons: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 8,
+        gap: Spacing.sm,
     },
     statusButton: {
-        paddingHorizontal: 16,
-        paddingVertical: 10,
-        borderRadius: 8,
-        backgroundColor: '#fff',
+        paddingHorizontal: Spacing.base,
+        paddingVertical: Spacing.sm + 2,
+        borderRadius: BorderRadius.button,
+        backgroundColor: Colors.neutral.white,
         borderWidth: 1,
-        borderColor: '#d0d0d0',
+        borderColor: Colors.neutral.greyLight,
     },
     statusButtonActive: {
-        backgroundColor: '#007AFF',
-        borderColor: '#007AFF',
+        backgroundColor: Colors.primary.mikasaBright,
+        borderColor: Colors.primary.mikasaBright,
     },
     statusButtonText: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#666',
+        fontSize: Typography.sizes.bodySmall,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.charcoal,
     },
     statusButtonTextActive: {
-        color: '#fff',
+        color: Colors.neutral.navyDeep,
     },
     buttonContainer: {
         flexDirection: 'row',
-        gap: 12,
-        marginTop: 20,
+        gap: Spacing.md,
+        marginTop: Spacing.lg,
     },
     button: {
         flex: 1,
-        paddingVertical: 16,
-        borderRadius: 8,
+        paddingVertical: Spacing.base,
+        borderRadius: BorderRadius.button,
         alignItems: 'center',
         justifyContent: 'center',
     },
     cancelButton: {
-        backgroundColor: '#fff',
+        backgroundColor: Colors.neutral.white,
         borderWidth: 1,
-        borderColor: '#d0d0d0',
+        borderColor: Colors.neutral.greyLight,
     },
     cancelButtonText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#666',
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.charcoal,
     },
     submitButton: {
-        backgroundColor: '#007AFF',
+        backgroundColor: Colors.primary.mikasaBright,
     },
     submitButtonText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#fff',
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.navyDeep,
     },
 });

@@ -11,9 +11,12 @@ import {
     ActivityIndicator,
     Switch,
 } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { apiRequest } from '../../../config/api.config';
 import { StorageService } from '../../../services/storage';
+import { Colors, Typography, Spacing, BorderRadius, ComponentStyles } from '../../../styles/theme';
 
 export default function NovaQuadraScreen() {
     const router = useRouter();
@@ -121,9 +124,11 @@ export default function NovaQuadraScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
+            <StatusBar style="dark" />
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
             >
                 {/* Header */}
                 <View style={styles.header}>
@@ -131,7 +136,8 @@ export default function NovaQuadraScreen() {
                         style={styles.backButton}
                         onPress={() => router.back()}
                     >
-                        <Text style={styles.backButtonText}>← Voltar</Text>
+                        <Ionicons name="arrow-back" size={24} color={Colors.secondary.ocean} />
+                        <Text style={styles.backButtonText}>Voltar</Text>
                     </TouchableOpacity>
                     <Text style={styles.title}>Nova Quadra</Text>
                     <Text style={styles.subtitle}>Cadastre uma nova quadra na sua arena</Text>
@@ -142,14 +148,22 @@ export default function NovaQuadraScreen() {
                     {/* Nome */}
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Nome da Quadra *</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Ex: Quadra 1, Quadra Principal"
-                            value={formData.nome}
-                            onChangeText={(text) => handleInputChange('nome', text)}
-                            maxLength={50}
-                            placeholderTextColor="#999"
-                        />
+                        <View style={styles.inputContainer}>
+                            <Ionicons
+                                name="grid"
+                                size={20}
+                                color={Colors.neutral.charcoal}
+                                style={styles.inputIcon}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Ex: Quadra 1, Quadra Principal"
+                                value={formData.nome}
+                                onChangeText={(text) => handleInputChange('nome', text)}
+                                maxLength={50}
+                                placeholderTextColor={Colors.neutral.charcoal}
+                            />
+                        </View>
                         <Text style={styles.helperText}>Máximo 50 caracteres</Text>
                     </View>
 
@@ -157,40 +171,64 @@ export default function NovaQuadraScreen() {
                     <View style={styles.row}>
                         <View style={[styles.inputGroup, styles.halfWidth]}>
                             <Text style={styles.label}>Comprimento (m)</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Ex: 18"
-                                value={formData.comprimento}
-                                onChangeText={(text) => handleInputChange('comprimento', text)}
-                                keyboardType="numeric"
-                                placeholderTextColor="#999"
-                            />
+                            <View style={styles.inputContainer}>
+                                <Ionicons
+                                    name="resize"
+                                    size={20}
+                                    color={Colors.neutral.charcoal}
+                                    style={styles.inputIcon}
+                                />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Ex: 18"
+                                    value={formData.comprimento}
+                                    onChangeText={(text) => handleInputChange('comprimento', text)}
+                                    keyboardType="numeric"
+                                    placeholderTextColor={Colors.neutral.charcoal}
+                                />
+                            </View>
                         </View>
 
                         <View style={[styles.inputGroup, styles.halfWidth]}>
                             <Text style={styles.label}>Largura (m)</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Ex: 9"
-                                value={formData.largura}
-                                onChangeText={(text) => handleInputChange('largura', text)}
-                                keyboardType="numeric"
-                                placeholderTextColor="#999"
-                            />
+                            <View style={styles.inputContainer}>
+                                <Ionicons
+                                    name="resize"
+                                    size={20}
+                                    color={Colors.neutral.charcoal}
+                                    style={styles.inputIcon}
+                                />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Ex: 9"
+                                    value={formData.largura}
+                                    onChangeText={(text) => handleInputChange('largura', text)}
+                                    keyboardType="numeric"
+                                    placeholderTextColor={Colors.neutral.charcoal}
+                                />
+                            </View>
                         </View>
                     </View>
 
                     {/* Valor por hora */}
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Valor por Hora (R$)</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Ex: 150.00"
-                            value={formData.valor_hora}
-                            onChangeText={(text) => handleInputChange('valor_hora', text)}
-                            keyboardType="decimal-pad"
-                            placeholderTextColor="#999"
-                        />
+                        <View style={styles.inputContainer}>
+                            <Ionicons
+                                name="cash"
+                                size={20}
+                                color={Colors.neutral.charcoal}
+                                style={styles.inputIcon}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Ex: 150.00"
+                                value={formData.valor_hora}
+                                onChangeText={(text) => handleInputChange('valor_hora', text)}
+                                keyboardType="decimal-pad"
+                                placeholderTextColor={Colors.neutral.charcoal}
+                            />
+                        </View>
                     </View>
 
                     {/* Switches */}
@@ -203,8 +241,8 @@ export default function NovaQuadraScreen() {
                             <Switch
                                 value={formData.coberta}
                                 onValueChange={(value) => handleInputChange('coberta', value)}
-                                trackColor={{ false: '#ddd', true: '#007AFF' }}
-                                thumbColor="#fff"
+                                trackColor={{ false: Colors.neutral.greyLight, true: Colors.primary.mikasaBright }}
+                                thumbColor={Colors.neutral.white}
                             />
                         </View>
 
@@ -216,8 +254,8 @@ export default function NovaQuadraScreen() {
                             <Switch
                                 value={formData.iluminacao}
                                 onValueChange={(value) => handleInputChange('iluminacao', value)}
-                                trackColor={{ false: '#ddd', true: '#007AFF' }}
-                                thumbColor="#fff"
+                                trackColor={{ false: Colors.neutral.greyLight, true: Colors.primary.mikasaBright }}
+                                thumbColor={Colors.neutral.white}
                             />
                         </View>
 
@@ -229,8 +267,8 @@ export default function NovaQuadraScreen() {
                             <Switch
                                 value={formData.ativa}
                                 onValueChange={(value) => handleInputChange('ativa', value)}
-                                trackColor={{ false: '#ddd', true: '#007AFF' }}
-                                thumbColor="#fff"
+                                trackColor={{ false: Colors.neutral.greyLight, true: Colors.primary.mikasaBright }}
+                                thumbColor={Colors.neutral.white}
                             />
                         </View>
                     </View>
@@ -238,16 +276,24 @@ export default function NovaQuadraScreen() {
                     {/* Observações */}
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Observações</Text>
-                        <TextInput
-                            style={[styles.input, styles.textArea]}
-                            placeholder="Informações adicionais sobre a quadra..."
-                            value={formData.observacoes}
-                            onChangeText={(text) => handleInputChange('observacoes', text)}
-                            multiline
-                            numberOfLines={4}
-                            textAlignVertical="top"
-                            placeholderTextColor="#999"
-                        />
+                        <View style={[styles.inputContainer, styles.textAreaContainer]}>
+                            <Ionicons
+                                name="document-text"
+                                size={20}
+                                color={Colors.neutral.charcoal}
+                                style={styles.inputIcon}
+                            />
+                            <TextInput
+                                style={[styles.input, styles.textArea]}
+                                placeholder="Informações adicionais sobre a quadra..."
+                                value={formData.observacoes}
+                                onChangeText={(text) => handleInputChange('observacoes', text)}
+                                multiline
+                                numberOfLines={4}
+                                textAlignVertical="top"
+                                placeholderTextColor={Colors.neutral.charcoal}
+                            />
+                        </View>
                     </View>
 
                     {/* Botão de Submit */}
@@ -257,9 +303,12 @@ export default function NovaQuadraScreen() {
                         disabled={loading}
                     >
                         {loading ? (
-                            <ActivityIndicator color="#fff" size="small" />
+                            <ActivityIndicator color={Colors.neutral.navyDeep} size="small" />
                         ) : (
-                            <Text style={styles.submitButtonText}>Cadastrar Quadra</Text>
+                            <>
+                                <Ionicons name="checkmark-circle" size={20} color={Colors.neutral.navyDeep} />
+                                <Text style={styles.submitButtonText}>Cadastrar Quadra</Text>
+                            </>
                         )}
                     </TouchableOpacity>
                 </View>
@@ -271,111 +320,127 @@ export default function NovaQuadraScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: Colors.neutral.sandLight,
     },
     scrollContent: {
-        padding: 20,
-        paddingBottom: 40,
+        padding: Spacing.lg,
+        paddingBottom: Spacing.huge,
     },
     header: {
-        marginBottom: 30,
+        marginBottom: Spacing.xxxl,
     },
     backButton: {
-        marginBottom: 16,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.xs,
+        marginBottom: Spacing.base,
     },
     backButtonText: {
-        fontSize: 16,
-        color: '#007AFF',
-        fontWeight: '600',
+        fontSize: Typography.sizes.body,
+        color: Colors.secondary.ocean,
+        fontWeight: Typography.fonts.headingWeight,
     },
     title: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#1b1b18',
-        marginBottom: 8,
+        fontSize: Typography.sizes.h1,
+        fontWeight: Typography.fonts.displayWeight,
+        color: Colors.neutral.navyDeep,
+        marginBottom: Spacing.sm,
     },
     subtitle: {
-        fontSize: 16,
-        color: '#666',
+        fontSize: Typography.sizes.body,
+        color: Colors.neutral.charcoal,
     },
     form: {
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        padding: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
+        backgroundColor: Colors.neutral.white,
+        borderRadius: BorderRadius.card,
+        padding: Spacing.lg,
+        ...ComponentStyles.card,
     },
     inputGroup: {
-        marginBottom: 20,
+        marginBottom: Spacing.lg,
     },
     label: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#1b1b18',
-        marginBottom: 8,
+        fontSize: Typography.sizes.label,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.navyDeep,
+        marginBottom: Spacing.sm,
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: Colors.neutral.white,
+        borderWidth: 1,
+        borderColor: Colors.neutral.greyLight,
+        borderRadius: BorderRadius.input,
+        paddingHorizontal: Spacing.md,
+    },
+    inputIcon: {
+        marginRight: Spacing.sm,
     },
     input: {
-        backgroundColor: '#f9f9f9',
-        borderWidth: 1,
-        borderColor: '#e0e0e0',
-        borderRadius: 8,
-        padding: 12,
-        fontSize: 16,
-        color: '#1b1b18',
+        flex: 1,
+        paddingVertical: Spacing.md,
+        fontSize: Typography.sizes.body,
+        color: Colors.neutral.navyDeep,
+    },
+    textAreaContainer: {
+        alignItems: 'flex-start',
+        paddingTop: Spacing.md,
     },
     textArea: {
         minHeight: 100,
-        paddingTop: 12,
+        textAlignVertical: 'top',
     },
     helperText: {
-        fontSize: 12,
-        color: '#999',
-        marginTop: 4,
+        fontSize: Typography.sizes.caption,
+        color: Colors.neutral.charcoal,
+        marginTop: Spacing.xs,
     },
     row: {
         flexDirection: 'row',
-        gap: 12,
+        gap: Spacing.md,
     },
     halfWidth: {
         flex: 1,
     },
     switchGroup: {
-        marginBottom: 20,
+        marginBottom: Spacing.lg,
     },
     switchItem: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: 12,
+        paddingVertical: Spacing.md,
         borderBottomWidth: 1,
-        borderBottomColor: '#e0e0e0',
+        borderBottomColor: Colors.neutral.greyLight,
     },
     switchLabel: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#1b1b18',
-        marginBottom: 4,
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: Colors.neutral.navyDeep,
+        marginBottom: Spacing.xs,
     },
     switchDescription: {
-        fontSize: 14,
-        color: '#666',
+        fontSize: Typography.sizes.bodySmall,
+        color: Colors.neutral.charcoal,
     },
     submitButton: {
-        backgroundColor: '#007AFF',
-        padding: 16,
-        borderRadius: 8,
+        backgroundColor: Colors.primary.mikasaBright,
+        padding: Spacing.base,
+        borderRadius: BorderRadius.button,
+        flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 10,
+        justifyContent: 'center',
+        gap: Spacing.sm,
+        marginTop: Spacing.md,
+        ...ComponentStyles.buttonPrimary,
     },
     submitButtonDisabled: {
-        backgroundColor: '#ccc',
+        opacity: 0.6,
     },
     submitButtonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
+        color: Colors.neutral.navyDeep,
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
     },
 });
