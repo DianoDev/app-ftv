@@ -155,10 +155,10 @@ export default function LoginScreen() {
                         <Image
                             source={require('../../images/logo.png')}
                             style={styles.logo}
-                            resizeMode="contain"
+                            resizeMode="cover"
                         />
                     </View>
-                    <Text style={styles.title}>Bem-vindo ao FutEvôlei</Text>
+                    <Text style={styles.title}>Bem-vindo ao FTV APP</Text>
                     <Text style={styles.subtitle}>Faça login para continuar</Text>
                 </View>
 
@@ -277,151 +277,121 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.neutral.sandLight,
+        backgroundColor: "#000000", // fundo preto total
     },
+
     scrollContainer: {
         flexGrow: 1,
-        justifyContent: 'center',
+        justifyContent: "center",
         padding: Spacing.xl,
     },
+
     header: {
-        alignItems: 'center',
+        alignItems: "center",
         marginBottom: Spacing.xxxl,
     },
-    logoContainer: {
-        marginBottom: Spacing.lg,
-    },
-    logo: {
-        width: 120,
-        height: 120,
-    },
+
     title: {
         fontSize: Typography.sizes.h1,
         fontWeight: Typography.fonts.displayWeight,
-        color: Colors.neutral.navyDeep,
+        color: "#FFD300", // amarelo neon
         marginBottom: Spacing.xs,
-        textAlign: 'center',
+        textAlign: "center",
     },
+
     subtitle: {
         fontSize: Typography.sizes.body,
-        color: Colors.neutral.charcoal,
-        textAlign: 'center',
+        color: "#CCCCCC",
+        textAlign: "center",
     },
+
     form: {
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: "#111111",
         borderRadius: BorderRadius.card,
         padding: Spacing.xl,
-        ...ComponentStyles.card,
+        borderWidth: 1,
+        borderColor: "#FFD30055",
     },
-    inputGroup: {
-        marginBottom: Spacing.lg,
-    },
+
     label: {
         fontSize: Typography.sizes.label,
         fontWeight: Typography.fonts.headingWeight,
-        color: Colors.neutral.navyDeep,
+        color: "#FFD300",
         marginBottom: Spacing.sm,
     },
+
     inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: Colors.neutral.white,
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#000000",
         borderWidth: 1,
-        borderColor: Colors.neutral.greyLight,
+        borderColor: "#FFD300",
         borderRadius: BorderRadius.input,
         paddingHorizontal: Spacing.md,
     },
-    inputIcon: {
-        marginRight: Spacing.sm,
-    },
+
     input: {
         flex: 1,
         paddingVertical: Spacing.md,
         fontSize: Typography.sizes.body,
-        color: Colors.neutral.navyDeep,
+        color: "#FFF",
     },
+
     passwordContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: Colors.neutral.white,
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#000000",
         borderWidth: 1,
-        borderColor: Colors.neutral.greyLight,
+        borderColor: "#FFD300",
         borderRadius: BorderRadius.input,
         paddingHorizontal: Spacing.md,
     },
-    passwordInput: {
-        flex: 1,
-        paddingVertical: Spacing.md,
-        fontSize: Typography.sizes.body,
-        color: Colors.neutral.navyDeep,
-    },
-    eyeButton: {
-        padding: Spacing.sm,
-    },
-    forgotPassword: {
-        alignSelf: 'flex-end',
-        marginBottom: Spacing.lg,
-    },
+
     forgotPasswordText: {
-        color: Colors.secondary.ocean,
+        color: "#FFD300",
         fontSize: Typography.sizes.bodySmall,
         fontWeight: Typography.fonts.headingWeight,
     },
+
     button: {
-        backgroundColor: Colors.primary.mikasaBright,
+        backgroundColor: "#FFD300",
         borderRadius: BorderRadius.button,
         padding: Spacing.base,
-        alignItems: 'center',
+        alignItems: "center",
         marginTop: Spacing.sm,
-        ...ComponentStyles.buttonPrimary,
     },
-    buttonDisabled: {
-        opacity: 0.6,
-    },
-    buttonContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
+
     buttonText: {
-        color: Colors.neutral.navyDeep,
+        color: "#000",
         fontSize: Typography.sizes.body,
         fontWeight: Typography.fonts.headingWeight,
     },
-    footer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: Spacing.lg,
-        gap: Spacing.xs,
-    },
+
     footerText: {
         fontSize: Typography.sizes.bodySmall,
-        color: Colors.neutral.charcoal,
+        color: "#FFF",
     },
+
     linkText: {
         fontSize: Typography.sizes.bodySmall,
-        color: Colors.secondary.ocean,
+        color: "#FFD300",
         fontWeight: Typography.fonts.headingWeight,
     },
-    linkDisabled: {
-        opacity: 0.5,
-    },
+
     infoBox: {
         marginTop: Spacing.lg,
-        backgroundColor: Colors.neutral.sandBeige,
+        backgroundColor: "#0d0d0d",
         padding: Spacing.md,
         borderRadius: BorderRadius.sm,
         borderWidth: 1,
-        borderColor: Colors.accent.coral,
-        flexDirection: 'row',
-        alignItems: 'center',
+        borderColor: "#FFD300",
+        flexDirection: "row",
+        alignItems: "center",
     },
-    infoIcon: {
-        marginRight: Spacing.sm,
-    },
+
     infoText: {
         flex: 1,
         fontSize: Typography.sizes.caption,
-        color: Colors.neutral.charcoal,
+        color: "#FFF",
     },
 });
