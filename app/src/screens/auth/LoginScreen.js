@@ -71,7 +71,7 @@ export default function LoginScreen() {
                         rota = '/src/screens/user_arena/arena/CreateArenaScreen';
                         break;
                     case 'jogador':
-                        rota = '/src/screens/user_jogador/jogador/CreateJogadorScreen';
+                        rota = '/src/screens/user_jogador/HomeScreen';
                         break;
                     case 'professor':
                         rota = '/src/screens/user_professor/professor/CreateProfessorScreen';
