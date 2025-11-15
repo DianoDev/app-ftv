@@ -71,7 +71,7 @@ export default function LoginScreen() {
                         rota = '/src/screens/user_arena/arena/CreateArenaScreen';
                         break;
                     case 'jogador':
-                        rota = '/src/screens/user_jogador/HomeScreen';
+                        rota = '/src/screens/user_jogador/jogador/CreateJogadorScreen';
                         break;
                     case 'professor':
                         rota = '/src/screens/user_professor/professor/CreateProfessorScreen';
@@ -144,7 +144,7 @@ export default function LoginScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="dark"/>
+            <StatusBar style="light"/>
             <ScrollView
                 contentContainerStyle={styles.scrollContainer}
                 keyboardShouldPersistTaps="handled"
@@ -155,11 +155,11 @@ export default function LoginScreen() {
                         <Image
                             source={require('../../images/logo.png')}
                             style={styles.logo}
-                            resizeMode="cover"
+                            resizeMode="contain"
                         />
                     </View>
-                    <Text style={styles.title}>Bem-vindo ao FTV APP</Text>
-                    <Text style={styles.subtitle}>Faça login para continuar</Text>
+                    <Text style={styles.title}>Bem-vindo de volta!</Text>
+                    <Text style={styles.subtitle}>Entre para continuar sua jornada</Text>
                 </View>
 
                 <View style={styles.form}>
@@ -169,13 +169,13 @@ export default function LoginScreen() {
                             <Ionicons
                                 name="mail-outline"
                                 size={20}
-                                color={Colors.neutral.charcoal}
+                                color="#FFD300"
                                 style={styles.inputIcon}
                             />
                             <TextInput
                                 style={styles.input}
                                 placeholder="seu@email.com"
-                                placeholderTextColor={Colors.neutral.charcoal}
+                                placeholderTextColor="#666"
                                 value={email}
                                 onChangeText={setEmail}
                                 keyboardType="email-address"
@@ -192,13 +192,13 @@ export default function LoginScreen() {
                             <Ionicons
                                 name="lock-closed-outline"
                                 size={20}
-                                color={Colors.neutral.charcoal}
+                                color="#FFD300"
                                 style={styles.inputIcon}
                             />
                             <TextInput
                                 style={styles.passwordInput}
                                 placeholder="Digite sua senha"
-                                placeholderTextColor={Colors.neutral.charcoal}
+                                placeholderTextColor="#666"
                                 value={senha}
                                 onChangeText={setSenha}
                                 secureTextEntry={!mostrarSenha}
@@ -212,7 +212,7 @@ export default function LoginScreen() {
                                 <Ionicons
                                     name={mostrarSenha ? 'eye-outline' : 'eye-off-outline'}
                                     size={20}
-                                    color={Colors.neutral.charcoal}
+                                    color="#FFD300"
                                 />
                             </TouchableOpacity>
                         </View>
@@ -234,7 +234,7 @@ export default function LoginScreen() {
                     >
                         {loading ? (
                             <View style={styles.buttonContent}>
-                                <ActivityIndicator color="#fff" size="small"/>
+                                <ActivityIndicator color="#000" size="small"/>
                                 <Text style={[styles.buttonText, {marginLeft: 10}]}>
                                     Entrando...
                                 </Text>
@@ -260,13 +260,13 @@ export default function LoginScreen() {
 
                 <View style={styles.infoBox}>
                     <Ionicons
-                        name="information-circle"
-                        size={20}
-                        color={Colors.accent.coral}
+                        name="shield-checkmark-outline"
+                        size={18}
+                        color="#FFD300"
                         style={styles.infoIcon}
                     />
                     <Text style={styles.infoText}>
-                        Use suas credenciais cadastradas para entrar
+                        Seus dados estão seguros conosco
                     </Text>
                 </View>
             </ScrollView>
@@ -277,7 +277,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#000000", // fundo preto total
+        backgroundColor: "#000000",
     },
 
     scrollContainer: {
@@ -288,52 +288,83 @@ const styles = StyleSheet.create({
 
     header: {
         alignItems: "center",
-        marginBottom: Spacing.xxxl,
+        marginBottom: Spacing.xxl,
+    },
+
+    logoContainer: {
+        marginBottom: Spacing.lg,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
+    logo: {
+        width: 200,
+        height: 200,
     },
 
     title: {
-        fontSize: Typography.sizes.h1,
-        fontWeight: Typography.fonts.displayWeight,
-        color: "#FFD300", // amarelo neon
+        fontSize: 28,
+        fontWeight: "700",
+        color: "#FFD300",
         marginBottom: Spacing.xs,
         textAlign: "center",
+        letterSpacing: 0.5,
     },
 
     subtitle: {
-        fontSize: Typography.sizes.body,
-        color: "#CCCCCC",
+        fontSize: 15,
+        color: "#999",
         textAlign: "center",
+        letterSpacing: 0.3,
     },
 
     form: {
-        backgroundColor: "#111111",
-        borderRadius: BorderRadius.card,
+        backgroundColor: "#0a0a0a",
+        borderRadius: 20,
         padding: Spacing.xl,
         borderWidth: 1,
-        borderColor: "#FFD30055",
+        borderColor: "#1a1a1a",
+        shadowColor: "#FFD300",
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 12,
+        elevation: 8,
+    },
+
+    inputGroup: {
+        marginBottom: Spacing.lg,
     },
 
     label: {
-        fontSize: Typography.sizes.label,
-        fontWeight: Typography.fonts.headingWeight,
+        fontSize: 13,
+        fontWeight: "600",
         color: "#FFD300",
         marginBottom: Spacing.sm,
+        letterSpacing: 0.5,
+        textTransform: "uppercase",
     },
 
     inputContainer: {
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: "#000000",
-        borderWidth: 1,
-        borderColor: "#FFD300",
-        borderRadius: BorderRadius.input,
+        borderWidth: 1.5,
+        borderColor: "#222",
+        borderRadius: 12,
         paddingHorizontal: Spacing.md,
+        height: 52,
+    },
+
+    inputIcon: {
+        marginRight: Spacing.sm,
     },
 
     input: {
         flex: 1,
-        paddingVertical: Spacing.md,
-        fontSize: Typography.sizes.body,
+        fontSize: 15,
         color: "#FFF",
     },
 
@@ -341,57 +372,111 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: "#000000",
-        borderWidth: 1,
-        borderColor: "#FFD300",
-        borderRadius: BorderRadius.input,
+        borderWidth: 1.5,
+        borderColor: "#222",
+        borderRadius: 12,
         paddingHorizontal: Spacing.md,
+        height: 52,
+    },
+
+    passwordInput: {
+        flex: 1,
+        fontSize: 15,
+        color: "#FFF",
+    },
+
+    eyeButton: {
+        padding: Spacing.xs,
+    },
+
+    forgotPassword: {
+        alignSelf: "flex-end",
+        marginBottom: Spacing.lg,
+        marginTop: -Spacing.xs,
     },
 
     forgotPasswordText: {
         color: "#FFD300",
-        fontSize: Typography.sizes.bodySmall,
-        fontWeight: Typography.fonts.headingWeight,
+        fontSize: 13,
+        fontWeight: "600",
     },
 
     button: {
         backgroundColor: "#FFD300",
-        borderRadius: BorderRadius.button,
-        padding: Spacing.base,
+        borderRadius: 12,
+        height: 52,
         alignItems: "center",
+        justifyContent: "center",
         marginTop: Spacing.sm,
+        shadowColor: "#FFD300",
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 6,
     },
 
-    buttonText: {
-        color: "#000",
-        fontSize: Typography.sizes.body,
-        fontWeight: Typography.fonts.headingWeight,
+    buttonDisabled: {
+        opacity: 0.7,
     },
 
-    footerText: {
-        fontSize: Typography.sizes.bodySmall,
-        color: "#FFF",
-    },
-
-    linkText: {
-        fontSize: Typography.sizes.bodySmall,
-        color: "#FFD300",
-        fontWeight: Typography.fonts.headingWeight,
-    },
-
-    infoBox: {
-        marginTop: Spacing.lg,
-        backgroundColor: "#0d0d0d",
-        padding: Spacing.md,
-        borderRadius: BorderRadius.sm,
-        borderWidth: 1,
-        borderColor: "#FFD300",
+    buttonContent: {
         flexDirection: "row",
         alignItems: "center",
     },
 
+    buttonText: {
+        color: "#000",
+        fontSize: 16,
+        fontWeight: "700",
+        letterSpacing: 0.5,
+    },
+
+    footer: {
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: Spacing.lg,
+        gap: Spacing.xs,
+    },
+
+    footerText: {
+        fontSize: 14,
+        color: "#999",
+    },
+
+    linkText: {
+        fontSize: 14,
+        color: "#FFD300",
+        fontWeight: "700",
+        textDecorationLine: "underline",
+    },
+
+    linkDisabled: {
+        opacity: 0.5,
+    },
+
+    infoBox: {
+        marginTop: Spacing.xl,
+        backgroundColor: "#0a0a0a",
+        padding: Spacing.md,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: "#1a1a1a",
+        flexDirection: "row",
+        alignItems: "center",
+    },
+
+    infoIcon: {
+        marginRight: Spacing.sm,
+    },
+
     infoText: {
         flex: 1,
-        fontSize: Typography.sizes.caption,
-        color: "#FFF",
+        fontSize: 12,
+        color: "#999",
+        letterSpacing: 0.3,
     },
 });
