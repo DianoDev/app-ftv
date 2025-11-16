@@ -17,6 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { SolicitacaoRachaService } from '../../../services/solicitacaoRachaService';
 import { ArenaService } from '../../../services/arenaService';
+import { StorageService } from '../../../services/storage';
 import { Colors, Typography, Spacing, BorderRadius } from '../../../styles/theme';
 
 export default function SolicitacaoDetailScreen() {
@@ -26,6 +27,7 @@ export default function SolicitacaoDetailScreen() {
     const [solicitacao, setSolicitacao] = useState(null);
     const [isParticipating, setIsParticipating] = useState(false);
     const [isCriador, setIsCriador] = useState(false);
+    const [currentUserId, setCurrentUserId] = useState(null);
     const [actionLoading, setActionLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [jogadoresDisponiveis, setJogadoresDisponiveis] = useState([]);
@@ -33,12 +35,30 @@ export default function SolicitacaoDetailScreen() {
     const [loadingJogadores, setLoadingJogadores] = useState(false);
 
     useEffect(() => {
-        loadSolicitacao();
+        loadUserAndSolicitacao();
     }, [solicitacaoId]);
 
-    const loadSolicitacao = async () => {
+    const loadUserAndSolicitacao = async () => {
         try {
             setLoading(true);
+
+            // Carregar usuário do localStorage
+            const user = await StorageService.getUser();
+            if (user && user.id) {
+                setCurrentUserId(user.id);
+            }
+
+            // Carregar solicitação
+            await loadSolicitacao(user?.id);
+        } catch (error) {
+            console.error('Error loading user and solicitacao:', error);
+            Alert.alert('Erro', 'Erro ao carregar informações');
+            router.back();
+        }
+    };
+
+    const loadSolicitacao = async (userId = null) => {
+        try {
             const result = await SolicitacaoRachaService.getSolicitacao(solicitacaoId);
             console.log('Resultado completo:', JSON.stringify(result, null, 2));
 
@@ -49,6 +69,8 @@ export default function SolicitacaoDetailScreen() {
                 console.log('Arena:', solicitacaoData.arena);
                 console.log('Criador:', solicitacaoData.criador);
                 console.log('Participantes:', solicitacaoData.participantes);
+                console.log('User ID atual:', userId || currentUserId);
+                console.log('Criador ID:', solicitacaoData.criador_id);
 
                 if (!solicitacaoData.arena && solicitacaoData.arena_id) {
                     const arenaResult = await ArenaService.getArena(solicitacaoData.arena_id);
@@ -58,8 +80,21 @@ export default function SolicitacaoDetailScreen() {
                 }
 
                 setSolicitacao(solicitacaoData);
-                setIsParticipating(result.data.is_participating || false);
-                setIsCriador(result.data.is_criador || false);
+
+                // Verificar se o usuário atual é o criador
+                const userIdToCheck = userId || currentUserId;
+                if (userIdToCheck) {
+                    const isUserCriador = solicitacaoData.criador_id === userIdToCheck;
+                    setIsCriador(isUserCriador);
+                    console.log('É criador?', isUserCriador);
+
+                    // Verificar se está participando
+                    const isUserParticipating = solicitacaoData.participantes?.some(
+                        p => p.usuario_id === userIdToCheck
+                    ) || false;
+                    setIsParticipating(isUserParticipating);
+                    console.log('Está participando?', isUserParticipating);
+                }
             } else {
                 Alert.alert('Erro', result.message);
                 router.back();
@@ -391,15 +426,62 @@ export default function SolicitacaoDetailScreen() {
                     ) : null}
                 </View>
 
-                {/* Botão de Ação */}
-                {solicitacao.status === 'aberta' && (
-                    <View style={styles.actionSection}>
-                        {isCriador ? (
-                            <View style={styles.creatorInfo}>
-                                <Ionicons name="star" size={24} color="#FFD300" />
-                                <Text style={styles.creatorInfoText}>Você é o criador deste racha</Text>
+                {/* Avisos e Informações do Criador */}
+                {isCriador && (
+                    <View style={styles.adminInfoCard}>
+                        <View style={styles.adminHeader}>
+                            <Ionicons name="shield-checkmark" size={24} color="#FFD300" />
+                            <Text style={styles.adminTitle}>Painel do Criador</Text>
+                        </View>
+
+                        <View style={styles.adminInfo}>
+                            <Ionicons name="information-circle-outline" size={20} color="#4CAF50" />
+                            <Text style={styles.adminInfoText}>
+                                Você é o criador deste racha e tem controle total sobre ele
+                            </Text>
+                        </View>
+
+                        <View style={styles.adminInfo}>
+                            <Ionicons name="people-outline" size={20} color="#FFD300" />
+                            <Text style={styles.adminInfoText}>
+                                {totalParticipantes} de {solicitacao.limite_participantes} vagas preenchidas
+                            </Text>
+                        </View>
+
+                        {!isFull && (
+                            <View style={styles.adminInfo}>
+                                <Ionicons name="alert-circle-outline" size={20} color="#FFD300" />
+                                <Text style={styles.adminInfoText}>
+                                    Ainda há {solicitacao.limite_participantes - totalParticipantes} {solicitacao.limite_participantes - totalParticipantes === 1 ? 'vaga disponível' : 'vagas disponíveis'}
+                                </Text>
                             </View>
-                        ) : isParticipating ? (
+                        )}
+
+                        {isFull && (
+                            <View style={styles.adminInfo}>
+                                <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+                                <Text style={[styles.adminInfoText, { color: '#4CAF50' }]}>
+                                    Racha completo! Todas as vagas foram preenchidas
+                                </Text>
+                            </View>
+                        )}
+                    </View>
+                )}
+
+                {/* Aviso de Participação */}
+                {!isCriador && isParticipating && (
+                    <View style={styles.participatingCard}>
+                        <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
+                        <Text style={styles.participatingText}>
+                            Você está participando deste racha
+                        </Text>
+                    </View>
+                )}
+
+                {/* Botão de Ação */}
+                {solicitacao.status === 'aberta' && !isCriador && (
+                    <View style={styles.actionSection}>
+                        {isParticipating ? (
                             <TouchableOpacity
                                 style={[styles.actionButton, styles.leaveButton]}
                                 onPress={handleSair}
@@ -407,36 +489,46 @@ export default function SolicitacaoDetailScreen() {
                                 activeOpacity={0.7}
                             >
                                 {actionLoading ? (
-                                    <ActivityIndicator size="small" color="#000000" />
+                                    <ActivityIndicator size="small" color="#FFFFFF" />
                                 ) : (
                                     <>
-                                        <Ionicons name="log-out-outline" size={24} color="#000000" />
-                                        <Text style={styles.actionButtonText}>Sair do Racha</Text>
+                                        <Ionicons name="log-out-outline" size={24} color="#FFFFFF" />
+                                        <Text style={[styles.actionButtonText, { color: '#FFFFFF' }]}>Sair do Racha</Text>
                                     </>
                                 )}
                             </TouchableOpacity>
                         ) : (
-                            <TouchableOpacity
-                                style={[
-                                    styles.actionButton,
-                                    styles.joinButton,
-                                    isFull && styles.actionButtonDisabled
-                                ]}
-                                onPress={handleParticipar}
-                                disabled={isFull || actionLoading}
-                                activeOpacity={0.7}
-                            >
-                                {actionLoading ? (
-                                    <ActivityIndicator size="small" color="#000000" />
-                                ) : (
-                                    <>
-                                        <Ionicons name="add-circle-outline" size={24} color="#000000" />
-                                        <Text style={styles.actionButtonText}>
-                                            {isFull ? 'Racha Lotado' : 'Entrar no Racha'}
+                            <>
+                                {isFull && (
+                                    <View style={styles.fullWarning}>
+                                        <Ionicons name="alert-circle" size={20} color="#F44336" />
+                                        <Text style={styles.fullWarningText}>
+                                            Este racha está lotado. Não é possível entrar no momento.
                                         </Text>
-                                    </>
+                                    </View>
                                 )}
-                            </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[
+                                        styles.actionButton,
+                                        styles.joinButton,
+                                        isFull && styles.actionButtonDisabled
+                                    ]}
+                                    onPress={handleParticipar}
+                                    disabled={isFull || actionLoading}
+                                    activeOpacity={0.7}
+                                >
+                                    {actionLoading ? (
+                                        <ActivityIndicator size="small" color="#000000" />
+                                    ) : (
+                                        <>
+                                            <Ionicons name="add-circle-outline" size={24} color="#000000" />
+                                            <Text style={styles.actionButtonText}>
+                                                {isFull ? 'Racha Lotado' : 'Entrar no Racha'}
+                                            </Text>
+                                        </>
+                                    )}
+                                </TouchableOpacity>
+                            </>
                         )}
                     </View>
                 )}
@@ -741,24 +833,79 @@ const styles = StyleSheet.create({
         color: '#FFD300',
         fontWeight: '600',
     },
-    actionSection: {
+    adminInfoCard: {
+        backgroundColor: '#1a1a1a',
+        borderRadius: BorderRadius.lg,
+        padding: Spacing.lg,
         marginBottom: Spacing.md,
+        borderWidth: 2,
+        borderColor: '#FFD300',
     },
-    creatorInfo: {
+    adminHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.sm,
+        marginBottom: Spacing.md,
+        paddingBottom: Spacing.md,
+        borderBottomWidth: 1,
+        borderBottomColor: '#2a2a2a',
+    },
+    adminTitle: {
+        fontSize: Typography.sizes.h3,
+        fontWeight: '700',
+        color: '#FFD300',
+    },
+    adminInfo: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        gap: Spacing.sm,
+        marginTop: Spacing.sm,
+        paddingVertical: Spacing.xs,
+    },
+    adminInfoText: {
+        flex: 1,
+        fontSize: Typography.sizes.body,
+        color: '#FFFFFF',
+        lineHeight: 20,
+    },
+    participatingCard: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(255, 211, 0, 0.15)',
+        backgroundColor: 'rgba(76, 175, 80, 0.15)',
         paddingVertical: Spacing.md,
+        paddingHorizontal: Spacing.lg,
         borderRadius: BorderRadius.md,
-        gap: 8,
+        gap: Spacing.sm,
         borderWidth: 1,
-        borderColor: '#FFD300',
+        borderColor: '#4CAF50',
+        marginBottom: Spacing.md,
     },
-    creatorInfoText: {
+    participatingText: {
         fontSize: Typography.sizes.body,
-        color: '#FFD300',
+        color: '#4CAF50',
         fontWeight: '600',
+    },
+    fullWarning: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(244, 67, 54, 0.15)',
+        paddingVertical: Spacing.sm,
+        paddingHorizontal: Spacing.md,
+        borderRadius: BorderRadius.md,
+        gap: Spacing.sm,
+        borderWidth: 1,
+        borderColor: '#F44336',
+        marginBottom: Spacing.sm,
+    },
+    fullWarningText: {
+        flex: 1,
+        fontSize: Typography.sizes.caption,
+        color: '#F44336',
+        fontWeight: '500',
+    },
+    actionSection: {
+        marginBottom: Spacing.md,
     },
     actionButton: {
         flexDirection: 'row',

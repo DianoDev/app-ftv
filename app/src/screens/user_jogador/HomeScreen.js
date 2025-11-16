@@ -80,11 +80,11 @@ export default function JogadorHomeScreen() {
 
     // Navegações para as novas telas
     const navigateToArenas = () => {
-        router.push('/src/screens/user_jogador/arenas/ArenasListScreen');
+        router.push('/src/screens/user_jogador/mapa/ArenasMapScreen');
     };
 
     const navigateToRachas = () => {
-        router.push('/src/screens/user_jogador/racha/SolicitacoesListScreen');
+        router.push('/src/screens/user_jogador/mapa/RachasMapScreen');
     };
 
     const navigateToCreateRacha = () => {
