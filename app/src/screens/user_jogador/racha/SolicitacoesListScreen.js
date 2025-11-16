@@ -150,15 +150,15 @@ export default function SolicitacoesListScreen() {
     const getStatusColor = (status) => {
         switch (status) {
             case 'aberta':
-                return Colors.status.success;
+                return '#4CAF50';
             case 'confirmada':
-                return Colors.primary.mikasaBright;
+                return '#FFD300';
             case 'cancelada':
-                return Colors.status.error;
+                return '#F44336';
             case 'concluida':
-                return Colors.neutral.charcoal;
+                return '#999999';
             default:
-                return Colors.neutral.charcoal;
+                return '#999999';
         }
     };
 
@@ -178,13 +178,11 @@ export default function SolicitacoesListScreen() {
     };
 
     const isUserParticipating = (solicitacao) => {
-        // Aqui você pode verificar se o usuário está na lista de participantes
-        // Por enquanto, vamos retornar false
         return false;
     };
 
     const isSolicitacaoFull = (solicitacao) => {
-        const totalParticipantes = (solicitacao.participantes_count || 0) + 1; // +1 para o criador
+        const totalParticipantes = (solicitacao.participantes_count || 0) + 1;
         return totalParticipantes >= solicitacao.limite_participantes;
     };
 
@@ -199,7 +197,7 @@ export default function SolicitacoesListScreen() {
         const isCriador = currentUserId === item.criador_id;
         const isParticipating = isUserParticipating(item);
         const isFull = isSolicitacaoFull(item);
-        const totalParticipantes = (item.participantes_count || 0) + 1; // +1 para o criador
+        const totalParticipantes = (item.participantes_count || 0) + 1;
 
         return (
             <TouchableOpacity
@@ -220,20 +218,20 @@ export default function SolicitacoesListScreen() {
                             {item.arena?.nome || 'Arena'}
                         </Text>
                         <View style={styles.locationRow}>
-                            <Ionicons name="location-outline" size={14} color={Colors.neutral.charcoal} />
+                            <Ionicons name="location-outline" size={14} color="#999999" />
                             <Text style={styles.locationText}>
                                 {item.arena?.cidade || ''}, {item.arena?.estado || ''}
                             </Text>
                         </View>
                         <View style={styles.timeRow}>
-                            <Ionicons name="time-outline" size={14} color={Colors.primary.mikasaBright} />
+                            <Ionicons name="time-outline" size={14} color="#FFD300" />
                             <Text style={styles.timeText}>
                                 {item.hora_inicio} - {item.hora_fim}
                             </Text>
                         </View>
                     </View>
 
-                    <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '20' }]}>
+                    <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '20', borderColor: getStatusColor(item.status) }]}>
                         <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
                             {getStatusLabel(item.status)}
                         </Text>
@@ -250,7 +248,7 @@ export default function SolicitacoesListScreen() {
                 {/* Informações adicionais */}
                 <View style={styles.infoRow}>
                     <View style={styles.infoItem}>
-                        <Ionicons name="people" size={18} color={Colors.primary.mikasaBright} />
+                        <Ionicons name="people" size={18} color="#FFD300" />
                         <Text style={styles.infoText}>
                             {totalParticipantes}/{item.limite_participantes}
                         </Text>
@@ -258,14 +256,14 @@ export default function SolicitacoesListScreen() {
 
                     {item.nivel_sugerido && (
                         <View style={styles.infoItem}>
-                            <Ionicons name="trophy" size={18} color={Colors.status.warning} />
+                            <Ionicons name="trophy" size={18} color="#FFD300" />
                             <Text style={styles.infoText}>{item.nivel_sugerido}</Text>
                         </View>
                     )}
 
                     {item.valor_por_pessoa && (
                         <View style={styles.infoItem}>
-                            <Ionicons name="cash" size={18} color={Colors.status.success} />
+                            <Ionicons name="cash" size={18} color="#4CAF50" />
                             <Text style={styles.infoText}>
                                 R$ {parseFloat(item.valor_por_pessoa).toFixed(2)}
                             </Text>
@@ -278,7 +276,7 @@ export default function SolicitacoesListScreen() {
                     <View style={styles.actionsRow}>
                         {isCriador ? (
                             <View style={styles.creatorBadge}>
-                                <Ionicons name="star" size={16} color={Colors.primary.mikasaBright} />
+                                <Ionicons name="star" size={16} color="#FFD300" />
                                 <Text style={styles.creatorText}>Você é o criador</Text>
                             </View>
                         ) : isParticipating ? (
@@ -289,10 +287,10 @@ export default function SolicitacoesListScreen() {
                                 activeOpacity={0.7}
                             >
                                 {actionLoading === item.id ? (
-                                    <ActivityIndicator size="small" color={Colors.neutral.white} />
+                                    <ActivityIndicator size="small" color="#000000" />
                                 ) : (
                                     <>
-                                        <Ionicons name="log-out-outline" size={20} color={Colors.neutral.white} />
+                                        <Ionicons name="log-out-outline" size={20} color="#000000" />
                                         <Text style={styles.actionButtonText}>Sair</Text>
                                     </>
                                 )}
@@ -309,10 +307,10 @@ export default function SolicitacoesListScreen() {
                                 activeOpacity={0.7}
                             >
                                 {actionLoading === item.id ? (
-                                    <ActivityIndicator size="small" color={Colors.neutral.white} />
+                                    <ActivityIndicator size="small" color="#000000" />
                                 ) : (
                                     <>
-                                        <Ionicons name="add-circle-outline" size={20} color={Colors.neutral.white} />
+                                        <Ionicons name="add-circle-outline" size={20} color="#000000" />
                                         <Text style={styles.actionButtonText}>
                                             {isFull ? 'Lotado' : 'Entrar'}
                                         </Text>
@@ -328,7 +326,7 @@ export default function SolicitacoesListScreen() {
 
     const renderEmptyList = () => (
         <View style={styles.emptyContainer}>
-            <Ionicons name="tennisball-outline" size={64} color={Colors.neutral.sandLight} />
+            <Ionicons name="tennisball-outline" size={64} color="#2a2a2a" />
             <Text style={styles.emptyTitle}>Nenhuma solicitação encontrada</Text>
             <Text style={styles.emptyText}>
                 {activeTab === 'abertas'
@@ -343,14 +341,14 @@ export default function SolicitacoesListScreen() {
 
         return (
             <View style={styles.footerLoader}>
-                <ActivityIndicator size="small" color={Colors.primary.mikasaBright} />
+                <ActivityIndicator size="small" color="#FFD300" />
             </View>
         );
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="dark" />
+            <StatusBar style="light" />
 
             {/* Header */}
             <View style={styles.header}>
@@ -358,14 +356,14 @@ export default function SolicitacoesListScreen() {
                     style={styles.backButton}
                     onPress={() => router.back()}
                 >
-                    <Ionicons name="arrow-back" size={24} color={Colors.neutral.deepCharcoal} />
+                    <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Rachas</Text>
                 <TouchableOpacity
                     style={styles.addButton}
                     onPress={() => router.push('/src/screens/user_jogador/racha/CreateSolicitacaoRachaScreen')}
                 >
-                    <Ionicons name="add-circle" size={28} color={Colors.primary.mikasaBright} />
+                    <Ionicons name="add-circle" size={28} color="#FFD300" />
                 </TouchableOpacity>
             </View>
 
@@ -401,7 +399,7 @@ export default function SolicitacoesListScreen() {
             {/* Solicitações List */}
             {loading && currentPage === 1 ? (
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color={Colors.primary.mikasaBright} />
+                    <ActivityIndicator size="large" color="#FFD300" />
                     <Text style={styles.loadingText}>Carregando solicitações...</Text>
                 </View>
             ) : (
@@ -418,7 +416,8 @@ export default function SolicitacoesListScreen() {
                         <RefreshControl
                             refreshing={refreshing}
                             onRefresh={handleRefresh}
-                            colors={[Colors.primary.mikasaBright]}
+                            colors={['#FFD300']}
+                            tintColor="#FFD300"
                         />
                     }
                 />
@@ -430,7 +429,7 @@ export default function SolicitacoesListScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.neutral.sandLight,
+        backgroundColor: '#0a0a0a',
     },
     header: {
         flexDirection: 'row',
@@ -438,25 +437,26 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.md,
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#0a0a0a',
         borderBottomWidth: 1,
-        borderBottomColor: Colors.neutral.sandLight,
+        borderBottomColor: '#2a2a2a',
     },
     backButton: {
         padding: Spacing.xs,
     },
     headerTitle: {
-        ...Typography.h2,
-        color: Colors.neutral.deepCharcoal,
+        fontSize: Typography.sizes.h2,
+        fontWeight: Typography.fonts.displayWeight,
+        color: '#FFFFFF',
     },
     addButton: {
         padding: Spacing.xs,
     },
     tabsContainer: {
         flexDirection: 'row',
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#0a0a0a',
         borderBottomWidth: 1,
-        borderBottomColor: Colors.neutral.sandLight,
+        borderBottomColor: '#2a2a2a',
     },
     tab: {
         flex: 1,
@@ -466,39 +466,41 @@ const styles = StyleSheet.create({
         borderBottomColor: 'transparent',
     },
     tabActive: {
-        borderBottomColor: Colors.primary.mikasaBright,
+        borderBottomColor: '#FFD300',
     },
     tabText: {
-        ...Typography.body,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.body,
+        color: '#999999',
     },
     tabTextActive: {
-        color: Colors.primary.mikasaBright,
+        color: '#FFD300',
         fontWeight: '600',
     },
     resultsInfo: {
         paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.xs,
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#0a0a0a',
     },
     resultsText: {
-        ...Typography.caption,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
     },
     listContent: {
         padding: Spacing.md,
         flexGrow: 1,
     },
     solicitacaoCard: {
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#1a1a1a',
         borderRadius: BorderRadius.lg,
         padding: Spacing.md,
         marginBottom: Spacing.md,
-        elevation: 2,
-        shadowColor: '#000',
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
+        shadowColor: '#FFD300',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowRadius: 8,
+        elevation: 4,
     },
     cardHeader: {
         flexDirection: 'row',
@@ -509,34 +511,33 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: Spacing.sm,
-        backgroundColor: Colors.primary.mikasaBright + '15',
+        backgroundColor: '#FFD300',
         borderRadius: BorderRadius.md,
         paddingVertical: Spacing.xs,
     },
     dayOfWeek: {
-        ...Typography.caption,
-        color: Colors.primary.mikasaBright,
-        fontWeight: '600',
         fontSize: 11,
+        fontWeight: '600',
+        color: '#000000',
+        letterSpacing: 0.5,
     },
     dateDay: {
-        ...Typography.h2,
-        color: Colors.primary.mikasaBright,
         fontSize: 24,
         fontWeight: 'bold',
+        color: '#000000',
     },
     dateMonth: {
-        ...Typography.caption,
-        color: Colors.primary.mikasaBright,
         fontSize: 11,
+        color: '#000000',
     },
     mainInfo: {
         flex: 1,
         justifyContent: 'center',
     },
     arenaName: {
-        ...Typography.h3,
-        color: Colors.neutral.deepCharcoal,
+        fontSize: Typography.sizes.h3,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
         marginBottom: 2,
     },
     locationRow: {
@@ -545,8 +546,8 @@ const styles = StyleSheet.create({
         marginTop: 2,
     },
     locationText: {
-        ...Typography.caption,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
         marginLeft: 4,
     },
     timeRow: {
@@ -555,8 +556,8 @@ const styles = StyleSheet.create({
         marginTop: 4,
     },
     timeText: {
-        ...Typography.caption,
-        color: Colors.primary.mikasaBright,
+        fontSize: Typography.sizes.caption,
+        color: '#FFD300',
         marginLeft: 4,
         fontWeight: '600',
     },
@@ -565,17 +566,16 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
         borderRadius: BorderRadius.sm,
         alignSelf: 'flex-start',
+        borderWidth: 1,
     },
     statusText: {
-        ...Typography.caption,
-        fontWeight: '600',
         fontSize: 11,
+        fontWeight: '600',
     },
     descricao: {
-        ...Typography.body,
-        color: Colors.neutral.charcoal,
-        marginBottom: Spacing.sm,
         fontSize: 13,
+        color: '#999999',
+        marginBottom: Spacing.sm,
         lineHeight: 18,
     },
     infoRow: {
@@ -590,16 +590,15 @@ const styles = StyleSheet.create({
         gap: 4,
     },
     infoText: {
-        ...Typography.caption,
-        color: Colors.neutral.deepCharcoal,
         fontSize: 13,
+        color: '#FFFFFF',
         fontWeight: '500',
     },
     actionsRow: {
         marginTop: Spacing.sm,
         paddingTop: Spacing.sm,
         borderTopWidth: 1,
-        borderTopColor: Colors.neutral.sandLight,
+        borderTopColor: '#2a2a2a',
     },
     creatorBadge: {
         flexDirection: 'row',
@@ -609,8 +608,8 @@ const styles = StyleSheet.create({
         gap: 6,
     },
     creatorText: {
-        ...Typography.body,
-        color: Colors.primary.mikasaBright,
+        fontSize: Typography.sizes.body,
+        color: '#FFD300',
         fontWeight: '600',
     },
     actionButton: {
@@ -622,18 +621,18 @@ const styles = StyleSheet.create({
         gap: 6,
     },
     joinButton: {
-        backgroundColor: Colors.accent.lime,
+        backgroundColor: '#FFD300',
     },
     leaveButton: {
-        backgroundColor: Colors.status.error,
+        backgroundColor: '#F44336',
     },
     actionButtonDisabled: {
-        backgroundColor: Colors.neutral.charcoal,
+        backgroundColor: '#666666',
         opacity: 0.5,
     },
     actionButtonText: {
-        ...Typography.button,
-        color: Colors.neutral.white,
+        fontSize: Typography.sizes.body,
+        color: '#000000',
         fontWeight: '600',
     },
     loadingContainer: {
@@ -642,8 +641,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     loadingText: {
-        ...Typography.body,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.body,
+        color: '#999999',
         marginTop: Spacing.sm,
     },
     emptyContainer: {
@@ -653,14 +652,15 @@ const styles = StyleSheet.create({
         paddingVertical: Spacing.xl * 2,
     },
     emptyTitle: {
-        ...Typography.h3,
-        color: Colors.neutral.deepCharcoal,
+        fontSize: Typography.sizes.h3,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
         marginTop: Spacing.md,
         marginBottom: Spacing.xs,
     },
     emptyText: {
-        ...Typography.body,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.body,
+        color: '#999999',
         textAlign: 'center',
     },
     footerLoader: {

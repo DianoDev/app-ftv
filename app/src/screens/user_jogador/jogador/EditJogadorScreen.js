@@ -49,7 +49,6 @@ export default function EditJogadorScreen() {
                 const jogador = result.data;
                 setJogadorId(jogador.id);
 
-                // Format data for display
                 setFormData({
                     telefone: jogador.telefone ? formatPhone(jogador.telefone) : '',
                     data_nascimento: jogador.data_nascimento ? formatDateFromDB(jogador.data_nascimento) : '',
@@ -81,7 +80,6 @@ export default function EditJogadorScreen() {
         }));
     };
 
-    // Formatting masks
     const formatCPF = (value) => {
         const numbers = value.replace(/\D/g, '');
         if (numbers.length <= 11) {
@@ -117,7 +115,6 @@ export default function EditJogadorScreen() {
     };
 
     const formatDateFromDB = (dateString) => {
-        // Convert YYYY-MM-DD to DD/MM/YYYY
         const parts = dateString.split('-');
         if (parts.length === 3) {
             return `${parts[2]}/${parts[1]}/${parts[0]}`;
@@ -177,7 +174,6 @@ export default function EditJogadorScreen() {
         setSaving(true);
 
         try {
-            // Prepare data for submission
             const dataToSend = {
                 telefone: formData.telefone.replace(/\D/g, '') || null,
                 data_nascimento: formData.data_nascimento || null,
@@ -222,9 +218,9 @@ export default function EditJogadorScreen() {
     if (loading) {
         return (
             <SafeAreaView style={styles.container}>
-                <StatusBar style="dark" />
+                <StatusBar style="light" />
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color={Colors.primary.mikasaBright} />
+                    <ActivityIndicator size="large" color="#FFD300" />
                     <Text style={styles.loadingText}>Carregando dados...</Text>
                 </View>
             </SafeAreaView>
@@ -233,7 +229,7 @@ export default function EditJogadorScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="dark" />
+            <StatusBar style="light" />
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 keyboardShouldPersistTaps="handled"
@@ -246,7 +242,7 @@ export default function EditJogadorScreen() {
                         onPress={() => router.back()}
                         activeOpacity={0.7}
                     >
-                        <Ionicons name="arrow-back" size={24} color={Colors.secondary.ocean} />
+                        <Ionicons name="arrow-back" size={24} color="#FFD300" />
                         <Text style={styles.backButtonText}>Voltar</Text>
                     </TouchableOpacity>
                     <Text style={styles.title}>Editar Perfil</Text>
@@ -257,7 +253,7 @@ export default function EditJogadorScreen() {
                 <View style={styles.form}>
                     {/* Info Box */}
                     <View style={styles.infoBox}>
-                        <Ionicons name="information-circle" size={20} color={Colors.secondary.ocean} />
+                        <Ionicons name="information-circle" size={20} color="#FFD300" />
                         <Text style={styles.infoText}>
                             Mantenha seu perfil atualizado para melhor experiência
                         </Text>
@@ -267,15 +263,15 @@ export default function EditJogadorScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>CPF</Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons name="card" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <Ionicons name="card" size={20} color="#FFD300" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="000.000.000-00"
+                                placeholderTextColor="#666666"
                                 value={formData.cpf}
                                 onChangeText={handleCPFChange}
                                 keyboardType="numeric"
                                 maxLength={14}
-                                placeholderTextColor={Colors.neutral.charcoal}
                             />
                         </View>
                     </View>
@@ -284,15 +280,15 @@ export default function EditJogadorScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Telefone</Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons name="call" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <Ionicons name="call" size={20} color="#FFD300" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="(00) 00000-0000"
+                                placeholderTextColor="#666666"
                                 value={formData.telefone}
                                 onChangeText={handlePhoneChange}
                                 keyboardType="phone-pad"
                                 maxLength={15}
-                                placeholderTextColor={Colors.neutral.charcoal}
                             />
                         </View>
                     </View>
@@ -301,15 +297,15 @@ export default function EditJogadorScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Data de Nascimento</Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons name="calendar" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <Ionicons name="calendar" size={20} color="#FFD300" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="DD/MM/AAAA"
+                                placeholderTextColor="#666666"
                                 value={formData.data_nascimento}
                                 onChangeText={handleDateChange}
                                 keyboardType="numeric"
                                 maxLength={10}
-                                placeholderTextColor={Colors.neutral.charcoal}
                             />
                         </View>
                     </View>
@@ -322,10 +318,11 @@ export default function EditJogadorScreen() {
                                 selectedValue={formData.genero}
                                 onValueChange={(value) => handleInputChange('genero', value)}
                                 style={styles.picker}
+                                dropdownIconColor="#FFD300"
                             >
-                                <Picker.Item label="Masculino" value="masculino" />
-                                <Picker.Item label="Feminino" value="feminino" />
-                                <Picker.Item label="Outro" value="outro" />
+                                <Picker.Item label="Masculino" value="masculino" color="#FFFFFF" />
+                                <Picker.Item label="Feminino" value="feminino" color="#FFFFFF" />
+                                <Picker.Item label="Outro" value="outro" color="#FFFFFF" />
                             </Picker>
                         </View>
                     </View>
@@ -334,13 +331,13 @@ export default function EditJogadorScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Cidade</Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons name="location" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <Ionicons name="location" size={20} color="#FFD300" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="Sua cidade"
+                                placeholderTextColor="#666666"
                                 value={formData.cidade}
                                 onChangeText={(text) => handleInputChange('cidade', text)}
-                                placeholderTextColor={Colors.neutral.charcoal}
                             />
                         </View>
                     </View>
@@ -349,15 +346,15 @@ export default function EditJogadorScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Estado (UF)</Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons name="map" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <Ionicons name="map" size={20} color="#FFD300" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="SP"
+                                placeholderTextColor="#666666"
                                 value={formData.estado}
                                 onChangeText={(text) => handleInputChange('estado', text.toUpperCase())}
                                 maxLength={2}
                                 autoCapitalize="characters"
-                                placeholderTextColor={Colors.neutral.charcoal}
                             />
                         </View>
                     </View>
@@ -370,11 +367,12 @@ export default function EditJogadorScreen() {
                                 selectedValue={formData.nivel_habilidade}
                                 onValueChange={(value) => handleInputChange('nivel_habilidade', value)}
                                 style={styles.picker}
+                                dropdownIconColor="#FFD300"
                             >
-                                <Picker.Item label="Iniciante" value="iniciante" />
-                                <Picker.Item label="Intermediário" value="intermediario" />
-                                <Picker.Item label="Avançado" value="avancado" />
-                                <Picker.Item label="Profissional" value="profissional" />
+                                <Picker.Item label="Iniciante" value="iniciante" color="#FFFFFF" />
+                                <Picker.Item label="Intermediário" value="intermediario" color="#FFFFFF" />
+                                <Picker.Item label="Avançado" value="avancado" color="#FFFFFF" />
+                                <Picker.Item label="Profissional" value="profissional" color="#FFFFFF" />
                             </Picker>
                         </View>
                     </View>
@@ -387,10 +385,11 @@ export default function EditJogadorScreen() {
                                 selectedValue={formData.posicao_preferida}
                                 onValueChange={(value) => handleInputChange('posicao_preferida', value)}
                                 style={styles.picker}
+                                dropdownIconColor="#FFD300"
                             >
-                                <Picker.Item label="Ambos" value="ambos" />
-                                <Picker.Item label="Esquerda" value="esquerda" />
-                                <Picker.Item label="Direita" value="direita" />
+                                <Picker.Item label="Ambos" value="ambos" color="#FFFFFF" />
+                                <Picker.Item label="Esquerda" value="esquerda" color="#FFFFFF" />
+                                <Picker.Item label="Direita" value="direita" color="#FFFFFF" />
                             </Picker>
                         </View>
                     </View>
@@ -399,14 +398,14 @@ export default function EditJogadorScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Altura (cm)</Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons name="resize" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <Ionicons name="resize" size={20} color="#FFD300" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="180"
+                                placeholderTextColor="#666666"
                                 value={formData.altura}
                                 onChangeText={(text) => handleInputChange('altura', text)}
                                 keyboardType="numeric"
-                                placeholderTextColor={Colors.neutral.charcoal}
                             />
                         </View>
                     </View>
@@ -415,14 +414,14 @@ export default function EditJogadorScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Peso (kg)</Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons name="speedometer" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <Ionicons name="speedometer" size={20} color="#FFD300" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="75"
+                                placeholderTextColor="#666666"
                                 value={formData.peso}
                                 onChangeText={(text) => handleInputChange('peso', text)}
                                 keyboardType="numeric"
-                                placeholderTextColor={Colors.neutral.charcoal}
                             />
                         </View>
                     </View>
@@ -434,12 +433,12 @@ export default function EditJogadorScreen() {
                             <TextInput
                                 style={[styles.input, styles.textArea]}
                                 placeholder="Conte um pouco sobre você e sua experiência no vôlei..."
+                                placeholderTextColor="#666666"
                                 value={formData.bio}
                                 onChangeText={(text) => handleInputChange('bio', text)}
                                 multiline
                                 numberOfLines={4}
                                 textAlignVertical="top"
-                                placeholderTextColor={Colors.neutral.charcoal}
                             />
                         </View>
                         <Text style={styles.charCount}>{formData.bio.length}/500</Text>
@@ -453,10 +452,10 @@ export default function EditJogadorScreen() {
                         activeOpacity={0.8}
                     >
                         {saving ? (
-                            <ActivityIndicator color={Colors.neutral.white} />
+                            <ActivityIndicator color="#000000" />
                         ) : (
                             <>
-                                <Ionicons name="checkmark-circle" size={24} color={Colors.neutral.white} />
+                                <Ionicons name="checkmark-circle" size={24} color="#000000" />
                                 <Text style={styles.submitButtonText}>Salvar Alterações</Text>
                             </>
                         )}
@@ -470,7 +469,7 @@ export default function EditJogadorScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#0a0a0a',
     },
     loadingContainer: {
         flex: 1,
@@ -478,20 +477,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     loadingText: {
-        ...Typography.body,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.body,
+        color: '#999999',
         marginTop: Spacing.sm,
     },
     scrollContent: {
         paddingBottom: Spacing.xl,
     },
     header: {
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#0a0a0a',
         paddingHorizontal: Spacing.lg,
         paddingTop: Spacing.md,
         paddingBottom: Spacing.xl,
         borderBottomWidth: 1,
-        borderBottomColor: Colors.neutral.sandLight,
+        borderBottomColor: '#2a2a2a',
     },
     backButton: {
         flexDirection: 'row',
@@ -499,34 +498,37 @@ const styles = StyleSheet.create({
         marginBottom: Spacing.md,
     },
     backButtonText: {
-        ...Typography.body,
-        color: Colors.secondary.ocean,
+        fontSize: Typography.sizes.body,
+        color: '#FFD300',
         marginLeft: Spacing.xs,
         fontWeight: '500',
     },
     title: {
-        ...Typography.h1,
-        color: Colors.neutral.deepCharcoal,
+        fontSize: Typography.sizes.h1,
+        fontWeight: Typography.fonts.displayWeight,
+        color: '#FFFFFF',
         marginBottom: Spacing.xs,
     },
     subtitle: {
-        ...Typography.body,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.body,
+        color: '#999999',
     },
     form: {
         padding: Spacing.lg,
     },
     infoBox: {
         flexDirection: 'row',
-        backgroundColor: Colors.secondary.ocean + '10',
+        backgroundColor: 'rgba(255, 211, 0, 0.15)',
         padding: Spacing.md,
         borderRadius: BorderRadius.md,
         marginBottom: Spacing.xl,
         alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#FFD300',
     },
     infoText: {
-        ...Typography.caption,
-        color: Colors.secondary.ocean,
+        fontSize: Typography.sizes.caption,
+        color: '#FFD300',
         marginLeft: Spacing.sm,
         flex: 1,
     },
@@ -534,19 +536,19 @@ const styles = StyleSheet.create({
         marginBottom: Spacing.lg,
     },
     label: {
-        ...Typography.body,
+        fontSize: Typography.sizes.body,
         fontWeight: '600',
-        color: Colors.neutral.deepCharcoal,
+        color: '#FFFFFF',
         marginBottom: Spacing.xs,
     },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: Colors.neutral.sandLight,
+        borderColor: '#3a3a3a',
         borderRadius: BorderRadius.md,
         paddingHorizontal: Spacing.sm,
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#2a2a2a',
     },
     inputIcon: {
         marginRight: Spacing.sm,
@@ -554,8 +556,8 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         paddingVertical: Spacing.sm,
-        ...Typography.body,
-        color: Colors.neutral.deepCharcoal,
+        fontSize: Typography.sizes.body,
+        color: '#FFFFFF',
     },
     textAreaContainer: {
         alignItems: 'flex-start',
@@ -566,37 +568,46 @@ const styles = StyleSheet.create({
         textAlignVertical: 'top',
     },
     charCount: {
-        ...Typography.caption,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
         textAlign: 'right',
         marginTop: Spacing.xxs,
     },
     pickerContainer: {
         borderWidth: 1,
-        borderColor: Colors.neutral.sandLight,
+        borderColor: '#3a3a3a',
         borderRadius: BorderRadius.md,
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#2a2a2a',
         overflow: 'hidden',
     },
     picker: {
-        ...Typography.body,
-        color: Colors.neutral.deepCharcoal,
+        fontSize: Typography.sizes.body,
+        color: '#FFFFFF',
     },
     submitButton: {
-        ...ComponentStyles.button,
-        backgroundColor: Colors.accent.lime,
+        backgroundColor: '#FFD300',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         gap: Spacing.sm,
         marginTop: Spacing.xl,
+        paddingVertical: Spacing.md,
+        borderRadius: BorderRadius.md,
+        shadowColor: '#FFD300',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 8,
     },
     submitButtonDisabled: {
         opacity: 0.6,
     },
     submitButtonText: {
-        ...Typography.button,
-        color: Colors.neutral.white,
+        fontSize: Typography.sizes.body,
+        color: '#000000',
         fontWeight: '600',
     },
 });

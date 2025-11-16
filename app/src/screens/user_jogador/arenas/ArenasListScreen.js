@@ -92,7 +92,6 @@ export default function ArenasListScreen() {
     };
 
     const handleArenaPress = (arena) => {
-        // Navegar para detalhes da arena
         router.push({
             pathname: '/src/screens/user_jogador/arenas/ArenaDetailScreen',
             params: { arenaId: arena.id }
@@ -107,18 +106,18 @@ export default function ArenasListScreen() {
         >
             <View style={styles.arenaHeader}>
                 <View style={styles.arenaIconContainer}>
-                    <Ionicons name="location" size={24} color={Colors.primary.mikasaBright} />
+                    <Ionicons name="location" size={24} color="#FFD300" />
                 </View>
                 <View style={styles.arenaInfo}>
                     <Text style={styles.arenaName}>{item.nome}</Text>
                     <Text style={styles.arenaLocation}>
-                        <Ionicons name="location-outline" size={14} color={Colors.textSecondary} />
+                        <Ionicons name="location-outline" size={14} color="#999999" />
                         {' '}{item.cidade}, {item.estado}
                     </Text>
                 </View>
                 {item.rating > 0 && (
                     <View style={styles.ratingContainer}>
-                        <Ionicons name="star" size={16} color={Colors.status.warning} />
+                        <Ionicons name="star" size={16} color="#FFD300" />
                         <Text style={styles.ratingText}>{item.rating.toFixed(1)}</Text>
                     </View>
                 )}
@@ -133,13 +132,13 @@ export default function ArenasListScreen() {
             <View style={styles.arenaFooter}>
                 {item.telefone && (
                     <View style={styles.footerItem}>
-                        <Ionicons name="call-outline" size={14} color={Colors.textSecondary} />
+                        <Ionicons name="call-outline" size={14} color="#FFD300" />
                         <Text style={styles.footerText}>{item.telefone}</Text>
                     </View>
                 )}
                 {item.whatsapp && (
                     <View style={styles.footerItem}>
-                        <Ionicons name="logo-whatsapp" size={14} color={Colors.status.success} />
+                        <Ionicons name="logo-whatsapp" size={14} color="#4CAF50" />
                         <Text style={styles.footerText}>{item.whatsapp}</Text>
                     </View>
                 )}
@@ -162,7 +161,7 @@ export default function ArenasListScreen() {
 
     const renderEmptyList = () => (
         <View style={styles.emptyContainer}>
-            <Ionicons name="location-outline" size={64} color={Colors.border} />
+            <Ionicons name="location-outline" size={64} color="#2a2a2a" />
             <Text style={styles.emptyTitle}>Nenhuma arena encontrada</Text>
             <Text style={styles.emptyText}>
                 {searchTerm ? 'Tente buscar por outro termo' : 'Não há arenas cadastradas no momento'}
@@ -175,14 +174,14 @@ export default function ArenasListScreen() {
 
         return (
             <View style={styles.footerLoader}>
-                <ActivityIndicator size="small" color={Colors.primary.mikasaBright} />
+                <ActivityIndicator size="small" color="#FFD300" />
             </View>
         );
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="dark" />
+            <StatusBar style="light" />
 
             {/* Header */}
             <View style={styles.header}>
@@ -190,7 +189,7 @@ export default function ArenasListScreen() {
                     style={styles.backButton}
                     onPress={() => router.back()}
                 >
-                    <Ionicons name="arrow-back" size={24} color={Colors.text} />
+                    <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Arenas</Text>
                 <View style={styles.headerRight} />
@@ -199,10 +198,11 @@ export default function ArenasListScreen() {
             {/* Search Bar */}
             <View style={styles.searchContainer}>
                 <View style={styles.searchInputContainer}>
-                    <Ionicons name="search" size={20} color={Colors.textSecondary} />
+                    <Ionicons name="search" size={20} color="#FFD300" />
                     <TextInput
                         style={styles.searchInput}
                         placeholder="Buscar arena por nome ou cidade..."
+                        placeholderTextColor="#666666"
                         value={searchTerm}
                         onChangeText={setSearchTerm}
                         onSubmitEditing={handleSearch}
@@ -210,7 +210,7 @@ export default function ArenasListScreen() {
                     />
                     {searchTerm.length > 0 && (
                         <TouchableOpacity onPress={handleClearSearch}>
-                            <Ionicons name="close-circle" size={20} color={Colors.textSecondary} />
+                            <Ionicons name="close-circle" size={20} color="#999999" />
                         </TouchableOpacity>
                     )}
                 </View>
@@ -234,7 +234,7 @@ export default function ArenasListScreen() {
             {/* Arenas List */}
             {loading && currentPage === 1 ? (
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color={Colors.primary.mikasaBright} />
+                    <ActivityIndicator size="large" color="#FFD300" />
                     <Text style={styles.loadingText}>Carregando arenas...</Text>
                 </View>
             ) : (
@@ -251,7 +251,8 @@ export default function ArenasListScreen() {
                         <RefreshControl
                             refreshing={refreshing}
                             onRefresh={handleRefresh}
-                            colors={[Colors.primary.mikasaBright]}
+                            colors={['#FFD300']}
+                            tintColor="#FFD300"
                         />
                     }
                 />
@@ -263,7 +264,7 @@ export default function ArenasListScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.background,
+        backgroundColor: '#0a0a0a',
     },
     header: {
         flexDirection: 'row',
@@ -271,16 +272,17 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.md,
-        backgroundColor: Colors.white,
+        backgroundColor: '#0a0a0a',
         borderBottomWidth: 1,
-        borderBottomColor: Colors.border,
+        borderBottomColor: '#2a2a2a',
     },
     backButton: {
         padding: Spacing.xs,
     },
     headerTitle: {
-        ...Typography.h2,
-        color: Colors.text,
+        fontSize: Typography.sizes.h2,
+        fontWeight: Typography.fonts.displayWeight,
+        color: '#FFFFFF',
     },
     headerRight: {
         width: 40,
@@ -289,58 +291,63 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.sm,
-        backgroundColor: Colors.white,
+        backgroundColor: '#0a0a0a',
         gap: Spacing.sm,
     },
     searchInputContainer: {
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: Colors.background,
+        backgroundColor: '#1a1a1a',
         borderRadius: BorderRadius.md,
         paddingHorizontal: Spacing.sm,
         gap: Spacing.xs,
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
     },
     searchInput: {
         flex: 1,
         paddingVertical: Spacing.sm,
-        ...Typography.body,
-        color: Colors.text,
+        fontSize: Typography.sizes.body,
+        color: '#FFFFFF',
     },
     searchButton: {
-        backgroundColor: Colors.primary.mikasaBright,
+        backgroundColor: '#FFD300',
         paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.sm,
         borderRadius: BorderRadius.md,
         justifyContent: 'center',
     },
     searchButtonText: {
-        ...Typography.button,
-        color: Colors.white,
+        fontSize: Typography.sizes.body,
+        color: '#000000',
+        fontWeight: '600',
     },
     resultsInfo: {
         paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.xs,
-        backgroundColor: Colors.white,
+        backgroundColor: '#0a0a0a',
     },
     resultsText: {
-        ...Typography.caption,
-        color: Colors.textSecondary,
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
     },
     listContent: {
         padding: Spacing.md,
         flexGrow: 1,
     },
     arenaCard: {
-        backgroundColor: Colors.white,
+        backgroundColor: '#1a1a1a',
         borderRadius: BorderRadius.lg,
         padding: Spacing.md,
         marginBottom: Spacing.md,
-        elevation: 2,
-        shadowColor: '#000',
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
+        shadowColor: '#FFD300',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowRadius: 8,
+        elevation: 4,
     },
     arenaHeader: {
         flexDirection: 'row',
@@ -350,41 +357,46 @@ const styles = StyleSheet.create({
     arenaIconContainer: {
         width: 40,
         height: 40,
-        borderRadius: BorderRadius.round,
-        backgroundColor: Colors.primary.mikasaBright + '20',
+        borderRadius: 20,
+        backgroundColor: '#2a2a2a',
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: Spacing.sm,
+        borderWidth: 1,
+        borderColor: '#FFD300',
     },
     arenaInfo: {
         flex: 1,
     },
     arenaName: {
-        ...Typography.h3,
-        color: Colors.text,
+        fontSize: Typography.sizes.h3,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
         marginBottom: Spacing.xxs,
     },
     arenaLocation: {
-        ...Typography.caption,
-        color: Colors.textSecondary,
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
     },
     ratingContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: Colors.status.warning + '20',
+        backgroundColor: 'rgba(255, 211, 0, 0.15)',
         paddingHorizontal: Spacing.xs,
         paddingVertical: 2,
         borderRadius: BorderRadius.sm,
         gap: 2,
+        borderWidth: 1,
+        borderColor: '#FFD300',
     },
     ratingText: {
-        ...Typography.caption,
-        color: Colors.status.warning,
+        fontSize: Typography.sizes.caption,
+        color: '#FFD300',
         fontWeight: '600',
     },
     arenaDescription: {
-        ...Typography.body,
-        color: Colors.textSecondary,
+        fontSize: Typography.sizes.body,
+        color: '#999999',
         marginBottom: Spacing.sm,
     },
     arenaFooter: {
@@ -398,8 +410,8 @@ const styles = StyleSheet.create({
         gap: Spacing.xxs,
     },
     footerText: {
-        ...Typography.caption,
-        color: Colors.textSecondary,
+        fontSize: Typography.sizes.caption,
+        color: '#FFFFFF',
     },
     comodidadesContainer: {
         flexDirection: 'row',
@@ -407,20 +419,20 @@ const styles = StyleSheet.create({
         gap: Spacing.xs,
     },
     comodidadeTag: {
-        backgroundColor: Colors.primary.mikasaBright + '20',
+        backgroundColor: '#2a2a2a',
         paddingHorizontal: Spacing.xs,
         paddingVertical: 2,
         borderRadius: BorderRadius.sm,
+        borderWidth: 1,
+        borderColor: '#FFD300',
     },
     comodidadeText: {
-        ...Typography.caption,
-        color: Colors.primary.mikasaBright,
         fontSize: 11,
+        color: '#FFD300',
     },
     moreComodidades: {
-        ...Typography.caption,
-        color: Colors.textSecondary,
         fontSize: 11,
+        color: '#999999',
         alignSelf: 'center',
     },
     loadingContainer: {
@@ -429,8 +441,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     loadingText: {
-        ...Typography.body,
-        color: Colors.textSecondary,
+        fontSize: Typography.sizes.body,
+        color: '#999999',
         marginTop: Spacing.sm,
     },
     emptyContainer: {
@@ -440,14 +452,15 @@ const styles = StyleSheet.create({
         paddingVertical: Spacing.xl * 2,
     },
     emptyTitle: {
-        ...Typography.h3,
-        color: Colors.text,
+        fontSize: Typography.sizes.h3,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
         marginTop: Spacing.md,
         marginBottom: Spacing.xs,
     },
     emptyText: {
-        ...Typography.body,
-        color: Colors.textSecondary,
+        fontSize: Typography.sizes.body,
+        color: '#999999',
         textAlign: 'center',
     },
     footerLoader: {

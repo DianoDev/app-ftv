@@ -43,7 +43,6 @@ export default function SolicitacaoDetailScreen() {
             console.log('Resultado completo:', JSON.stringify(result, null, 2));
 
             if (result.success) {
-                // Adaptar estrutura de dados
                 const solicitacaoData = result.data.solicitacao || result.data;
 
                 console.log('Solicitação:', solicitacaoData);
@@ -51,7 +50,6 @@ export default function SolicitacaoDetailScreen() {
                 console.log('Criador:', solicitacaoData.criador);
                 console.log('Participantes:', solicitacaoData.participantes);
 
-                // Se arena não veio carregada, buscar separadamente
                 if (!solicitacaoData.arena && solicitacaoData.arena_id) {
                     const arenaResult = await ArenaService.getArena(solicitacaoData.arena_id);
                     if (arenaResult.success) {
@@ -173,15 +171,15 @@ export default function SolicitacaoDetailScreen() {
     const getStatusColor = (status) => {
         switch (status) {
             case 'aberta':
-                return Colors.status.success;
+                return '#4CAF50';
             case 'confirmada':
-                return Colors.primary.mikasaBright;
+                return '#FFD300';
             case 'cancelada':
-                return Colors.status.error;
+                return '#F44336';
             case 'concluida':
-                return Colors.neutral.charcoal;
+                return '#999999';
             default:
-                return Colors.neutral.charcoal;
+                return '#999999';
         }
     };
 
@@ -207,7 +205,7 @@ export default function SolicitacaoDetailScreen() {
             activeOpacity={0.7}
         >
             <View style={styles.jogadorAvatar}>
-                <Ionicons name="person" size={24} color={Colors.primary.mikasaBright} />
+                <Ionicons name="person" size={24} color="#FFD300" />
             </View>
             <View style={styles.jogadorInfo}>
                 <Text style={styles.jogadorNome}>{item.name}</Text>
@@ -220,16 +218,16 @@ export default function SolicitacaoDetailScreen() {
                     <Text style={styles.jogadorNivel}>{item.nivel_habilidade}</Text>
                 )}
             </View>
-            <Ionicons name="add-circle" size={24} color={Colors.accent.lime} />
+            <Ionicons name="add-circle" size={24} color="#FFD300" />
         </TouchableOpacity>
     );
 
     if (loading) {
         return (
             <SafeAreaView style={styles.container}>
-                <StatusBar style="dark" />
+                <StatusBar style="light" />
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color={Colors.primary.mikasaBright} />
+                    <ActivityIndicator size="large" color="#FFD300" />
                     <Text style={styles.loadingText}>Carregando detalhes...</Text>
                 </View>
             </SafeAreaView>
@@ -240,12 +238,12 @@ export default function SolicitacaoDetailScreen() {
         return null;
     }
 
-    const totalParticipantes = (solicitacao.participantes?.length || 0) + 1; // +1 para o criador
+    const totalParticipantes = (solicitacao.participantes?.length || 0) + 1;
     const isFull = totalParticipantes >= solicitacao.limite_participantes;
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="dark" />
+            <StatusBar style="light" />
 
             {/* Header */}
             <View style={styles.header}>
@@ -253,7 +251,7 @@ export default function SolicitacaoDetailScreen() {
                     style={styles.backButton}
                     onPress={() => router.back()}
                 >
-                    <Ionicons name="arrow-back" size={24} color={Colors.neutral.deepCharcoal} />
+                    <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Detalhes do Racha</Text>
                 <View style={styles.headerRight} />
@@ -271,13 +269,13 @@ export default function SolicitacaoDetailScreen() {
                         <View style={styles.dateInfo}>
                             <Text style={styles.dayOfWeek}>{formatDayOfWeek(solicitacao.data_jogo)}</Text>
                             <View style={styles.timeRow}>
-                                <Ionicons name="time-outline" size={16} color={Colors.primary.mikasaBright} />
+                                <Ionicons name="time-outline" size={16} color="#FFD300" />
                                 <Text style={styles.timeText}>
                                     {solicitacao.hora_inicio} - {solicitacao.hora_fim}
                                 </Text>
                             </View>
                         </View>
-                        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(solicitacao.status) + '20' }]}>
+                        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(solicitacao.status) + '20', borderColor: getStatusColor(solicitacao.status) }]}>
                             <Text style={[styles.statusText, { color: getStatusColor(solicitacao.status) }]}>
                                 {getStatusLabel(solicitacao.status)}
                             </Text>
@@ -287,7 +285,7 @@ export default function SolicitacaoDetailScreen() {
                     {/* Arena */}
                     <View style={styles.section}>
                         <View style={styles.sectionHeader}>
-                            <Ionicons name="location" size={20} color={Colors.primary.mikasaBright} />
+                            <Ionicons name="location" size={20} color="#FFD300" />
                             <Text style={styles.sectionTitle}>Local</Text>
                         </View>
                         {solicitacao.arena ? (
@@ -309,7 +307,7 @@ export default function SolicitacaoDetailScreen() {
                     {solicitacao.descricao && (
                         <View style={styles.section}>
                             <View style={styles.sectionHeader}>
-                                <Ionicons name="document-text" size={20} color={Colors.primary.mikasaBright} />
+                                <Ionicons name="document-text" size={20} color="#FFD300" />
                                 <Text style={styles.sectionTitle}>Descrição</Text>
                             </View>
                             <Text style={styles.descricao}>{solicitacao.descricao}</Text>
@@ -319,14 +317,14 @@ export default function SolicitacaoDetailScreen() {
                     {/* Informações */}
                     <View style={styles.infoGrid}>
                         <View style={styles.infoCard}>
-                            <Ionicons name="people" size={24} color={Colors.primary.mikasaBright} />
+                            <Ionicons name="people" size={24} color="#FFD300" />
                             <Text style={styles.infoLabel}>Participantes</Text>
                             <Text style={styles.infoValue}>{totalParticipantes}/{solicitacao.limite_participantes}</Text>
                         </View>
 
                         {solicitacao.nivel_sugerido && (
                             <View style={styles.infoCard}>
-                                <Ionicons name="trophy" size={24} color={Colors.status.warning} />
+                                <Ionicons name="trophy" size={24} color="#FFD300" />
                                 <Text style={styles.infoLabel}>Nível</Text>
                                 <Text style={styles.infoValue}>{solicitacao.nivel_sugerido}</Text>
                             </View>
@@ -334,7 +332,7 @@ export default function SolicitacaoDetailScreen() {
 
                         {solicitacao.valor_por_pessoa && (
                             <View style={styles.infoCard}>
-                                <Ionicons name="cash" size={24} color={Colors.status.success} />
+                                <Ionicons name="cash" size={24} color="#4CAF50" />
                                 <Text style={styles.infoLabel}>Valor</Text>
                                 <Text style={styles.infoValue}>R$ {parseFloat(solicitacao.valor_por_pessoa).toFixed(2)}</Text>
                             </View>
@@ -351,7 +349,7 @@ export default function SolicitacaoDetailScreen() {
                                 style={styles.convidarButton}
                                 onPress={openConvidarModal}
                             >
-                                <Ionicons name="person-add" size={20} color={Colors.neutral.white} />
+                                <Ionicons name="person-add" size={20} color="#000000" />
                                 <Text style={styles.convidarButtonText}>Convidar</Text>
                             </TouchableOpacity>
                         )}
@@ -360,14 +358,14 @@ export default function SolicitacaoDetailScreen() {
                     {/* Criador */}
                     <View style={styles.participanteItem}>
                         <View style={styles.participanteAvatar}>
-                            <Ionicons name="person" size={24} color={Colors.primary.mikasaBright} />
+                            <Ionicons name="person" size={24} color="#FFD300" />
                         </View>
                         <View style={styles.participanteInfo}>
                             <Text style={styles.participanteNome}>
                                 {solicitacao.criador?.name || `Criador (ID: ${solicitacao.criador_id})`}
                             </Text>
                             <View style={styles.criadorBadge}>
-                                <Ionicons name="star" size={12} color={Colors.primary.mikasaBright} />
+                                <Ionicons name="star" size={12} color="#FFD300" />
                                 <Text style={styles.criadorText}>Criador</Text>
                             </View>
                         </View>
@@ -378,7 +376,7 @@ export default function SolicitacaoDetailScreen() {
                         solicitacao.participantes.map((participante, index) => (
                             <View key={index} style={styles.participanteItem}>
                                 <View style={styles.participanteAvatar}>
-                                    <Ionicons name="person" size={24} color={Colors.accent.lime} />
+                                    <Ionicons name="person" size={24} color="#FFD300" />
                                 </View>
                                 <View style={styles.participanteInfo}>
                                     <Text style={styles.participanteNome}>
@@ -398,7 +396,7 @@ export default function SolicitacaoDetailScreen() {
                     <View style={styles.actionSection}>
                         {isCriador ? (
                             <View style={styles.creatorInfo}>
-                                <Ionicons name="star" size={24} color={Colors.primary.mikasaBright} />
+                                <Ionicons name="star" size={24} color="#FFD300" />
                                 <Text style={styles.creatorInfoText}>Você é o criador deste racha</Text>
                             </View>
                         ) : isParticipating ? (
@@ -409,10 +407,10 @@ export default function SolicitacaoDetailScreen() {
                                 activeOpacity={0.7}
                             >
                                 {actionLoading ? (
-                                    <ActivityIndicator size="small" color={Colors.neutral.white} />
+                                    <ActivityIndicator size="small" color="#000000" />
                                 ) : (
                                     <>
-                                        <Ionicons name="log-out-outline" size={24} color={Colors.neutral.white} />
+                                        <Ionicons name="log-out-outline" size={24} color="#000000" />
                                         <Text style={styles.actionButtonText}>Sair do Racha</Text>
                                     </>
                                 )}
@@ -429,10 +427,10 @@ export default function SolicitacaoDetailScreen() {
                                 activeOpacity={0.7}
                             >
                                 {actionLoading ? (
-                                    <ActivityIndicator size="small" color={Colors.neutral.white} />
+                                    <ActivityIndicator size="small" color="#000000" />
                                 ) : (
                                     <>
-                                        <Ionicons name="add-circle-outline" size={24} color={Colors.neutral.white} />
+                                        <Ionicons name="add-circle-outline" size={24} color="#000000" />
                                         <Text style={styles.actionButtonText}>
                                             {isFull ? 'Racha Lotado' : 'Entrar no Racha'}
                                         </Text>
@@ -456,16 +454,17 @@ export default function SolicitacaoDetailScreen() {
                         <View style={styles.modalHeader}>
                             <Text style={styles.modalTitle}>Convidar Jogador</Text>
                             <TouchableOpacity onPress={() => setModalVisible(false)}>
-                                <Ionicons name="close" size={28} color={Colors.neutral.charcoal} />
+                                <Ionicons name="close" size={28} color="#999999" />
                             </TouchableOpacity>
                         </View>
 
                         <View style={styles.searchContainer}>
                             <View style={styles.searchInputContainer}>
-                                <Ionicons name="search" size={20} color={Colors.neutral.charcoal} />
+                                <Ionicons name="search" size={20} color="#999999" />
                                 <TextInput
                                     style={styles.searchInput}
                                     placeholder="Buscar por nome..."
+                                    placeholderTextColor="#666666"
                                     value={searchTerm}
                                     onChangeText={setSearchTerm}
                                     onSubmitEditing={handleSearch}
@@ -481,7 +480,7 @@ export default function SolicitacaoDetailScreen() {
 
                         {loadingJogadores ? (
                             <View style={styles.modalLoadingContainer}>
-                                <ActivityIndicator size="large" color={Colors.primary.mikasaBright} />
+                                <ActivityIndicator size="large" color="#FFD300" />
                             </View>
                         ) : (
                             <FlatList
@@ -506,7 +505,7 @@ export default function SolicitacaoDetailScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.neutral.sandLight,
+        backgroundColor: '#0a0a0a',
     },
     header: {
         flexDirection: 'row',
@@ -514,16 +513,17 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.md,
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#0a0a0a',
         borderBottomWidth: 1,
-        borderBottomColor: Colors.neutral.sandLight,
+        borderBottomColor: '#2a2a2a',
     },
     backButton: {
         padding: Spacing.xs,
     },
     headerTitle: {
-        ...Typography.h2,
-        color: Colors.neutral.deepCharcoal,
+        fontSize: Typography.sizes.h2,
+        fontWeight: Typography.fonts.displayWeight,
+        color: '#FFFFFF',
     },
     headerRight: {
         width: 40,
@@ -534,23 +534,25 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     loadingText: {
-        ...Typography.body,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.body,
+        color: '#999999',
         marginTop: Spacing.sm,
     },
     scrollContent: {
         padding: Spacing.md,
     },
     mainCard: {
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#1a1a1a',
         borderRadius: BorderRadius.lg,
         padding: Spacing.lg,
         marginBottom: Spacing.md,
-        elevation: 2,
-        shadowColor: '#000',
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
+        shadowColor: '#FFD300',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowRadius: 8,
+        elevation: 4,
     },
     dateStatusRow: {
         flexDirection: 'row',
@@ -560,29 +562,28 @@ const styles = StyleSheet.create({
     dateBox: {
         width: 70,
         height: 70,
-        backgroundColor: Colors.primary.mikasaBright + '15',
+        backgroundColor: '#FFD300',
         borderRadius: BorderRadius.md,
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: Spacing.md,
     },
     dateDay: {
-        ...Typography.h1,
-        color: Colors.primary.mikasaBright,
         fontSize: 32,
         fontWeight: 'bold',
+        color: '#000000',
     },
     dateMonth: {
-        ...Typography.caption,
-        color: Colors.primary.mikasaBright,
         fontSize: 14,
+        color: '#000000',
     },
     dateInfo: {
         flex: 1,
     },
     dayOfWeek: {
-        ...Typography.h3,
-        color: Colors.neutral.deepCharcoal,
+        fontSize: Typography.sizes.h3,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
         marginBottom: 4,
     },
     timeRow: {
@@ -591,19 +592,19 @@ const styles = StyleSheet.create({
         gap: 4,
     },
     timeText: {
-        ...Typography.body,
-        color: Colors.primary.mikasaBright,
+        fontSize: Typography.sizes.body,
+        color: '#FFD300',
         fontWeight: '600',
     },
     statusBadge: {
         paddingHorizontal: Spacing.sm,
         paddingVertical: 6,
         borderRadius: BorderRadius.sm,
+        borderWidth: 1,
     },
     statusText: {
-        ...Typography.caption,
-        fontWeight: '600',
         fontSize: 12,
+        fontWeight: '600',
     },
     section: {
         marginBottom: Spacing.lg,
@@ -615,26 +616,28 @@ const styles = StyleSheet.create({
         marginBottom: Spacing.sm,
     },
     sectionTitle: {
-        ...Typography.h3,
-        color: Colors.neutral.deepCharcoal,
+        fontSize: Typography.sizes.h3,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
     },
     arenaName: {
-        ...Typography.h2,
-        color: Colors.neutral.deepCharcoal,
+        fontSize: Typography.sizes.h2,
+        fontWeight: Typography.fonts.displayWeight,
+        color: '#FFD300',
         marginBottom: 4,
     },
     arenaEndereco: {
-        ...Typography.body,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.body,
+        color: '#999999',
         marginBottom: 2,
     },
     arenaLocalidade: {
-        ...Typography.caption,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
     },
     descricao: {
-        ...Typography.body,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.body,
+        color: '#999999',
         lineHeight: 20,
     },
     infoGrid: {
@@ -645,26 +648,31 @@ const styles = StyleSheet.create({
     infoCard: {
         flex: 1,
         minWidth: '30%',
-        backgroundColor: Colors.neutral.sandLight,
+        backgroundColor: '#2a2a2a',
         borderRadius: BorderRadius.md,
         padding: Spacing.md,
         alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#3a3a3a',
     },
     infoLabel: {
-        ...Typography.caption,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
         marginTop: 4,
     },
     infoValue: {
-        ...Typography.h3,
-        color: Colors.neutral.deepCharcoal,
+        fontSize: Typography.sizes.h3,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
         marginTop: 2,
     },
     participantesCard: {
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#1a1a1a',
         borderRadius: BorderRadius.lg,
         padding: Spacing.lg,
         marginBottom: Spacing.md,
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
     },
     participantesHeader: {
         flexDirection: 'row',
@@ -673,21 +681,22 @@ const styles = StyleSheet.create({
         marginBottom: Spacing.md,
     },
     participantesTitle: {
-        ...Typography.h3,
-        color: Colors.neutral.deepCharcoal,
+        fontSize: Typography.sizes.h3,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
     },
     convidarButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: Colors.accent.lime,
+        backgroundColor: '#FFD300',
         paddingHorizontal: Spacing.sm,
         paddingVertical: Spacing.xs,
         borderRadius: BorderRadius.md,
         gap: 4,
     },
     convidarButtonText: {
-        ...Typography.caption,
-        color: Colors.neutral.white,
+        fontSize: Typography.sizes.caption,
+        color: '#000000',
         fontWeight: '600',
     },
     participanteItem: {
@@ -695,28 +704,30 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: Spacing.sm,
         borderBottomWidth: 1,
-        borderBottomColor: Colors.neutral.sandLight,
+        borderBottomColor: '#2a2a2a',
     },
     participanteAvatar: {
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: Colors.neutral.sandLight,
+        backgroundColor: '#2a2a2a',
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: Spacing.sm,
+        borderWidth: 1,
+        borderColor: '#FFD300',
     },
     participanteInfo: {
         flex: 1,
     },
     participanteNome: {
-        ...Typography.body,
-        color: Colors.neutral.deepCharcoal,
+        fontSize: Typography.sizes.body,
+        color: '#FFFFFF',
         fontWeight: '500',
     },
     participanteStatus: {
-        ...Typography.caption,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
         fontStyle: 'italic',
     },
     criadorBadge: {
@@ -726,8 +737,8 @@ const styles = StyleSheet.create({
         marginTop: 2,
     },
     criadorText: {
-        ...Typography.caption,
-        color: Colors.primary.mikasaBright,
+        fontSize: Typography.sizes.caption,
+        color: '#FFD300',
         fontWeight: '600',
     },
     actionSection: {
@@ -737,14 +748,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: Colors.primary.mikasaBright + '15',
+        backgroundColor: 'rgba(255, 211, 0, 0.15)',
         paddingVertical: Spacing.md,
         borderRadius: BorderRadius.md,
         gap: 8,
+        borderWidth: 1,
+        borderColor: '#FFD300',
     },
     creatorInfoText: {
-        ...Typography.body,
-        color: Colors.primary.mikasaBright,
+        fontSize: Typography.sizes.body,
+        color: '#FFD300',
         fontWeight: '600',
     },
     actionButton: {
@@ -756,33 +769,34 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     joinButton: {
-        backgroundColor: Colors.accent.lime,
+        backgroundColor: '#FFD300',
     },
     leaveButton: {
-        backgroundColor: Colors.status.error,
+        backgroundColor: '#F44336',
     },
     actionButtonDisabled: {
-        backgroundColor: Colors.neutral.charcoal,
+        backgroundColor: '#666666',
         opacity: 0.5,
     },
     actionButtonText: {
-        ...Typography.button,
-        color: Colors.neutral.white,
-        fontWeight: '600',
         fontSize: 16,
+        color: '#000000',
+        fontWeight: '600',
     },
     modalOverlay: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        backgroundColor: 'rgba(0,0,0,0.8)',
         justifyContent: 'flex-end',
     },
     modalContent: {
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#1a1a1a',
         borderTopLeftRadius: BorderRadius.xl,
         borderTopRightRadius: BorderRadius.xl,
         paddingTop: Spacing.lg,
         paddingHorizontal: Spacing.lg,
         maxHeight: '80%',
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
     },
     modalHeader: {
         flexDirection: 'row',
@@ -791,8 +805,9 @@ const styles = StyleSheet.create({
         marginBottom: Spacing.md,
     },
     modalTitle: {
-        ...Typography.h2,
-        color: Colors.neutral.deepCharcoal,
+        fontSize: Typography.sizes.h2,
+        fontWeight: Typography.fonts.displayWeight,
+        color: '#FFFFFF',
     },
     searchContainer: {
         flexDirection: 'row',
@@ -803,27 +818,29 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: Colors.neutral.sandLight,
+        backgroundColor: '#2a2a2a',
         borderRadius: BorderRadius.md,
         paddingHorizontal: Spacing.sm,
         gap: 8,
+        borderWidth: 1,
+        borderColor: '#3a3a3a',
     },
     searchInput: {
         flex: 1,
         paddingVertical: Spacing.sm,
-        ...Typography.body,
-        color: Colors.neutral.deepCharcoal,
+        fontSize: Typography.sizes.body,
+        color: '#FFFFFF',
     },
     searchButton: {
-        backgroundColor: Colors.primary.mikasaBright,
+        backgroundColor: '#FFD300',
         paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.sm,
         borderRadius: BorderRadius.md,
         justifyContent: 'center',
     },
     searchButtonText: {
-        ...Typography.button,
-        color: Colors.neutral.white,
+        fontSize: Typography.sizes.body,
+        color: '#000000',
         fontWeight: '600',
     },
     modalLoadingContainer: {
@@ -838,33 +855,35 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: Spacing.md,
         borderBottomWidth: 1,
-        borderBottomColor: Colors.neutral.sandLight,
+        borderBottomColor: '#2a2a2a',
     },
     jogadorAvatar: {
         width: 50,
         height: 50,
         borderRadius: 25,
-        backgroundColor: Colors.primary.mikasaBright + '15',
+        backgroundColor: '#2a2a2a',
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: Spacing.md,
+        borderWidth: 1,
+        borderColor: '#FFD300',
     },
     jogadorInfo: {
         flex: 1,
     },
     jogadorNome: {
-        ...Typography.body,
-        color: Colors.neutral.deepCharcoal,
+        fontSize: Typography.sizes.body,
+        color: '#FFFFFF',
         fontWeight: '600',
         marginBottom: 2,
     },
     jogadorLocalidade: {
-        ...Typography.caption,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
     },
     jogadorNivel: {
-        ...Typography.caption,
-        color: Colors.primary.mikasaBright,
+        fontSize: Typography.sizes.caption,
+        color: '#FFD300',
         fontWeight: '600',
     },
     emptyJogadores: {
@@ -872,7 +891,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     emptyJogadoresText: {
-        ...Typography.body,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.body,
+        color: '#999999',
     },
 });

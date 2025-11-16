@@ -26,7 +26,6 @@ export default function CreateSolicitacaoRachaScreen() {
     const [loadingArenas, setLoadingArenas] = useState(true);
     const [arenas, setArenas] = useState([]);
 
-    // Date/Time pickers visibility
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePickerInicio, setShowTimePickerInicio] = useState(false);
     const [showTimePickerFim, setShowTimePickerFim] = useState(false);
@@ -137,7 +136,6 @@ export default function CreateSolicitacaoRachaScreen() {
             return false;
         }
 
-        // Validar se hora fim é maior que hora início
         if (formData.hora_inicio >= formData.hora_fim) {
             Alert.alert('Erro', 'A hora de fim deve ser posterior à hora de início');
             return false;
@@ -162,7 +160,6 @@ export default function CreateSolicitacaoRachaScreen() {
                 limite_participantes: parseInt(formData.limite_participantes),
             };
 
-            // Campos opcionais
             if (formData.valor_estimado) {
                 dataToSend.valor_estimado = parseFloat(formData.valor_estimado);
             }
@@ -205,7 +202,7 @@ export default function CreateSolicitacaoRachaScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="dark" />
+            <StatusBar style="light" />
 
             {/* Header */}
             <View style={styles.header}>
@@ -213,15 +210,15 @@ export default function CreateSolicitacaoRachaScreen() {
                     style={styles.backButton}
                     onPress={() => router.back()}
                 >
-                    <Ionicons name="arrow-back" size={24} color={Colors.text} />
+                    <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Nova Solicitação de Racha</Text>
+                <Text style={styles.headerTitle}>Nova Solicitação</Text>
                 <View style={styles.headerRight} />
             </View>
 
             {loadingArenas ? (
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color={Colors.primary} />
+                    <ActivityIndicator size="large" color="#FFD300" />
                     <Text style={styles.loadingText}>Carregando arenas...</Text>
                 </View>
             ) : (
@@ -233,20 +230,22 @@ export default function CreateSolicitacaoRachaScreen() {
                     {/* Arena */}
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>
-                            <Ionicons name="location" size={18} color={Colors.primary} /> Arena
+                            <Ionicons name="location" size={18} color="#FFD300" /> Arena
                         </Text>
                         <View style={styles.pickerContainer}>
                             <Picker
                                 selectedValue={formData.arena_id}
                                 onValueChange={(value) => handleInputChange('arena_id', value)}
                                 style={styles.picker}
+                                dropdownIconColor="#FFD300"
                             >
-                                <Picker.Item label="Selecione uma arena" value="" />
+                                <Picker.Item label="Selecione uma arena" value="" color="#999999" />
                                 {arenas.map((arena) => (
                                     <Picker.Item
                                         key={arena.id}
                                         label={`${arena.nome} - ${arena.cidade}/${arena.estado}`}
                                         value={arena.id.toString()}
+                                        color="#FFFFFF"
                                     />
                                 ))}
                             </Picker>
@@ -256,7 +255,7 @@ export default function CreateSolicitacaoRachaScreen() {
                     {/* Data e Horário */}
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>
-                            <Ionicons name="calendar" size={18} color={Colors.primary} /> Data e Horário
+                            <Ionicons name="calendar" size={18} color="#FFD300" /> Data e Horário
                         </Text>
 
                         {/* Data */}
@@ -264,7 +263,7 @@ export default function CreateSolicitacaoRachaScreen() {
                             style={styles.dateButton}
                             onPress={() => setShowDatePicker(true)}
                         >
-                            <Ionicons name="calendar-outline" size={20} color={Colors.textSecondary} />
+                            <Ionicons name="calendar-outline" size={20} color="#FFD300" />
                             <Text style={styles.dateButtonText}>
                                 {formatDateToBR(formData.data_jogo)}
                             </Text>
@@ -288,7 +287,7 @@ export default function CreateSolicitacaoRachaScreen() {
                                     style={styles.timeButton}
                                     onPress={() => setShowTimePickerInicio(true)}
                                 >
-                                    <Ionicons name="time-outline" size={20} color={Colors.textSecondary} />
+                                    <Ionicons name="time-outline" size={20} color="#FFD300" />
                                     <Text style={styles.timeButtonText}>
                                         {formData.hora_inicio || 'HH:MM'}
                                     </Text>
@@ -301,7 +300,7 @@ export default function CreateSolicitacaoRachaScreen() {
                                     style={styles.timeButton}
                                     onPress={() => setShowTimePickerFim(true)}
                                 >
-                                    <Ionicons name="time-outline" size={20} color={Colors.textSecondary} />
+                                    <Ionicons name="time-outline" size={20} color="#FFD300" />
                                     <Text style={styles.timeButtonText}>
                                         {formData.hora_fim || 'HH:MM'}
                                     </Text>
@@ -333,13 +332,14 @@ export default function CreateSolicitacaoRachaScreen() {
                     {/* Participantes */}
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>
-                            <Ionicons name="people" size={18} color={Colors.primary} /> Participantes
+                            <Ionicons name="people" size={18} color="#FFD300" /> Participantes
                         </Text>
                         <View style={styles.inputContainer}>
                             <Text style={styles.label}>Limite de Participantes *</Text>
                             <TextInput
                                 style={styles.input}
                                 placeholder="Ex: 10"
+                                placeholderTextColor="#666666"
                                 value={formData.limite_participantes}
                                 onChangeText={(value) => handleInputChange('limite_participantes', value)}
                                 keyboardType="numeric"
@@ -352,13 +352,14 @@ export default function CreateSolicitacaoRachaScreen() {
                                 selectedValue={formData.nivel_sugerido}
                                 onValueChange={(value) => handleInputChange('nivel_sugerido', value)}
                                 style={styles.picker}
+                                dropdownIconColor="#FFD300"
                             >
-                                <Picker.Item label="Qualquer nível" value="" />
-                                <Picker.Item label="Iniciante" value="iniciante" />
-                                <Picker.Item label="Intermediário" value="intermediario" />
-                                <Picker.Item label="Avançado" value="avancado" />
-                                <Picker.Item label="Profissional" value="profissional" />
-                                <Picker.Item label="Misto" value="misto" />
+                                <Picker.Item label="Qualquer nível" value="" color="#999999" />
+                                <Picker.Item label="Iniciante" value="iniciante" color="#FFFFFF" />
+                                <Picker.Item label="Intermediário" value="intermediario" color="#FFFFFF" />
+                                <Picker.Item label="Avançado" value="avancado" color="#FFFFFF" />
+                                <Picker.Item label="Profissional" value="profissional" color="#FFFFFF" />
+                                <Picker.Item label="Misto" value="misto" color="#FFFFFF" />
                             </Picker>
                         </View>
                     </View>
@@ -366,13 +367,14 @@ export default function CreateSolicitacaoRachaScreen() {
                     {/* Valores */}
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>
-                            <Ionicons name="cash" size={18} color={Colors.primary} /> Valores (opcional)
+                            <Ionicons name="cash" size={18} color="#FFD300" /> Valores (opcional)
                         </Text>
                         <View style={styles.inputContainer}>
                             <Text style={styles.label}>Valor Total Estimado</Text>
                             <TextInput
                                 style={styles.input}
                                 placeholder="Ex: 200.00"
+                                placeholderTextColor="#666666"
                                 value={formData.valor_estimado}
                                 onChangeText={(value) => handleInputChange('valor_estimado', value)}
                                 keyboardType="decimal-pad"
@@ -384,6 +386,7 @@ export default function CreateSolicitacaoRachaScreen() {
                             <TextInput
                                 style={styles.input}
                                 placeholder="Ex: 25.00"
+                                placeholderTextColor="#666666"
                                 value={formData.valor_por_pessoa}
                                 onChangeText={(value) => handleInputChange('valor_por_pessoa', value)}
                                 keyboardType="decimal-pad"
@@ -394,13 +397,14 @@ export default function CreateSolicitacaoRachaScreen() {
                     {/* Descrição */}
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>
-                            <Ionicons name="document-text" size={18} color={Colors.primary} /> Informações Adicionais
+                            <Ionicons name="document-text" size={18} color="#FFD300" /> Informações Adicionais
                         </Text>
                         <View style={styles.inputContainer}>
                             <Text style={styles.label}>Descrição</Text>
                             <TextInput
                                 style={[styles.input, styles.textArea]}
                                 placeholder="Descreva brevemente o racha..."
+                                placeholderTextColor="#666666"
                                 value={formData.descricao}
                                 onChangeText={(value) => handleInputChange('descricao', value)}
                                 multiline
@@ -415,6 +419,7 @@ export default function CreateSolicitacaoRachaScreen() {
                             <TextInput
                                 style={[styles.input, styles.textArea]}
                                 placeholder="Observações importantes (ex: trazer bola, vestiário, etc)..."
+                                placeholderTextColor="#666666"
                                 value={formData.observacoes}
                                 onChangeText={(value) => handleInputChange('observacoes', value)}
                                 multiline
@@ -432,10 +437,10 @@ export default function CreateSolicitacaoRachaScreen() {
                         disabled={loading}
                     >
                         {loading ? (
-                            <ActivityIndicator color={Colors.white} />
+                            <ActivityIndicator color="#000000" />
                         ) : (
                             <>
-                                <Ionicons name="checkmark-circle" size={24} color={Colors.white} />
+                                <Ionicons name="checkmark-circle" size={24} color="#000000" />
                                 <Text style={styles.submitButtonText}>Criar Solicitação</Text>
                             </>
                         )}
@@ -451,7 +456,7 @@ export default function CreateSolicitacaoRachaScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.background,
+        backgroundColor: '#0a0a0a',
     },
     header: {
         flexDirection: 'row',
@@ -459,17 +464,17 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.md,
-        backgroundColor: Colors.white,
+        backgroundColor: '#0a0a0a',
         borderBottomWidth: 1,
-        borderBottomColor: Colors.border,
+        borderBottomColor: '#2a2a2a',
     },
     backButton: {
         padding: Spacing.xs,
     },
     headerTitle: {
-        ...Typography.h2,
-        color: Colors.text,
         fontSize: 18,
+        fontWeight: Typography.fonts.displayWeight,
+        color: '#FFFFFF',
     },
     headerRight: {
         width: 40,
@@ -480,8 +485,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     loadingText: {
-        ...Typography.body,
-        color: Colors.textSecondary,
+        fontSize: Typography.sizes.body,
+        color: '#999999',
         marginTop: Spacing.sm,
     },
     scrollView: {
@@ -491,34 +496,37 @@ const styles = StyleSheet.create({
         padding: Spacing.md,
     },
     section: {
-        backgroundColor: Colors.white,
+        backgroundColor: '#1a1a1a',
         borderRadius: BorderRadius.lg,
         padding: Spacing.md,
         marginBottom: Spacing.md,
-        elevation: 1,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
     },
     sectionTitle: {
-        ...Typography.h3,
-        color: Colors.text,
-        marginBottom: Spacing.md,
         fontSize: 16,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
+        marginBottom: Spacing.md,
     },
     inputContainer: {
         marginBottom: Spacing.md,
     },
     label: {
-        ...Typography.body,
-        color: Colors.text,
+        fontSize: Typography.sizes.body,
+        color: '#FFFFFF',
         marginBottom: Spacing.xs,
         fontWeight: '500',
     },
     input: {
-        ...ComponentStyles.input,
-        backgroundColor: Colors.background,
+        backgroundColor: '#2a2a2a',
+        borderWidth: 1,
+        borderColor: '#3a3a3a',
+        borderRadius: BorderRadius.md,
+        paddingHorizontal: Spacing.sm,
+        paddingVertical: Spacing.sm,
+        fontSize: Typography.sizes.body,
+        color: '#FFFFFF',
     },
     textArea: {
         minHeight: 80,
@@ -526,8 +534,8 @@ const styles = StyleSheet.create({
         paddingTop: Spacing.sm,
     },
     charCount: {
-        ...Typography.caption,
-        color: Colors.textSecondary,
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
         textAlign: 'right',
         marginTop: Spacing.xxs,
     },
@@ -535,21 +543,24 @@ const styles = StyleSheet.create({
         marginBottom: Spacing.sm,
     },
     picker: {
-        backgroundColor: Colors.background,
+        backgroundColor: '#2a2a2a',
         borderRadius: BorderRadius.md,
+        color: '#FFFFFF',
     },
     dateButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: Colors.background,
+        backgroundColor: '#2a2a2a',
         padding: Spacing.sm,
         borderRadius: BorderRadius.md,
         gap: Spacing.sm,
         marginBottom: Spacing.sm,
+        borderWidth: 1,
+        borderColor: '#3a3a3a',
     },
     dateButtonText: {
-        ...Typography.body,
-        color: Colors.text,
+        fontSize: Typography.sizes.body,
+        color: '#FFFFFF',
     },
     timeContainer: {
         flexDirection: 'row',
@@ -561,28 +572,42 @@ const styles = StyleSheet.create({
     timeButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: Colors.background,
+        backgroundColor: '#2a2a2a',
         padding: Spacing.sm,
         borderRadius: BorderRadius.md,
         gap: Spacing.sm,
+        borderWidth: 1,
+        borderColor: '#3a3a3a',
     },
     timeButtonText: {
-        ...Typography.body,
-        color: Colors.text,
+        fontSize: Typography.sizes.body,
+        color: '#FFFFFF',
     },
     submitButton: {
-        ...ComponentStyles.button,
+        backgroundColor: '#FFD300',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+        paddingVertical: Spacing.md,
+        borderRadius: BorderRadius.md,
         gap: Spacing.sm,
         marginTop: Spacing.md,
+        shadowColor: '#FFD300',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 8,
     },
     submitButtonDisabled: {
         opacity: 0.6,
     },
     submitButtonText: {
-        ...ComponentStyles.buttonText,
+        fontSize: 16,
+        color: '#000000',
+        fontWeight: '600',
     },
     bottomSpacer: {
         height: Spacing.xl,

@@ -97,13 +97,13 @@ export default function JogadorHomeScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="dark" />
+            <StatusBar style="light" />
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 {/* Header */}
                 <View style={styles.header}>
                     <View style={styles.headerLeft}>
                         <View style={styles.avatarContainer}>
-                            <Ionicons name="person" size={32} color={Colors.primary.mikasaBright} />
+                            <Ionicons name="person" size={32} color="#FFD300" />
                         </View>
                         <View>
                             <Text style={styles.greeting}>Olá, {userName}! 👋</Text>
@@ -117,32 +117,13 @@ export default function JogadorHomeScreen() {
                         activeOpacity={0.8}
                     >
                         {isLoggingOut ? (
-                            <ActivityIndicator color={Colors.neutral.white} size="small" />
+                            <ActivityIndicator color="#FFD300" size="small" />
                         ) : (
-                            <Ionicons name="log-out-outline" size={22} color={Colors.neutral.white} />
+                            <Ionicons name="log-out-outline" size={22} color="#FFD300" />
                         )}
                     </TouchableOpacity>
                 </View>
 
-                {/* Botão Destaque - Criar Racha */}
-                <TouchableOpacity
-                    style={styles.heroCard}
-                    onPress={navigateToCreateRacha}
-                    activeOpacity={0.9}
-                >
-                    <View style={styles.heroContent}>
-                        <View style={styles.heroIconContainer}>
-                            <Ionicons name="add-circle" size={48} color={Colors.neutral.white} />
-                        </View>
-                        <View style={styles.heroText}>
-                            <Text style={styles.heroTitle}>Criar Novo Racha</Text>
-                            <Text style={styles.heroDescription}>
-                                Organize uma partida e convide seus amigos
-                            </Text>
-                        </View>
-                    </View>
-                    <Ionicons name="chevron-forward" size={24} color={Colors.neutral.white} />
-                </TouchableOpacity>
 
                 {/* Menu Principal */}
                 <View style={styles.mainMenu}>
@@ -151,12 +132,12 @@ export default function JogadorHomeScreen() {
                     <View style={styles.menuGrid}>
                         {/* Arenas */}
                         <TouchableOpacity
-                            style={[styles.menuCard, styles.menuCardArenas]}
+                            style={styles.menuCard}
                             onPress={navigateToArenas}
                             activeOpacity={0.8}
                         >
                             <View style={styles.menuIconContainer}>
-                                <Ionicons name="location" size={32} color={Colors.neutral.white} />
+                                <Ionicons name="location" size={32} color="#000000" />
                             </View>
                             <Text style={styles.menuCardTitle}>Arenas</Text>
                             <Text style={styles.menuCardDescription}>Encontre quadras próximas</Text>
@@ -164,12 +145,12 @@ export default function JogadorHomeScreen() {
 
                         {/* Rachas */}
                         <TouchableOpacity
-                            style={[styles.menuCard, styles.menuCardRachas]}
+                            style={styles.menuCard}
                             onPress={navigateToRachas}
                             activeOpacity={0.8}
                         >
                             <View style={styles.menuIconContainer}>
-                                <Ionicons name="tennisball" size={32} color={Colors.neutral.white} />
+                                <Ionicons name="tennisball" size={32} color="#000000" />
                             </View>
                             <Text style={styles.menuCardTitle}>Rachas</Text>
                             <Text style={styles.menuCardDescription}>Partidas disponíveis</Text>
@@ -177,12 +158,12 @@ export default function JogadorHomeScreen() {
 
                         {/* Perfil */}
                         <TouchableOpacity
-                            style={[styles.menuCard, styles.menuCardProfile]}
+                            style={styles.menuCard}
                             onPress={navigateToProfile}
                             activeOpacity={0.8}
                         >
                             <View style={styles.menuIconContainer}>
-                                <Ionicons name="person" size={32} color={Colors.neutral.white} />
+                                <Ionicons name="person" size={32} color="#000000" />
                             </View>
                             <Text style={styles.menuCardTitle}>Perfil</Text>
                             <Text style={styles.menuCardDescription}>Meus dados</Text>
@@ -194,7 +175,7 @@ export default function JogadorHomeScreen() {
                             activeOpacity={0.8}
                         >
                             <View style={styles.menuIconContainer}>
-                                <Ionicons name="trophy" size={32} color={Colors.neutral.white} />
+                                <Ionicons name="trophy" size={32}  color="#000000"  />
                             </View>
                             <Text style={styles.menuCardTitle}>Ranking</Text>
                             <Text style={styles.menuCardDescription}>Ver classificação</Text>
@@ -206,7 +187,7 @@ export default function JogadorHomeScreen() {
                             activeOpacity={0.8}
                         >
                             <View style={styles.menuIconContainer}>
-                                <Ionicons name="medal" size={32} color={Colors.neutral.white} />
+                                <Ionicons name="medal" size={32}  color="#000000"  />
                             </View>
                             <Text style={styles.menuCardTitle}>Torneios</Text>
                             <Text style={styles.menuCardDescription}>Competições</Text>
@@ -218,7 +199,7 @@ export default function JogadorHomeScreen() {
                             activeOpacity={0.8}
                         >
                             <View style={styles.menuIconContainer}>
-                                <Ionicons name="bar-chart" size={32} color={Colors.neutral.white} />
+                                <Ionicons name="bar-chart" size={32}  color="#000000"  />
                             </View>
                             <Text style={styles.menuCardTitle}>Estatísticas</Text>
                             <Text style={styles.menuCardDescription}>Meu desempenho</Text>
@@ -233,7 +214,7 @@ export default function JogadorHomeScreen() {
                     <View style={styles.statsContainer}>
                         <View style={styles.statCard}>
                             <View style={styles.statIconContainer}>
-                                <Ionicons name="game-controller" size={24} color={Colors.accent.lime} />
+                                <Ionicons name="game-controller" size={24} color="#FFD300" />
                             </View>
                             <Text style={styles.statNumber}>24</Text>
                             <Text style={styles.statLabel}>Partidas</Text>
@@ -241,7 +222,7 @@ export default function JogadorHomeScreen() {
 
                         <View style={styles.statCard}>
                             <View style={styles.statIconContainer}>
-                                <Ionicons name="checkmark-circle" size={24} color={Colors.success} />
+                                <Ionicons name="checkmark-circle" size={24} color="#FFD300" />
                             </View>
                             <Text style={styles.statNumber}>18</Text>
                             <Text style={styles.statLabel}>Vitórias</Text>
@@ -249,7 +230,7 @@ export default function JogadorHomeScreen() {
 
                         <View style={styles.statCard}>
                             <View style={styles.statIconContainer}>
-                                <Ionicons name="trending-up" size={24} color={Colors.primary.mikasaBright} />
+                                <Ionicons name="trending-up" size={24} color="#FFD300" />
                             </View>
                             <Text style={styles.statNumber}>75%</Text>
                             <Text style={styles.statLabel}>Win Rate</Text>
@@ -277,18 +258,18 @@ export default function JogadorHomeScreen() {
                                 <Text style={styles.rachaDate}>09/11</Text>
                             </View>
                             <View style={styles.rachaTimeContainer}>
-                                <Ionicons name="time" size={16} color={Colors.neutral.charcoal} />
+                                <Ionicons name="time" size={16} color="#FFD300" />
                                 <Text style={styles.rachaTime}>14:00</Text>
                             </View>
                         </View>
                         <View style={styles.rachaBody}>
                             <Text style={styles.rachaTitle}>Arena Praia do Forte</Text>
                             <View style={styles.rachaInfo}>
-                                <Ionicons name="people" size={16} color={Colors.accent.lime} />
+                                <Ionicons name="people" size={16} color="#FFD300" />
                                 <Text style={styles.rachaInfoText}>6/8 confirmados</Text>
                             </View>
                             <View style={styles.rachaInfo}>
-                                <Ionicons name="location" size={16} color={Colors.neutral.charcoal} />
+                                <Ionicons name="location" size={16} color="#999999" />
                                 <Text style={styles.rachaInfoText}>Copacabana, RJ</Text>
                             </View>
                         </View>
@@ -310,18 +291,18 @@ export default function JogadorHomeScreen() {
                                 <Text style={styles.rachaDate}>10/11</Text>
                             </View>
                             <View style={styles.rachaTimeContainer}>
-                                <Ionicons name="time" size={16} color={Colors.neutral.charcoal} />
+                                <Ionicons name="time" size={16} color="#FFD300" />
                                 <Text style={styles.rachaTime}>16:00</Text>
                             </View>
                         </View>
                         <View style={styles.rachaBody}>
                             <Text style={styles.rachaTitle}>Arena Beach Sports</Text>
                             <View style={styles.rachaInfo}>
-                                <Ionicons name="people" size={16} color={Colors.accent.coral} />
+                                <Ionicons name="people" size={16} color="#999999" />
                                 <Text style={styles.rachaInfoText}>8/8 confirmados</Text>
                             </View>
                             <View style={styles.rachaInfo}>
-                                <Ionicons name="location" size={16} color={Colors.neutral.charcoal} />
+                                <Ionicons name="location" size={16} color="#999999" />
                                 <Text style={styles.rachaInfoText}>Ipanema, RJ</Text>
                             </View>
                         </View>
@@ -339,7 +320,7 @@ export default function JogadorHomeScreen() {
 
                     <View style={styles.tipCard}>
                         <View style={styles.tipIconContainer}>
-                            <Ionicons name="bulb" size={32} color={Colors.primary.mikasaBright} />
+                            <Ionicons name="bulb" size={32} color="#000000" />
                         </View>
                         <View style={styles.tipContent}>
                             <Text style={styles.tipTitle}>Explore novas arenas!</Text>
@@ -351,7 +332,7 @@ export default function JogadorHomeScreen() {
                                 onPress={navigateToArenas}
                             >
                                 <Text style={styles.tipButtonText}>Ver Arenas</Text>
-                                <Ionicons name="arrow-forward" size={16} color={Colors.primary.mikasaBright} />
+                                <Ionicons name="arrow-forward" size={16} color="#FFD300" />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -366,7 +347,7 @@ export default function JogadorHomeScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.neutral.sandLight,
+        backgroundColor: '#0a0a0a', // Fundo escuro tecnológico
     },
     scrollContent: {
         paddingBottom: Spacing.xl,
@@ -378,6 +359,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: Spacing.lg,
         paddingTop: Spacing.lg,
         paddingBottom: Spacing.xl,
+        backgroundColor: '#0a0a0a',
     },
     headerLeft: {
         flexDirection: 'row',
@@ -389,73 +371,47 @@ const styles = StyleSheet.create({
         width: 56,
         height: 56,
         borderRadius: 28,
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#1a1a1a',
         justifyContent: 'center',
         alignItems: 'center',
-        ...ComponentStyles.card,
+        borderWidth: 2,
+        borderColor: '#FFD300',
+        shadowColor: '#FFD300',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 8,
     },
     greeting: {
         fontSize: Typography.sizes.h2,
         fontWeight: Typography.fonts.displayWeight,
-        color: Colors.neutral.navyDeep,
+        color: '#FFFFFF',
     },
     subtitle: {
         fontSize: Typography.sizes.bodySmall,
-        color: Colors.neutral.charcoal,
+        color: '#999999',
         marginTop: 2,
     },
     logoutButton: {
-        backgroundColor: Colors.accent.coral,
+        backgroundColor: '#1a1a1a',
         width: 48,
         height: 48,
         borderRadius: 24,
         alignItems: 'center',
         justifyContent: 'center',
-        ...ComponentStyles.card,
-    },
-
-    // Hero Card - Criar Racha
-    heroCard: {
-        backgroundColor: Colors.accent.lime,
-        marginHorizontal: Spacing.lg,
-        marginBottom: Spacing.xl,
-        padding: Spacing.lg,
-        borderRadius: BorderRadius.card,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        ...ComponentStyles.card,
-        shadowColor: Colors.accent.lime,
+        borderWidth: 1,
+        borderColor: '#FFD300',
+        shadowColor: '#FFD300',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
         shadowOpacity: 0.3,
+        shadowRadius: 8,
         elevation: 8,
-    },
-    heroContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        flex: 1,
-        gap: Spacing.md,
-    },
-    heroIconContainer: {
-        width: 64,
-        height: 64,
-        borderRadius: 32,
-        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    heroText: {
-        flex: 1,
-    },
-    heroTitle: {
-        fontSize: Typography.sizes.h3,
-        fontWeight: Typography.fonts.displayWeight,
-        color: Colors.neutral.white,
-        marginBottom: Spacing.xs,
-    },
-    heroDescription: {
-        fontSize: Typography.sizes.bodySmall,
-        color: Colors.neutral.white,
-        opacity: 0.95,
     },
 
     // Menu Principal
@@ -466,7 +422,7 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: Typography.sizes.h3,
         fontWeight: Typography.fonts.headingWeight,
-        color: Colors.neutral.navyDeep,
+        color: '#FFFFFF',
         marginBottom: Spacing.md,
     },
     menuGrid: {
@@ -479,47 +435,39 @@ const styles = StyleSheet.create({
         padding: Spacing.lg,
         borderRadius: BorderRadius.card,
         alignItems: 'center',
-        ...ComponentStyles.card,
+        backgroundColor: '#1a1a1a',
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
         minHeight: 140,
-    },
-    menuCardArenas: {
-        backgroundColor: Colors.secondary.ocean,
-    },
-    menuCardRachas: {
-        backgroundColor: Colors.accent.lime,
-    },
-    menuCardProfile: {
-        backgroundColor: Colors.primary.mikasaBright,
-    },
-    menuCardRanking: {
-        backgroundColor: Colors.accent.coral,
-    },
-    menuCardTournaments: {
-        backgroundColor: '#9B59B6',
-    },
-    menuCardStats: {
-        backgroundColor: '#3498DB',
+        shadowColor: '#FFD300',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 3,
     },
     menuIconContainer: {
         width: 64,
         height: 64,
         borderRadius: 32,
-        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        backgroundColor: '#FFD300',
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: Spacing.sm,
+        elevation: 3,
     },
     menuCardTitle: {
         fontSize: Typography.sizes.body,
         fontWeight: Typography.fonts.headingWeight,
-        color: Colors.neutral.white,
+        color: '#FFD300',
         marginBottom: Spacing.xs,
         textAlign: 'center',
     },
     menuCardDescription: {
         fontSize: Typography.sizes.caption,
-        color: Colors.neutral.white,
-        opacity: 0.9,
+        color: '#999999',
         textAlign: 'center',
     },
 
@@ -534,11 +482,20 @@ const styles = StyleSheet.create({
     },
     statCard: {
         flex: 1,
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#1a1a1a',
         padding: Spacing.base,
         borderRadius: BorderRadius.card,
         alignItems: 'center',
-        ...ComponentStyles.card,
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
+        shadowColor: '#FFD300',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 2,
     },
     statIconContainer: {
         marginBottom: Spacing.xs,
@@ -546,12 +503,12 @@ const styles = StyleSheet.create({
     statNumber: {
         fontSize: Typography.sizes.h2,
         fontWeight: Typography.fonts.numbersWeight,
-        color: Colors.neutral.navyDeep,
+        color: '#FFD300',
         marginBottom: 4,
     },
     statLabel: {
         fontSize: Typography.sizes.caption,
-        color: Colors.neutral.charcoal,
+        color: '#999999',
         textAlign: 'center',
     },
 
@@ -568,15 +525,24 @@ const styles = StyleSheet.create({
     },
     seeAllText: {
         fontSize: Typography.sizes.bodySmall,
-        color: Colors.accent.lime,
+        color: '#FFD300',
         fontWeight: Typography.fonts.headingWeight,
     },
     rachaCard: {
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#1a1a1a',
         padding: Spacing.base,
         borderRadius: BorderRadius.card,
         marginBottom: Spacing.md,
-        ...ComponentStyles.card,
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
+        shadowColor: '#FFD300',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
     },
     rachaHeader: {
         flexDirection: 'row',
@@ -586,7 +552,7 @@ const styles = StyleSheet.create({
     },
     rachaDateContainer: {
         alignItems: 'center',
-        backgroundColor: Colors.accent.lime + '20',
+        backgroundColor: '#FFD300',
         paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.xs,
         borderRadius: BorderRadius.sm,
@@ -594,27 +560,29 @@ const styles = StyleSheet.create({
     rachaDay: {
         fontSize: 10,
         fontWeight: Typography.fonts.headingWeight,
-        color: Colors.accent.lime,
+        color: '#000000',
         letterSpacing: 0.5,
     },
     rachaDate: {
         fontSize: Typography.sizes.body,
         fontWeight: Typography.fonts.displayWeight,
-        color: Colors.accent.lime,
+        color: '#000000',
     },
     rachaTimeContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: Spacing.xs,
-        backgroundColor: Colors.neutral.sandLight,
+        backgroundColor: '#2a2a2a',
         paddingHorizontal: Spacing.sm,
         paddingVertical: Spacing.xs,
         borderRadius: BorderRadius.sm,
+        borderWidth: 1,
+        borderColor: '#3a3a3a',
     },
     rachaTime: {
         fontSize: Typography.sizes.bodySmall,
         fontWeight: Typography.fonts.headingWeight,
-        color: Colors.neutral.charcoal,
+        color: '#FFFFFF',
     },
     rachaBody: {
         marginBottom: Spacing.sm,
@@ -622,7 +590,7 @@ const styles = StyleSheet.create({
     rachaTitle: {
         fontSize: Typography.sizes.body,
         fontWeight: Typography.fonts.headingWeight,
-        color: Colors.neutral.navyDeep,
+        color: '#FFFFFF',
         marginBottom: Spacing.xs,
     },
     rachaInfo: {
@@ -633,30 +601,33 @@ const styles = StyleSheet.create({
     },
     rachaInfoText: {
         fontSize: Typography.sizes.bodySmall,
-        color: Colors.neutral.charcoal,
+        color: '#999999',
     },
     rachaFooter: {
         borderTopWidth: 1,
-        borderTopColor: Colors.neutral.sandLight,
+        borderTopColor: '#2a2a2a',
         paddingTop: Spacing.sm,
     },
     rachaStatusBadge: {
-        backgroundColor: Colors.accent.lime + '20',
+        backgroundColor: 'rgba(255, 211, 0, 0.15)',
         paddingHorizontal: Spacing.sm,
         paddingVertical: Spacing.xs,
         borderRadius: BorderRadius.sm,
         alignSelf: 'flex-start',
+        borderWidth: 1,
+        borderColor: '#FFD300',
     },
     rachaStatusText: {
         fontSize: Typography.sizes.caption,
-        color: Colors.accent.lime,
+        color: '#FFD300',
         fontWeight: Typography.fonts.headingWeight,
     },
     rachaStatusFull: {
-        backgroundColor: Colors.neutral.sandLight,
+        backgroundColor: 'rgba(153, 153, 153, 0.15)',
+        borderColor: '#666666',
     },
     rachaStatusFullText: {
-        color: Colors.neutral.charcoal,
+        color: '#999999',
     },
 
     // Dicas
@@ -665,20 +636,37 @@ const styles = StyleSheet.create({
         marginBottom: Spacing.xl,
     },
     tipCard: {
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#1a1a1a',
         padding: Spacing.lg,
         borderRadius: BorderRadius.card,
         flexDirection: 'row',
         gap: Spacing.md,
-        ...ComponentStyles.card,
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
+        shadowColor: '#FFD300',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
     },
     tipIconContainer: {
         width: 56,
         height: 56,
         borderRadius: 28,
-        backgroundColor: Colors.primary.mikasaBright + '20',
+        backgroundColor: '#FFD300',
         justifyContent: 'center',
         alignItems: 'center',
+        shadowColor: '#FFD300',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.4,
+        shadowRadius: 12,
+        elevation: 8,
     },
     tipContent: {
         flex: 1,
@@ -686,12 +674,12 @@ const styles = StyleSheet.create({
     tipTitle: {
         fontSize: Typography.sizes.body,
         fontWeight: Typography.fonts.headingWeight,
-        color: Colors.neutral.navyDeep,
+        color: '#FFFFFF',
         marginBottom: Spacing.xs,
     },
     tipText: {
         fontSize: Typography.sizes.bodySmall,
-        color: Colors.neutral.charcoal,
+        color: '#999999',
         marginBottom: Spacing.sm,
         lineHeight: 20,
     },
@@ -702,7 +690,7 @@ const styles = StyleSheet.create({
     },
     tipButtonText: {
         fontSize: Typography.sizes.bodySmall,
-        color: Colors.primary.mikasaBright,
+        color: '#FFD300',
         fontWeight: Typography.fonts.headingWeight,
     },
     bottomSpacer: {

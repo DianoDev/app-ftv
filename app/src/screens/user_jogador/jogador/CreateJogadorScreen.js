@@ -42,7 +42,6 @@ export default function CreateJogadorScreen() {
         }));
     };
 
-    // Máscaras de formatação
     const formatCPF = (value) => {
         const numbers = value.replace(/\D/g, '');
         if (numbers.length <= 11) {
@@ -133,7 +132,6 @@ export default function CreateJogadorScreen() {
                 return;
             }
 
-            // Prepara os dados para envio
             const dataToSend = {
                 user_id: user.id,
                 telefone: formData.telefone.replace(/\D/g, '') || null,
@@ -183,7 +181,7 @@ export default function CreateJogadorScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="dark" />
+            <StatusBar style="light" />
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 keyboardShouldPersistTaps="handled"
@@ -196,7 +194,7 @@ export default function CreateJogadorScreen() {
                         onPress={() => router.back()}
                         activeOpacity={0.7}
                     >
-                        <Ionicons name="arrow-back" size={24} color={Colors.secondary.ocean} />
+                        <Ionicons name="arrow-back" size={24} color="#FFD300" />
                         <Text style={styles.backButtonText}>Voltar</Text>
                     </TouchableOpacity>
                     <Text style={styles.title}>Completar Perfil</Text>
@@ -207,7 +205,7 @@ export default function CreateJogadorScreen() {
                 <View style={styles.form}>
                     {/* Info Box */}
                     <View style={styles.infoBox}>
-                        <Ionicons name="information-circle" size={20} color={Colors.secondary.ocean} />
+                        <Ionicons name="information-circle" size={20} color="#FFD300" />
                         <Text style={styles.infoText}>
                             Complete seu perfil para participar de partidas e campeonatos
                         </Text>
@@ -217,15 +215,15 @@ export default function CreateJogadorScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>CPF</Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons name="card" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <Ionicons name="card" size={20} color="#FFD300" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="000.000.000-00"
+                                placeholderTextColor="#666666"
                                 value={formData.cpf}
                                 onChangeText={handleCPFChange}
                                 keyboardType="numeric"
                                 maxLength={14}
-                                placeholderTextColor={Colors.neutral.charcoal}
                             />
                         </View>
                     </View>
@@ -234,15 +232,15 @@ export default function CreateJogadorScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Telefone</Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons name="call" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <Ionicons name="call" size={20} color="#FFD300" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="(00) 00000-0000"
+                                placeholderTextColor="#666666"
                                 value={formData.telefone}
                                 onChangeText={handlePhoneChange}
                                 keyboardType="phone-pad"
                                 maxLength={15}
-                                placeholderTextColor={Colors.neutral.charcoal}
                             />
                         </View>
                     </View>
@@ -251,15 +249,15 @@ export default function CreateJogadorScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Data de Nascimento</Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons name="calendar" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <Ionicons name="calendar" size={20} color="#FFD300" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="DD/MM/AAAA"
+                                placeholderTextColor="#666666"
                                 value={formData.data_nascimento}
                                 onChangeText={handleDateChange}
                                 keyboardType="numeric"
                                 maxLength={10}
-                                placeholderTextColor={Colors.neutral.charcoal}
                             />
                         </View>
                     </View>
@@ -268,15 +266,16 @@ export default function CreateJogadorScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Gênero</Text>
                         <View style={styles.pickerContainer}>
-                            <Ionicons name="male-female" size={20} color={Colors.neutral.charcoal} style={styles.pickerIcon} />
+                            <Ionicons name="male-female" size={20} color="#FFD300" style={styles.pickerIcon} />
                             <Picker
                                 selectedValue={formData.genero}
                                 onValueChange={(value) => handleInputChange('genero', value)}
                                 style={styles.picker}
+                                dropdownIconColor="#FFD300"
                             >
-                                <Picker.Item label="Masculino" value="masculino" />
-                                <Picker.Item label="Feminino" value="feminino" />
-                                <Picker.Item label="Outro" value="outro" />
+                                <Picker.Item label="Masculino" value="masculino" color="#FFFFFF" />
+                                <Picker.Item label="Feminino" value="feminino" color="#FFFFFF" />
+                                <Picker.Item label="Outro" value="outro" color="#FFFFFF" />
                             </Picker>
                         </View>
                     </View>
@@ -288,10 +287,10 @@ export default function CreateJogadorScreen() {
                             <TextInput
                                 style={styles.inputFull}
                                 placeholder="Ex: São Paulo"
+                                placeholderTextColor="#666666"
                                 value={formData.cidade}
                                 onChangeText={(text) => handleInputChange('cidade', text)}
                                 maxLength={100}
-                                placeholderTextColor={Colors.neutral.charcoal}
                             />
                         </View>
 
@@ -300,11 +299,11 @@ export default function CreateJogadorScreen() {
                             <TextInput
                                 style={styles.inputFull}
                                 placeholder="SP"
+                                placeholderTextColor="#666666"
                                 value={formData.estado}
                                 onChangeText={(text) => handleInputChange('estado', text.toUpperCase())}
                                 maxLength={2}
                                 autoCapitalize="characters"
-                                placeholderTextColor={Colors.neutral.charcoal}
                             />
                         </View>
                     </View>
@@ -316,10 +315,10 @@ export default function CreateJogadorScreen() {
                             <TextInput
                                 style={styles.inputFull}
                                 placeholder="Ex: 180"
+                                placeholderTextColor="#666666"
                                 value={formData.altura}
                                 onChangeText={(text) => handleInputChange('altura', text)}
                                 keyboardType="numeric"
-                                placeholderTextColor={Colors.neutral.charcoal}
                             />
                         </View>
 
@@ -328,10 +327,10 @@ export default function CreateJogadorScreen() {
                             <TextInput
                                 style={styles.inputFull}
                                 placeholder="Ex: 75"
+                                placeholderTextColor="#666666"
                                 value={formData.peso}
                                 onChangeText={(text) => handleInputChange('peso', text)}
                                 keyboardType="numeric"
-                                placeholderTextColor={Colors.neutral.charcoal}
                             />
                         </View>
                     </View>
@@ -340,16 +339,17 @@ export default function CreateJogadorScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Nível de Habilidade</Text>
                         <View style={styles.pickerContainer}>
-                            <Ionicons name="star" size={20} color={Colors.neutral.charcoal} style={styles.pickerIcon} />
+                            <Ionicons name="star" size={20} color="#FFD300" style={styles.pickerIcon} />
                             <Picker
                                 selectedValue={formData.nivel_habilidade}
                                 onValueChange={(value) => handleInputChange('nivel_habilidade', value)}
                                 style={styles.picker}
+                                dropdownIconColor="#FFD300"
                             >
-                                <Picker.Item label="Iniciante" value="iniciante" />
-                                <Picker.Item label="Intermediário" value="intermediario" />
-                                <Picker.Item label="Avançado" value="avancado" />
-                                <Picker.Item label="Profissional" value="profissional" />
+                                <Picker.Item label="Iniciante" value="iniciante" color="#FFFFFF" />
+                                <Picker.Item label="Intermediário" value="intermediario" color="#FFFFFF" />
+                                <Picker.Item label="Avançado" value="avancado" color="#FFFFFF" />
+                                <Picker.Item label="Profissional" value="profissional" color="#FFFFFF" />
                             </Picker>
                         </View>
                     </View>
@@ -358,15 +358,16 @@ export default function CreateJogadorScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Posição Preferida</Text>
                         <View style={styles.pickerContainer}>
-                            <Ionicons name="american-football" size={20} color={Colors.neutral.charcoal} style={styles.pickerIcon} />
+                            <Ionicons name="american-football" size={20} color="#FFD300" style={styles.pickerIcon} />
                             <Picker
                                 selectedValue={formData.posicao_preferida}
                                 onValueChange={(value) => handleInputChange('posicao_preferida', value)}
                                 style={styles.picker}
+                                dropdownIconColor="#FFD300"
                             >
-                                <Picker.Item label="Levantador" value="levantador" />
-                                <Picker.Item label="Atacante" value="atacante" />
-                                <Picker.Item label="Ambos" value="ambos" />
+                                <Picker.Item label="Levantador" value="levantador" color="#FFFFFF" />
+                                <Picker.Item label="Atacante" value="atacante" color="#FFFFFF" />
+                                <Picker.Item label="Ambos" value="ambos" color="#FFFFFF" />
                             </Picker>
                         </View>
                     </View>
@@ -377,12 +378,12 @@ export default function CreateJogadorScreen() {
                         <TextInput
                             style={[styles.inputFull, styles.textArea]}
                             placeholder="Conte um pouco sobre sua experiência no futevôlei..."
+                            placeholderTextColor="#666666"
                             value={formData.bio}
                             onChangeText={(text) => handleInputChange('bio', text)}
                             multiline
                             numberOfLines={4}
                             textAlignVertical="top"
-                            placeholderTextColor={Colors.neutral.charcoal}
                         />
                         <Text style={styles.helperText}>
                             Descreva sua experiência, objetivos e estilo de jogo
@@ -398,12 +399,12 @@ export default function CreateJogadorScreen() {
                     >
                         {loading ? (
                             <View style={styles.buttonContent}>
-                                <ActivityIndicator color={Colors.neutral.navyDeep} size="small" />
+                                <ActivityIndicator color="#000000" size="small" />
                                 <Text style={[styles.submitButtonText, {marginLeft: Spacing.sm}]}>Salvando...</Text>
                             </View>
                         ) : (
                             <View style={styles.buttonContent}>
-                                <Ionicons name="checkmark-circle" size={20} color={Colors.neutral.navyDeep} />
+                                <Ionicons name="checkmark-circle" size={20} color="#000000" />
                                 <Text style={[styles.submitButtonText, {marginLeft: Spacing.sm}]}>Completar Perfil</Text>
                             </View>
                         )}
@@ -417,7 +418,7 @@ export default function CreateJogadorScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.neutral.sandLight,
+        backgroundColor: '#0a0a0a',
     },
     scrollContent: {
         padding: Spacing.lg,
@@ -434,38 +435,41 @@ const styles = StyleSheet.create({
     },
     backButtonText: {
         fontSize: Typography.sizes.body,
-        color: Colors.secondary.ocean,
+        color: '#FFD300',
         fontWeight: Typography.fonts.headingWeight,
     },
     title: {
         fontSize: Typography.sizes.h1,
         fontWeight: Typography.fonts.displayWeight,
-        color: Colors.neutral.navyDeep,
+        color: '#FFFFFF',
         marginBottom: Spacing.xs,
     },
     subtitle: {
         fontSize: Typography.sizes.body,
-        color: Colors.neutral.charcoal,
+        color: '#999999',
     },
     form: {
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#1a1a1a',
         borderRadius: BorderRadius.card,
         padding: Spacing.lg,
-        ...ComponentStyles.card,
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
     },
     infoBox: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: `${Colors.secondary.ocean}15`,
+        backgroundColor: 'rgba(255, 211, 0, 0.15)',
         padding: Spacing.md,
         borderRadius: BorderRadius.sm,
         marginBottom: Spacing.lg,
         gap: Spacing.sm,
+        borderWidth: 1,
+        borderColor: '#FFD300',
     },
     infoText: {
         flex: 1,
         fontSize: Typography.sizes.bodySmall,
-        color: Colors.secondary.ocean,
+        color: '#FFD300',
     },
     inputGroup: {
         marginBottom: Spacing.lg,
@@ -473,15 +477,15 @@ const styles = StyleSheet.create({
     label: {
         fontSize: Typography.sizes.label,
         fontWeight: Typography.fonts.headingWeight,
-        color: Colors.neutral.navyDeep,
+        color: '#FFFFFF',
         marginBottom: Spacing.sm,
     },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#2a2a2a',
         borderWidth: 1,
-        borderColor: Colors.neutral.greyLight,
+        borderColor: '#3a3a3a',
         borderRadius: BorderRadius.input,
         paddingHorizontal: Spacing.md,
     },
@@ -492,16 +496,16 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingVertical: Spacing.md,
         fontSize: Typography.sizes.body,
-        color: Colors.neutral.navyDeep,
+        color: '#FFFFFF',
     },
     inputFull: {
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#2a2a2a',
         borderWidth: 1,
-        borderColor: Colors.neutral.greyLight,
+        borderColor: '#3a3a3a',
         borderRadius: BorderRadius.input,
         padding: Spacing.md,
         fontSize: Typography.sizes.body,
-        color: Colors.neutral.navyDeep,
+        color: '#FFFFFF',
     },
     textArea: {
         minHeight: 100,
@@ -510,7 +514,7 @@ const styles = StyleSheet.create({
     },
     helperText: {
         fontSize: Typography.sizes.caption,
-        color: Colors.neutral.charcoal,
+        color: '#999999',
         marginTop: Spacing.xs,
     },
     row: {
@@ -520,9 +524,9 @@ const styles = StyleSheet.create({
     pickerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#2a2a2a',
         borderWidth: 1,
-        borderColor: Colors.neutral.greyLight,
+        borderColor: '#3a3a3a',
         borderRadius: BorderRadius.input,
         paddingLeft: Spacing.md,
     },
@@ -531,15 +535,22 @@ const styles = StyleSheet.create({
     },
     picker: {
         flex: 1,
-        color: Colors.neutral.navyDeep,
+        color: '#FFFFFF',
     },
     submitButton: {
-        backgroundColor: Colors.primary.mikasaBright,
+        backgroundColor: '#FFD300',
         padding: Spacing.base,
         borderRadius: BorderRadius.button,
         alignItems: 'center',
         marginTop: Spacing.md,
-        ...ComponentStyles.buttonPrimary,
+        shadowColor: '#FFD300',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 8,
     },
     submitButtonDisabled: {
         opacity: 0.6,
@@ -549,7 +560,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     submitButtonText: {
-        color: Colors.neutral.navyDeep,
+        color: '#000000',
         fontSize: Typography.sizes.body,
         fontWeight: Typography.fonts.headingWeight,
     },
