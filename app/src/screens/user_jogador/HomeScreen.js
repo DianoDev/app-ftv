@@ -95,6 +95,10 @@ export default function JogadorHomeScreen() {
         router.push('/src/screens/user_jogador/jogador/EditJogadorScreen');
     };
 
+    const navigateToTorneios = () => {
+        router.push('/src/screens/user_jogador/torneios/TorneiosListScreen');
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="light" />
@@ -185,6 +189,7 @@ export default function JogadorHomeScreen() {
                         <TouchableOpacity
                             style={[styles.menuCard, styles.menuCardTournaments]}
                             activeOpacity={0.8}
+                            onPress={navigateToTorneios}
                         >
                             <View style={styles.menuIconContainer}>
                                 <Ionicons name="medal" size={32}  color="#000000"  />

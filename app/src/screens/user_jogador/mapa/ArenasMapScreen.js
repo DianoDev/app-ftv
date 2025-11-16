@@ -8,8 +8,10 @@ import {
     ActivityIndicator,
     Alert,
     Dimensions,
+    Modal,
+    ScrollView,
 } from 'react-native';
-import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
@@ -27,6 +29,7 @@ export default function ArenasMapScreen() {
     const [arenas, setArenas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedArena, setSelectedArena] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
     const [region, setRegion] = useState({
         latitude: -23.5505, // São Paulo como padrão
         longitude: -46.6333,
@@ -76,6 +79,8 @@ export default function ArenasMapScreen() {
 
     const handleMarkerPress = (arena) => {
         setSelectedArena(arena);
+        setModalVisible(true);
+
         // Centralizar mapa no marcador selecionado
         mapRef.current?.animateToRegion({
             latitude: parseFloat(arena.latitude),
@@ -86,10 +91,16 @@ export default function ArenasMapScreen() {
     };
 
     const handleArenaPress = (arena) => {
+        setModalVisible(false);
         router.push({
             pathname: '/src/screens/user_jogador/arenas/ArenaDetailScreen',
             params: { arenaId: arena.id }
         });
+    };
+
+    const closeModal = () => {
+        setModalVisible(false);
+        setSelectedArena(null);
     };
 
     const handleMyLocation = () => {
@@ -180,65 +191,162 @@ export default function ArenasMapScreen() {
                                     <Ionicons name="location" size={20} color="#FFD300" />
                                 </View>
                             </View>
-                            <Callout onPress={() => handleArenaPress(arena)}>
-                                <View style={styles.calloutContainer}>
-                                    <Text style={styles.calloutTitle}>{arena.nome}</Text>
-
-                                    <View style={styles.calloutInfo}>
-                                        <Ionicons name="location-outline" size={14} color="#999999" />
-                                        <Text style={styles.calloutText}>
-                                            {arena.endereco || `${arena.cidade}, ${arena.estado}`}
-                                        </Text>
-                                    </View>
-
-                                    {arena.telefone && (
-                                        <View style={styles.calloutInfo}>
-                                            <Ionicons name="call-outline" size={14} color="#FFD300" />
-                                            <Text style={styles.calloutText}>{arena.telefone}</Text>
-                                        </View>
-                                    )}
-
-                                    {arena.whatsapp && (
-                                        <View style={styles.calloutInfo}>
-                                            <Ionicons name="logo-whatsapp" size={14} color="#4CAF50" />
-                                            <Text style={styles.calloutText}>{arena.whatsapp}</Text>
-                                        </View>
-                                    )}
-
-                                    {arena.rating && arena.rating > 0 && (
-                                        <View style={styles.calloutInfo}>
-                                            <Ionicons name="star" size={14} color="#FFD300" />
-                                            <Text style={styles.calloutText}>
-                                                {arena.rating.toFixed(1)} estrelas
-                                            </Text>
-                                        </View>
-                                    )}
-
-                                    {arena.comodidades && arena.comodidades.length > 0 && (
-                                        <View style={styles.comodidadesWrapper}>
-                                            <Ionicons name="checkmark-circle-outline" size={14} color="#4CAF50" />
-                                            <View style={styles.comodidadesContainer}>
-                                                {arena.comodidades.slice(0, 3).map((comodidade, index) => (
-                                                    <View key={index} style={styles.comodidadeTag}>
-                                                        <Text style={styles.comodidadeText}>{comodidade}</Text>
-                                                    </View>
-                                                ))}
-                                                {arena.comodidades.length > 3 && (
-                                                    <Text style={styles.moreComodidades}>
-                                                        +{arena.comodidades.length - 3}
-                                                    </Text>
-                                                )}
-                                            </View>
-                                        </View>
-                                    )}
-
-                                    <Text style={styles.calloutLink}>Toque para ver todos os detalhes</Text>
-                                </View>
-                            </Callout>
                         </Marker>
                     ))}
                 </MapView>
             )}
+
+            {/* Modal de Detalhes */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={closeModal}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        {selectedArena && (
+                            <>
+                                {/* Header do Modal */}
+                                <View style={styles.modalHeader}>
+                                    <View style={styles.modalHeaderLeft}>
+                                        <Ionicons
+                                            name="location"
+                                            size={24}
+                                            color="#FFD300"
+                                        />
+                                        <Text style={styles.modalTitle}>
+                                            {selectedArena.nome}
+                                        </Text>
+                                    </View>
+                                    <TouchableOpacity onPress={closeModal}>
+                                        <Ionicons name="close" size={28} color="#FFFFFF" />
+                                    </TouchableOpacity>
+                                </View>
+
+                                {/* Informações */}
+                                <ScrollView style={styles.modalScroll}>
+                                    {/* Localização */}
+                                    <View style={styles.infoRow}>
+                                        <View style={styles.infoIcon}>
+                                            <Ionicons name="location-outline" size={20} color="#FFD300" />
+                                        </View>
+                                        <View style={styles.infoContent}>
+                                            <Text style={styles.infoLabel}>Endereço</Text>
+                                            <Text style={styles.infoValue}>
+                                                {selectedArena.endereco || `${selectedArena.cidade}, ${selectedArena.estado}`}
+                                            </Text>
+                                        </View>
+                                    </View>
+
+                                    {/* Cidade/Estado */}
+                                    {selectedArena.cidade && selectedArena.estado && (
+                                        <View style={styles.infoRow}>
+                                            <View style={styles.infoIcon}>
+                                                <Ionicons name="map-outline" size={20} color="#FFD300" />
+                                            </View>
+                                            <View style={styles.infoContent}>
+                                                <Text style={styles.infoLabel}>Cidade</Text>
+                                                <Text style={styles.infoValue}>
+                                                    {selectedArena.cidade}, {selectedArena.estado}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    )}
+
+                                    {/* Telefone */}
+                                    {selectedArena.telefone && (
+                                        <View style={styles.infoRow}>
+                                            <View style={styles.infoIcon}>
+                                                <Ionicons name="call-outline" size={20} color="#FFD300" />
+                                            </View>
+                                            <View style={styles.infoContent}>
+                                                <Text style={styles.infoLabel}>Telefone</Text>
+                                                <Text style={styles.infoValue}>
+                                                    {selectedArena.telefone}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    )}
+
+                                    {/* WhatsApp */}
+                                    {selectedArena.whatsapp && (
+                                        <View style={styles.infoRow}>
+                                            <View style={styles.infoIcon}>
+                                                <Ionicons name="logo-whatsapp" size={20} color="#4CAF50" />
+                                            </View>
+                                            <View style={styles.infoContent}>
+                                                <Text style={styles.infoLabel}>WhatsApp</Text>
+                                                <Text style={[styles.infoValue, { color: '#4CAF50' }]}>
+                                                    {selectedArena.whatsapp}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    )}
+
+                                    {/* Avaliação */}
+                                    {selectedArena.rating && selectedArena.rating > 0 && (
+                                        <View style={styles.infoRow}>
+                                            <View style={styles.infoIcon}>
+                                                <Ionicons name="star" size={20} color="#FFD300" />
+                                            </View>
+                                            <View style={styles.infoContent}>
+                                                <Text style={styles.infoLabel}>Avaliação</Text>
+                                                <Text style={styles.infoValue}>
+                                                    {selectedArena.rating.toFixed(1)} estrelas
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    )}
+
+                                    {/* Comodidades */}
+                                    {selectedArena.comodidades && selectedArena.comodidades.length > 0 && (
+                                        <View style={styles.infoRow}>
+                                            <View style={styles.infoIcon}>
+                                                <Ionicons name="checkmark-circle-outline" size={20} color="#4CAF50" />
+                                            </View>
+                                            <View style={styles.infoContent}>
+                                                <Text style={styles.infoLabel}>Comodidades</Text>
+                                                <View style={styles.comodidadesContainer}>
+                                                    {selectedArena.comodidades.map((comodidade, index) => (
+                                                        <View key={index} style={styles.comodidadeTag}>
+                                                            <Text style={styles.comodidadeText}>{comodidade}</Text>
+                                                        </View>
+                                                    ))}
+                                                </View>
+                                            </View>
+                                        </View>
+                                    )}
+
+                                    {/* Descrição */}
+                                    {selectedArena.descricao && (
+                                        <View style={styles.infoRow}>
+                                            <View style={styles.infoIcon}>
+                                                <Ionicons name="document-text-outline" size={20} color="#FFD300" />
+                                            </View>
+                                            <View style={styles.infoContent}>
+                                                <Text style={styles.infoLabel}>Descrição</Text>
+                                                <Text style={styles.infoValue}>
+                                                    {selectedArena.descricao}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    )}
+                                </ScrollView>
+
+                                {/* Botão Ver Detalhes */}
+                                <TouchableOpacity
+                                    style={styles.detailsButton}
+                                    onPress={() => handleArenaPress(selectedArena)}
+                                >
+                                    <Text style={styles.detailsButtonText}>Ver Detalhes Completos</Text>
+                                    <Ionicons name="arrow-forward" size={20} color="#0a0a0a" />
+                                </TouchableOpacity>
+                            </>
+                        )}
+                    </View>
+                </View>
+            </Modal>
 
             {/* Info Badge */}
             {!loading && arenas.length > 0 && (
@@ -271,7 +379,7 @@ export default function ArenasMapScreen() {
     );
 }
 
-// Estilo do mapa escuro
+// Estilo do mapa escuro - atualizado para remover POIs
 const mapStyle = [
     {
         "elementType": "geometry",
@@ -291,14 +399,32 @@ const mapStyle = [
         "stylers": [{ "color": "#2a2a2a" }]
     },
     {
+        "featureType": "administrative.land_parcel",
+        "elementType": "labels",
+        "stylers": [{ "visibility": "off" }]
+    },
+    {
+        "featureType": "poi",
+        "stylers": [{ "visibility": "off" }]
+    },
+    {
         "featureType": "poi",
         "elementType": "labels.text.fill",
-        "stylers": [{ "color": "#6a6a6a" }]
+        "stylers": [{ "visibility": "off" }]
+    },
+    {
+        "featureType": "poi.business",
+        "stylers": [{ "visibility": "off" }]
     },
     {
         "featureType": "poi.park",
         "elementType": "geometry",
         "stylers": [{ "color": "#2a2a2a" }]
+    },
+    {
+        "featureType": "poi.park",
+        "elementType": "labels.text",
+        "stylers": [{ "visibility": "off" }]
     },
     {
         "featureType": "road",
@@ -307,8 +433,36 @@ const mapStyle = [
     },
     {
         "featureType": "road",
+        "elementType": "labels.icon",
+        "stylers": [{ "visibility": "off" }]
+    },
+    {
+        "featureType": "road",
         "elementType": "labels.text.fill",
         "stylers": [{ "color": "#9a9a9a" }]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "labels",
+        "stylers": [{ "visibility": "off" }]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "labels",
+        "stylers": [{ "visibility": "off" }]
+    },
+    {
+        "featureType": "road.local",
+        "stylers": [{ "visibility": "on" }]
+    },
+    {
+        "featureType": "road.local",
+        "elementType": "labels",
+        "stylers": [{ "visibility": "off" }]
+    },
+    {
+        "featureType": "transit",
+        "stylers": [{ "visibility": "off" }]
     },
     {
         "featureType": "water",
@@ -384,72 +538,105 @@ const styles = StyleSheet.create({
     },
     marker: {
         backgroundColor: '#0a0a0a',
-        borderRadius: 15,
-        padding: 3,
+        borderRadius: 18,
+        padding: 6,
         borderWidth: 2,
         borderColor: '#FFD300',
     },
-    calloutContainer: {
+    // Estilos do Modal
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        justifyContent: 'flex-end',
+    },
+    modalContent: {
         backgroundColor: '#1a1a1a',
-        borderRadius: BorderRadius.md,
-        padding: Spacing.md,
-        minWidth: 240,
-        maxWidth: 280,
-        borderWidth: 1,
-        borderColor: '#FFD300',
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+        paddingTop: Spacing.lg,
+        paddingBottom: Spacing.xl,
+        paddingHorizontal: Spacing.lg,
+        maxHeight: height * 0.75,
     },
-    calloutTitle: {
-        fontSize: Typography.sizes.h3,
-        fontWeight: '700',
-        color: '#FFFFFF',
-        marginBottom: 8,
-    },
-    calloutInfo: {
+    modalHeader: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
-        gap: 6,
-        marginTop: 6,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: Spacing.md,
     },
-    calloutText: {
-        fontSize: Typography.sizes.caption,
+    modalHeaderLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.sm,
+        flex: 1,
+    },
+    modalTitle: {
+        fontSize: Typography.sizes.h2,
+        fontWeight: '700',
         color: '#FFFFFF',
         flex: 1,
     },
-    comodidadesWrapper: {
+    modalScroll: {
+        maxHeight: height * 0.5,
+    },
+    infoRow: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
-        gap: 6,
-        marginTop: 6,
+        paddingVertical: Spacing.md,
+        borderBottomWidth: 1,
+        borderBottomColor: '#2a2a2a',
+    },
+    infoIcon: {
+        width: 40,
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        paddingTop: 2,
+    },
+    infoContent: {
+        flex: 1,
+    },
+    infoLabel: {
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
+        marginBottom: 4,
+    },
+    infoValue: {
+        fontSize: Typography.sizes.body,
+        color: '#FFFFFF',
+        fontWeight: '600',
     },
     comodidadesContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 4,
-        flex: 1,
+        gap: 6,
+        marginTop: 4,
     },
     comodidadeTag: {
         backgroundColor: '#2a2a2a',
-        paddingHorizontal: 6,
-        paddingVertical: 2,
+        paddingHorizontal: Spacing.xs,
+        paddingVertical: 4,
         borderRadius: BorderRadius.sm,
         borderWidth: 1,
         borderColor: '#FFD300',
     },
     comodidadeText: {
-        fontSize: 10,
-        color: '#FFD300',
-    },
-    moreComodidades: {
-        fontSize: 10,
-        color: '#999999',
-        alignSelf: 'center',
-    },
-    calloutLink: {
         fontSize: Typography.sizes.caption,
         color: '#FFD300',
-        marginTop: 10,
+        fontWeight: '500',
+    },
+    detailsButton: {
+        backgroundColor: '#FFD300',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: Spacing.md,
+        borderRadius: BorderRadius.md,
+        marginTop: Spacing.lg,
+        gap: Spacing.xs,
+    },
+    detailsButtonText: {
+        fontSize: Typography.sizes.body,
         fontWeight: '700',
-        textAlign: 'center',
+        color: '#0a0a0a',
     },
     infoBadge: {
         position: 'absolute',
