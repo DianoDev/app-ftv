@@ -10,25 +10,21 @@ import {
     ActivityIndicator,
     RefreshControl,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
-import { useRouter, useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { StorageService } from '../../../services/storage';
 import { API_CONFIG } from '../../../config/api.config';
 import { dateFromISO } from '../../../utils/formatters';
 import { Colors, Typography, Spacing, BorderRadius, ComponentStyles } from '../../../styles/theme';
 
-export default function CampeonatosListScreen() {
+export default function ListCampeonatoScreen() {
     const router = useRouter();
     const [campeonatos, setCampeonatos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
 
-    // Buscar campeonatos da API
-    const fetchCampeonatos = async (pageNumber = 1, showLoading = true) => {
+    const fetchCampeonatos = async (showLoading = true) => {
         try {
             if (showLoading) {
                 setLoading(true);
@@ -43,7 +39,7 @@ export default function CampeonatosListScreen() {
             }
 
             const response = await fetch(
-                `${API_CONFIG.BASE_URL}/api/campeonatos/list?current_page=${pageNumber}&per_page=10`,
+                `${API_CONFIG.BASE_URL}/api/campeonatos/list`,
                 {
                     method: 'GET',
                     headers: {
@@ -57,14 +53,7 @@ export default function CampeonatosListScreen() {
             const data = await response.json();
 
             if (response.ok) {
-                if (pageNumber === 1) {
-                    setCampeonatos(data.data || []);
-                } else {
-                    setCampeonatos(prev => [...prev, ...(data.data || [])]);
-                }
-
-                setTotalPages(data.last_page || 1);
-                setHasMore(pageNumber < (data.last_page || 1));
+                setCampeonatos(data.data || []);
             } else {
                 throw new Error(data.message || 'Erro ao buscar campeonatos');
             }
@@ -77,31 +66,17 @@ export default function CampeonatosListScreen() {
         }
     };
 
-    // Carregar campeonatos sempre que a tela ganhar foco
     useFocusEffect(
         useCallback(() => {
-            setPage(1);
-            fetchCampeonatos(1);
+            fetchCampeonatos();
         }, [])
     );
 
-    // Função de refresh
     const onRefresh = useCallback(() => {
         setRefreshing(true);
-        setPage(1);
-        fetchCampeonatos(1, false);
+        fetchCampeonatos(false);
     }, []);
 
-    // Carregar mais campeonatos (paginação)
-    const loadMore = () => {
-        if (!loading && hasMore) {
-            const nextPage = page + 1;
-            setPage(nextPage);
-            fetchCampeonatos(nextPage, false);
-        }
-    };
-
-    // Navegar para tela de edição
     const handleEdit = (campeonato) => {
         router.push({
             pathname: '/src/screens/user_arena/campeonato/EditCampeonatoScreen',
@@ -109,18 +84,6 @@ export default function CampeonatosListScreen() {
         });
     };
 
-    // Navegar para tela de categorias
-    const handleCategorias = (campeonato) => {
-        router.push({
-            pathname: '/src/screens/user_arena/campeonato/categoria/ListCategoriaScreen',
-            params: {
-                campeonatoId: campeonato.id,
-                campeonatoNome: campeonato.nome
-            }
-        });
-    };
-
-    // Confirmar exclusão
     const confirmDelete = (campeonato) => {
         Alert.alert(
             'Confirmar Exclusão',
@@ -139,7 +102,6 @@ export default function CampeonatosListScreen() {
         );
     };
 
-    // Excluir campeonato
     const handleDelete = async (campeonatoId) => {
         try {
             const token = await StorageService.getToken();
@@ -160,8 +122,7 @@ export default function CampeonatosListScreen() {
 
             if (response.ok) {
                 Alert.alert('Sucesso', data.message || 'Campeonato excluído com sucesso!');
-                setPage(1);
-                fetchCampeonatos(1);
+                fetchCampeonatos();
             } else {
                 throw new Error(data.message || 'Erro ao excluir campeonato');
             }
@@ -171,145 +132,111 @@ export default function CampeonatosListScreen() {
         }
     };
 
-    // Navegar para tela de criar novo campeonato
     const handleCreateCampeonato = () => {
         router.push('/src/screens/user_arena/campeonato/CreateCampeonatoScreen');
     };
 
-    // Obter cor do status
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'inscricoes_abertas':
-                return Colors.accent.lime;
-            case 'em_andamento':
-                return Colors.secondary.ocean;
-            case 'finalizado':
-                return Colors.neutral.charcoal;
-            case 'cancelado':
-                return Colors.status.error;
-            default:
-                return Colors.neutral.charcoal;
-        }
+    const handleCategorias = (campeonato) => {
+        router.push({
+            pathname: '/src/screens/user_arena/campeonato/categoria/ListCategoriaScreen',
+            params: { campeonatoId: campeonato.id }
+        });
     };
 
-    // Obter texto do status
-    const getStatusText = (status) => {
-        switch (status) {
-            case 'inscricoes_abertas':
-                return 'Inscrições Abertas';
-            case 'em_andamento':
-                return 'Em Andamento';
-            case 'finalizado':
-                return 'Finalizado';
-            case 'cancelado':
-                return 'Cancelado';
-            default:
-                return status;
-        }
+    const getStatusBadge = (status) => {
+        const statusMap = {
+            'inscricoes_abertas': { label: 'Inscrições Abertas', color: '#4CAF50' },
+            'em_andamento': { label: 'Em Andamento', color: '#FFD300' },
+            'finalizado': { label: 'Finalizado', color: '#999999' },
+            'cancelado': { label: 'Cancelado', color: '#FF5252' },
+        };
+
+        return statusMap[status] || { label: status, color: '#999999' };
     };
 
-    // Renderizar item da lista
-    const renderCampeonatoItem = ({ item }) => (
-        <View style={styles.campeonatoCard}>
-            <View style={styles.campeonatoHeader}>
-                <View style={styles.campeonatoInfo}>
-                    <Text style={styles.campeonatoNome}>{item.nome}</Text>
-                    <View style={styles.statusBadge}>
-                        <View
-                            style={[
-                                styles.statusDot,
-                                { backgroundColor: getStatusColor(item.status) }
-                            ]}
-                        />
-                        <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
-                            {getStatusText(item.status)}
-                        </Text>
+    const renderCampeonatoItem = ({ item }) => {
+        const statusInfo = getStatusBadge(item.status);
+
+        return (
+            <View style={styles.campeonatoCard}>
+                <View style={styles.campeonatoHeader}>
+                    <View style={styles.campeonatoIconContainer}>
+                        <Ionicons name="trophy" size={24} color="#FFD300" />
                     </View>
-                </View>
-            </View>
-
-            {item.descricao && (
-                <Text style={styles.descricao} numberOfLines={2}>
-                    {item.descricao}
-                </Text>
-            )}
-
-            <View style={styles.campeonatoDetails}>
-                <View style={styles.detailRow}>
-                    <Ionicons name="calendar" size={18} color={Colors.neutral.charcoal} />
-                    <View style={styles.detailContent}>
-                        <Text style={styles.detailLabel}>Período:</Text>
-                        <Text style={styles.detailValue}>
-                            {dateFromISO(item.data_inicio)} até {dateFromISO(item.data_fim)}
-                        </Text>
+                    <View style={styles.campeonatoInfo}>
+                        <View style={styles.nomeContainer}>
+                            <Text style={styles.campeonatoNome}>{item.nome}</Text>
+                            <TouchableOpacity
+                                onPress={() => handleEdit(item)}
+                                style={styles.editIconButton}
+                                activeOpacity={0.7}
+                            >
+                                <Ionicons name="create-outline" size={20} color="#FFD300" />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={[styles.statusBadge, { backgroundColor: `${statusInfo.color}20`, borderColor: statusInfo.color }]}>
+                            <Text style={[styles.statusText, { color: statusInfo.color }]}>
+                                {statusInfo.label}
+                            </Text>
+                        </View>
                     </View>
                 </View>
 
-                {item.tipo && (
-                    <View style={styles.detailRow}>
-                        <Ionicons name="trophy" size={18} color={Colors.neutral.charcoal} />
-                        <View style={styles.detailContent}>
+                {item.descricao && (
+                    <Text style={styles.descricao} numberOfLines={2}>
+                        {item.descricao}
+                    </Text>
+                )}
+
+                <View style={styles.campeonatoDetails}>
+                    {item.data_inicio && item.data_fim && (
+                        <View style={styles.detailRow}>
+                            <Ionicons name="calendar" size={16} color="#FFD300" />
+                            <Text style={styles.detailLabel}>Período:</Text>
+                            <Text style={styles.detailValue}>
+                                {dateFromISO(item.data_inicio)} - {dateFromISO(item.data_fim)}
+                            </Text>
+                        </View>
+                    )}
+
+                    {item.tipo && (
+                        <View style={styles.detailRow}>
+                            <Ionicons name="ribbon" size={16} color="#FFD300" />
                             <Text style={styles.detailLabel}>Tipo:</Text>
                             <Text style={styles.detailValue}>{item.tipo}</Text>
                         </View>
-                    </View>
-                )}
+                    )}
+                </View>
 
-                {item.arena_id && (
-                    <View style={styles.detailRow}>
-                        <Ionicons name="grid" size={18} color={Colors.neutral.charcoal} />
-                        <View style={styles.detailContent}>
-                            <Text style={styles.detailLabel}>Arena Definida</Text>
-                        </View>
-                    </View>
-                )}
-            </View>
+                <View style={styles.actionsContainer}>
+                    <TouchableOpacity
+                        style={[styles.actionButton, styles.categoriaButton]}
+                        onPress={() => handleCategorias(item)}
+                        activeOpacity={0.8}
+                    >
+                        <Ionicons name="list" size={18} color="#000000" />
+                        <Text style={styles.actionButtonText}>Categorias</Text>
+                    </TouchableOpacity>
 
-            <View style={styles.actionsContainer}>
-                <TouchableOpacity
-                    style={[styles.actionButton, styles.categoriesButton]}
-                    onPress={() => handleCategorias(item)}
-                >
-                    <Ionicons name="list" size={16} color={Colors.neutral.white} />
-                    <Text style={styles.actionButtonText}>Categorias</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={[styles.actionButton, styles.editButton]}
-                    onPress={() => handleEdit(item)}
-                >
-                    <Ionicons name="pencil" size={16} color={Colors.neutral.white} />
-                    <Text style={styles.actionButtonText}>Editar</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={[styles.actionButton, styles.deleteButton]}
-                    onPress={() => confirmDelete(item)}
-                >
-                    <Ionicons name="trash" size={16} color={Colors.neutral.white} />
-                </TouchableOpacity>
-            </View>
-        </View>
-    );
-
-    // Renderizar footer com loading de paginação
-    const renderFooter = () => {
-        if (!loading || page === 1) return null;
-
-        return (
-            <View style={styles.footerLoader}>
-                <ActivityIndicator size="small" color={Colors.primary.mikasaBright} />
+                    <TouchableOpacity
+                        style={[styles.actionButton, styles.deleteButton]}
+                        onPress={() => confirmDelete(item)}
+                        activeOpacity={0.8}
+                    >
+                        <Ionicons name="trash" size={18} color="#FFFFFF" />
+                        <Text style={styles.deleteButtonText}>Excluir</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         );
     };
 
-    // Renderizar lista vazia
     const renderEmpty = () => {
         if (loading) return null;
 
         return (
             <View style={styles.emptyContainer}>
-                <Ionicons name="trophy-outline" size={64} color={Colors.neutral.charcoal} />
+                <Ionicons name="trophy-outline" size={64} color="#2a2a2a" />
                 <Text style={styles.emptyTitle}>Nenhum campeonato cadastrado</Text>
                 <Text style={styles.emptyDescription}>
                     Comece criando seu primeiro campeonato
@@ -317,20 +244,21 @@ export default function CampeonatosListScreen() {
                 <TouchableOpacity
                     style={styles.emptyButton}
                     onPress={handleCreateCampeonato}
+                    activeOpacity={0.8}
                 >
-                    <Ionicons name="add-circle" size={20} color={Colors.neutral.navyDeep} />
+                    <Ionicons name="add-circle" size={20} color="#000000" />
                     <Text style={styles.emptyButtonText}>Criar Campeonato</Text>
                 </TouchableOpacity>
             </View>
         );
     };
 
-    if (loading && page === 1) {
+    if (loading) {
         return (
             <SafeAreaView style={styles.container}>
-                <StatusBar style="dark" />
+                <StatusBar style="light" />
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color={Colors.primary.mikasaBright} />
+                    <ActivityIndicator size="large" color="#FFD300" />
                     <Text style={styles.loadingText}>Carregando campeonatos...</Text>
                 </View>
             </SafeAreaView>
@@ -339,24 +267,28 @@ export default function CampeonatosListScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="dark" />
+            <StatusBar style="light" />
+
             {/* Header */}
             <View style={styles.header}>
-                <View style={styles.headerLeft}>
-                    <TouchableOpacity
-                        style={styles.backButton}
-                        onPress={() => router.back()}
-                    >
-                        <Ionicons name="arrow-back" size={24} color={Colors.secondary.ocean} />
-                        <Text style={styles.backButtonText}>Voltar</Text>
-                    </TouchableOpacity>
-                    <View style={styles.headerInfo}>
-                        <Text style={styles.headerTitle}>Campeonatos</Text>
-                        <Text style={styles.headerSubtitle}>
-                            {campeonatos.length} {campeonatos.length === 1 ? 'campeonato' : 'campeonatos'}
-                        </Text>
-                    </View>
+                <TouchableOpacity
+                    style={styles.backButton}
+                    onPress={() => router.back()}
+                >
+                    <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+                </TouchableOpacity>
+                <View style={styles.headerCenter}>
+                    <Text style={styles.headerTitle}>Meus Campeonatos</Text>
+                    <Text style={styles.headerSubtitle}>
+                        {campeonatos.length} {campeonatos.length === 1 ? 'campeonato' : 'campeonatos'}
+                    </Text>
                 </View>
+                <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={handleCreateCampeonato}
+                >
+                    <Ionicons name="add-circle" size={28} color="#FFD300" />
+                </TouchableOpacity>
             </View>
 
             {/* Lista de Campeonatos */}
@@ -370,23 +302,12 @@ export default function CampeonatosListScreen() {
                     <RefreshControl
                         refreshing={refreshing}
                         onRefresh={onRefresh}
-                        colors={[Colors.primary.mikasaBright]}
-                        tintColor={Colors.primary.mikasaBright}
+                        colors={['#FFD300']}
+                        tintColor="#FFD300"
                     />
                 }
-                onEndReached={loadMore}
-                onEndReachedThreshold={0.1}
-                ListFooterComponent={renderFooter}
                 ListEmptyComponent={renderEmpty}
             />
-
-            {/* FAB Button */}
-            <TouchableOpacity
-                style={styles.fab}
-                onPress={handleCreateCampeonato}
-            >
-                <Ionicons name="add" size={28} color={Colors.neutral.navyDeep} />
-            </TouchableOpacity>
         </SafeAreaView>
     );
 }
@@ -394,7 +315,7 @@ export default function CampeonatosListScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.neutral.sandLight,
+        backgroundColor: '#0a0a0a',
     },
     loadingContainer: {
         flex: 1,
@@ -404,198 +325,207 @@ const styles = StyleSheet.create({
     loadingText: {
         marginTop: Spacing.md,
         fontSize: Typography.sizes.body,
-        color: Colors.neutral.charcoal,
+        color: '#999999',
     },
     header: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        padding: Spacing.lg,
-        backgroundColor: Colors.neutral.white,
+        justifyContent: 'space-between',
+        paddingHorizontal: Spacing.md,
+        paddingVertical: Spacing.md,
+        backgroundColor: '#0a0a0a',
         borderBottomWidth: 1,
-        borderBottomColor: Colors.neutral.greyLight,
-    },
-    headerLeft: {
-        flex: 1,
+        borderBottomColor: '#2a2a2a',
     },
     backButton: {
-        flexDirection: 'row',
+        padding: Spacing.xs,
+    },
+    headerCenter: {
+        flex: 1,
         alignItems: 'center',
-        marginBottom: Spacing.sm,
-        gap: Spacing.sm,
-    },
-    backButtonText: {
-        fontSize: Typography.sizes.body,
-        color: Colors.secondary.ocean,
-        fontWeight: Typography.fonts.headingWeight,
-    },
-    headerInfo: {
-        marginTop: Spacing.xs,
     },
     headerTitle: {
-        fontSize: Typography.sizes.h3,
+        fontSize: Typography.sizes.h2,
         fontWeight: Typography.fonts.displayWeight,
-        color: Colors.neutral.navyDeep,
+        color: '#FFFFFF',
     },
     headerSubtitle: {
-        fontSize: Typography.sizes.bodySmall,
-        color: Colors.neutral.charcoal,
-        marginTop: Spacing.xs,
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
+        marginTop: 2,
+    },
+    addButton: {
+        padding: Spacing.xs,
     },
     listContent: {
-        padding: Spacing.base,
-        paddingBottom: 80,
+        padding: Spacing.md,
+        paddingBottom: Spacing.xxxl,
     },
     campeonatoCard: {
-        backgroundColor: Colors.neutral.white,
-        borderRadius: BorderRadius.card,
-        padding: Spacing.base,
-        marginBottom: Spacing.base,
-        ...ComponentStyles.card,
+        backgroundColor: '#1a1a1a',
+        borderRadius: BorderRadius.lg,
+        padding: Spacing.md,
+        marginBottom: Spacing.md,
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
+        shadowColor: '#FFD300',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
     },
     campeonatoHeader: {
-        marginBottom: Spacing.md,
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginBottom: Spacing.sm,
+    },
+    campeonatoIconContainer: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#2a2a2a',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: Spacing.sm,
+        borderWidth: 1,
+        borderColor: '#FFD300',
     },
     campeonatoInfo: {
         flex: 1,
     },
-    campeonatoNome: {
-        fontSize: Typography.sizes.h5,
-        fontWeight: Typography.fonts.displayWeight,
-        color: Colors.neutral.navyDeep,
-        marginBottom: Spacing.sm,
-    },
-    statusBadge: {
+    nomeContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        alignSelf: 'flex-start',
-        paddingHorizontal: Spacing.sm + 2,
-        paddingVertical: Spacing.xs,
-        borderRadius: BorderRadius.full,
-        backgroundColor: Colors.neutral.greyLight,
+        justifyContent: 'space-between',
+        width: '100%',
     },
-    statusDot: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-        marginRight: Spacing.xs + 2,
+    editIconButton: {
+        padding: 6,
+    },
+    campeonatoNome: {
+        fontSize: Typography.sizes.h3,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
+        marginBottom: Spacing.xs,
+    },
+    statusBadge: {
+        paddingHorizontal: Spacing.sm,
+        paddingVertical: 4,
+        borderRadius: BorderRadius.xs,
+        alignSelf: 'flex-start',
+        borderWidth: 1,
     },
     statusText: {
-        fontSize: Typography.sizes.caption,
+        fontSize: 11,
         fontWeight: Typography.fonts.headingWeight,
     },
     descricao: {
         fontSize: Typography.sizes.bodySmall,
-        color: Colors.neutral.charcoal,
+        color: '#999999',
         marginBottom: Spacing.md,
         fontStyle: 'italic',
-        lineHeight: Typography.sizes.bodySmall * Typography.lineHeights.normal,
     },
     campeonatoDetails: {
         marginBottom: Spacing.md,
-        paddingTop: Spacing.md,
+        paddingTop: Spacing.sm,
         borderTopWidth: 1,
-        borderTopColor: Colors.neutral.greyLight,
+        borderTopColor: '#2a2a2a',
     },
     detailRow: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
-        marginBottom: Spacing.sm,
-        gap: Spacing.sm,
-    },
-    detailContent: {
-        flex: 1,
+        alignItems: 'center',
+        marginBottom: Spacing.xs,
+        gap: Spacing.xs,
     },
     detailLabel: {
-        fontSize: Typography.sizes.caption,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.bodySmall,
+        color: '#999999',
         fontWeight: Typography.fonts.headingWeight,
     },
     detailValue: {
         fontSize: Typography.sizes.bodySmall,
-        color: Colors.neutral.navyDeep,
-        marginTop: 2,
+        color: '#FFFFFF',
+        flex: 1,
     },
     actionsContainer: {
         flexDirection: 'row',
         gap: Spacing.sm,
-        marginTop: Spacing.md,
+        marginTop: Spacing.sm,
     },
     actionButton: {
-        flexDirection: 'row',
-        gap: Spacing.xs,
-        paddingVertical: Spacing.sm + 2,
-        paddingHorizontal: Spacing.md,
+        flex: 1,
+        paddingVertical: Spacing.md,
         borderRadius: BorderRadius.button,
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+        gap: Spacing.xs,
     },
-    categoriesButton: {
-        backgroundColor: Colors.secondary.ocean,
-        flex: 1,
+    categoriaButton:{
+        backgroundColor: '#FFD300',
+        padding: Spacing.base,
+        borderRadius: BorderRadius.button,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+
     },
     editButton: {
-        backgroundColor: Colors.accent.lime,
-        flex: 1,
+        backgroundColor: '#FFD300',
     },
     deleteButton: {
-        backgroundColor: Colors.status.error,
-        minWidth: 50,
+        backgroundColor: '#2a2a2a',
+        borderWidth: 1,
+        borderColor: '#FF5252',
     },
     actionButtonText: {
-        color: Colors.neutral.white,
+        color: '#000000',
         fontWeight: Typography.fonts.headingWeight,
         fontSize: Typography.sizes.bodySmall,
     },
-    footerLoader: {
-        paddingVertical: Spacing.lg,
-        alignItems: 'center',
+    deleteButtonText: {
+        color: '#FF5252',
+        fontWeight: Typography.fonts.headingWeight,
+        fontSize: Typography.sizes.bodySmall,
     },
     emptyContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingVertical: 60,
+        paddingVertical: Spacing.huge,
         paddingHorizontal: Spacing.xxxl,
     },
     emptyTitle: {
-        fontSize: Typography.sizes.h4,
+        fontSize: Typography.sizes.h3,
         fontWeight: Typography.fonts.displayWeight,
-        color: Colors.neutral.navyDeep,
+        color: '#FFFFFF',
         marginTop: Spacing.base,
         marginBottom: Spacing.sm,
         textAlign: 'center',
     },
     emptyDescription: {
-        fontSize: Typography.sizes.bodySmall,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.body,
+        color: '#999999',
         textAlign: 'center',
         marginBottom: Spacing.xl,
     },
     emptyButton: {
-        flexDirection: 'row',
-        gap: Spacing.sm,
-        backgroundColor: Colors.primary.mikasaBright,
+        backgroundColor: '#FFD300',
         paddingHorizontal: Spacing.xl,
         paddingVertical: Spacing.md,
         borderRadius: BorderRadius.button,
+        flexDirection: 'row',
         alignItems: 'center',
+        gap: Spacing.xs,
+        shadowColor: '#FFD300',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 4,
     },
     emptyButtonText: {
-        color: Colors.neutral.navyDeep,
+        color: '#000000',
         fontWeight: Typography.fonts.headingWeight,
         fontSize: Typography.sizes.body,
-    },
-    fab: {
-        position: 'absolute',
-        right: Spacing.base,
-        bottom: Spacing.base,
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-        backgroundColor: Colors.primary.mikasaBright,
-        alignItems: 'center',
-        justifyContent: 'center',
-        ...ComponentStyles.card,
     },
 });

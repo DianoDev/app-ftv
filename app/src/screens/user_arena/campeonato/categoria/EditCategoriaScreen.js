@@ -238,9 +238,9 @@ export default function EditCategoriaScreen() {
     if (loading) {
         return (
             <SafeAreaView style={styles.container}>
-                <StatusBar style="dark" />
+                <StatusBar style="light" />
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color={Colors.primary.mikasaBright} />
+                    <ActivityIndicator size="large" color="#FFD300" />
                     <Text style={styles.loadingText}>Carregando dados...</Text>
                 </View>
             </SafeAreaView>
@@ -249,34 +249,41 @@ export default function EditCategoriaScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="dark" />
-            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            <StatusBar style="light" />
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+            >
                 {/* Header */}
                 <View style={styles.header}>
                     <TouchableOpacity
                         style={styles.backButton}
                         onPress={() => router.back()}
                     >
-                        <Ionicons name="arrow-back" size={24} color={Colors.secondary.ocean} />
-                        <Text style={styles.backButtonText}>Voltar</Text>
+                        <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
                     </TouchableOpacity>
-                    <Text style={styles.headerTitle}>Editar Categoria</Text>
+                    <View style={styles.headerCenter}>
+                        <Text style={styles.title}>Editar Categoria</Text>
+                        <Text style={styles.subtitle}>Atualize os dados da categoria</Text>
+                    </View>
+                    <View style={styles.headerRight} />
                 </View>
 
                 {/* Formulário */}
                 <View style={styles.form}>
-                    {/* Nome da Categoria */}
+                    {/* Nome */}
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>
-                            Nome da Categoria <Text style={styles.required}>*</Text>
+                            <Ionicons name="pricetag" size={16} color="#FFD300" /> Nome da Categoria *
                         </Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons name="pricetag" size={20} color={Colors.text.secondary} style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="Ex: Masculino A, Feminino B"
                                 value={nome}
                                 onChangeText={setNome}
+                                placeholderTextColor="#666666"
                                 maxLength={100}
                             />
                         </View>
@@ -284,7 +291,9 @@ export default function EditCategoriaScreen() {
 
                     {/* Gênero */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Gênero</Text>
+                        <Text style={styles.label}>
+                            <Ionicons name="people" size={16} color="#FFD300" /> Gênero
+                        </Text>
                         <View style={styles.optionsContainer}>
                             {generoOptions.map((option) => (
                                 <TouchableOpacity
@@ -308,7 +317,9 @@ export default function EditCategoriaScreen() {
 
                     {/* Nível */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Nível</Text>
+                        <Text style={styles.label}>
+                            <Ionicons name="star" size={16} color="#FFD300" /> Nível
+                        </Text>
                         <View style={styles.optionsContainer}>
                             {nivelOptions.map((option) => (
                                 <TouchableOpacity
@@ -333,9 +344,10 @@ export default function EditCategoriaScreen() {
                     {/* Configurações */}
                     <View style={styles.row}>
                         <View style={[styles.inputGroup, styles.halfWidth]}>
-                            <Text style={styles.label}>Máximo de Duplas</Text>
+                            <Text style={styles.label}>
+                                <Ionicons name="options" size={16} color="#FFD300" /> Máx. Duplas
+                            </Text>
                             <View style={styles.inputContainer}>
-                                <Ionicons name="options" size={20} color={Colors.text.secondary} style={styles.inputIcon} />
                                 <TextInput
                                     style={styles.input}
                                     placeholder="Ex: 16"
@@ -343,20 +355,23 @@ export default function EditCategoriaScreen() {
                                     onChangeText={setMaxDuplas}
                                     keyboardType="numeric"
                                     maxLength={3}
+                                    placeholderTextColor="#666666"
                                 />
                             </View>
                         </View>
 
                         <View style={[styles.inputGroup, styles.halfWidth]}>
-                            <Text style={styles.label}>Valor da Inscrição</Text>
+                            <Text style={styles.label}>
+                                <Ionicons name="cash-outline" size={16} color="#FFD300" /> Inscrição
+                            </Text>
                             <View style={styles.inputContainer}>
-                                <Ionicons name="cash-outline" size={20} color={Colors.text.secondary} style={styles.inputIcon} />
                                 <TextInput
                                     style={styles.input}
                                     placeholder="R$ 0,00"
                                     value={valorInscricao}
                                     onChangeText={handleValorInscricaoChange}
                                     keyboardType="numeric"
+                                    placeholderTextColor="#666666"
                                 />
                             </View>
                         </View>
@@ -364,7 +379,9 @@ export default function EditCategoriaScreen() {
 
                     {/* Status */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Status</Text>
+                        <Text style={styles.label}>
+                            <Ionicons name="flag" size={16} color="#FFD300" /> Status
+                        </Text>
                         <View style={styles.optionsContainer}>
                             {statusOptions.map((option) => (
                                 <TouchableOpacity
@@ -387,77 +404,70 @@ export default function EditCategoriaScreen() {
                     </View>
 
                     {/* Premiação */}
-                    <View style={styles.section}>
-                        <View style={styles.sectionTitleContainer}>
-                            <Ionicons name="trophy" size={24} color={Colors.primary.mikasaBright} />
-                            <Text style={styles.sectionTitle}>Premiação</Text>
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>1º Lugar</Text>
-                            <View style={styles.inputContainer}>
-                                <Ionicons name="cash-outline" size={20} color={Colors.text.secondary} style={styles.inputIcon} />
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="R$ 0,00"
-                                    value={premiacao1Lugar}
-                                    onChangeText={(text) => handlePremiacaoChange(text, setPremiacao1Lugar)}
-                                    keyboardType="numeric"
-                                />
-                            </View>
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>2º Lugar</Text>
-                            <View style={styles.inputContainer}>
-                                <Ionicons name="cash-outline" size={20} color={Colors.text.secondary} style={styles.inputIcon} />
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="R$ 0,00"
-                                    value={premiacao2Lugar}
-                                    onChangeText={(text) => handlePremiacaoChange(text, setPremiacao2Lugar)}
-                                    keyboardType="numeric"
-                                />
-                            </View>
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>3º Lugar</Text>
-                            <View style={styles.inputContainer}>
-                                <Ionicons name="cash-outline" size={20} color={Colors.text.secondary} style={styles.inputIcon} />
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="R$ 0,00"
-                                    value={premiacao3Lugar}
-                                    onChangeText={(text) => handlePremiacaoChange(text, setPremiacao3Lugar)}
-                                    keyboardType="numeric"
-                                />
-                            </View>
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>
+                            <Ionicons name="trophy" size={16} color="#FFD300" /> 1º Lugar
+                        </Text>
+                        <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="R$ 0,00"
+                                value={premiacao1Lugar}
+                                onChangeText={(text) => handlePremiacaoChange(text, setPremiacao1Lugar)}
+                                keyboardType="numeric"
+                                placeholderTextColor="#666666"
+                            />
                         </View>
                     </View>
 
-                    {/* Botões */}
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity
-                            style={[styles.button, styles.cancelButton]}
-                            onPress={() => router.back()}
-                            disabled={saving}
-                        >
-                            <Text style={styles.cancelButtonText}>Cancelar</Text>
-                        </TouchableOpacity>
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>
+                            <Ionicons name="trophy" size={16} color="#FFD300" /> 2º Lugar
+                        </Text>
+                        <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="R$ 0,00"
+                                value={premiacao2Lugar}
+                                onChangeText={(text) => handlePremiacaoChange(text, setPremiacao2Lugar)}
+                                keyboardType="numeric"
+                                placeholderTextColor="#666666"
+                            />
+                        </View>
+                    </View>
 
-                        <TouchableOpacity
-                            style={[styles.button, styles.submitButton]}
-                            onPress={handleSubmit}
-                            disabled={saving}
-                        >
-                            {saving ? (
-                                <ActivityIndicator color="#fff" size="small" />
-                            ) : (
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>
+                            <Ionicons name="trophy" size={16} color="#FFD300" /> 3º Lugar
+                        </Text>
+                        <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="R$ 0,00"
+                                value={premiacao3Lugar}
+                                onChangeText={(text) => handlePremiacaoChange(text, setPremiacao3Lugar)}
+                                keyboardType="numeric"
+                                placeholderTextColor="#666666"
+                            />
+                        </View>
+                    </View>
+
+                    {/* Botão de Submit */}
+                    <TouchableOpacity
+                        style={[styles.submitButton, saving && styles.submitButtonDisabled]}
+                        onPress={handleSubmit}
+                        disabled={saving}
+                        activeOpacity={0.8}
+                    >
+                        {saving ? (
+                            <ActivityIndicator color="#000000" size="small" />
+                        ) : (
+                            <>
+                                <Ionicons name="checkmark-circle" size={20} color="#000000" />
                                 <Text style={styles.submitButtonText}>Salvar Alterações</Text>
-                            )}
-                        </TouchableOpacity>
-                    </View>
+                            </>
+                        )}
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -467,7 +477,7 @@ export default function EditCategoriaScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.neutral.sandLight,
+        backgroundColor: '#0a0a0a',
     },
     loadingContainer: {
         flex: 1,
@@ -476,68 +486,72 @@ const styles = StyleSheet.create({
     },
     loadingText: {
         marginTop: Spacing.sm,
-        ...Typography.body,
-        color: Colors.text.primary,
+        fontSize: Typography.sizes.body,
+        color: '#999999',
     },
     scrollContent: {
-        paddingBottom: Spacing.xl,
+        padding: Spacing.lg,
+        paddingBottom: Spacing.huge,
     },
     header: {
-        backgroundColor: Colors.neutral.white,
-        padding: Spacing.lg,
-        borderBottomWidth: 1,
-        borderBottomColor: Colors.neutral.border,
-    },
-    backButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: Spacing.sm,
-        gap: Spacing.xs,
+        justifyContent: 'space-between',
+        marginBottom: Spacing.xl,
     },
-    backButtonText: {
-        ...Typography.body,
-        color: Colors.secondary.ocean,
-        fontWeight: '600',
+    backButton: {
+        padding: Spacing.xs,
     },
-    headerTitle: {
-        ...Typography.h2,
-        color: Colors.text.primary,
+    headerCenter: {
+        flex: 1,
+        alignItems: 'center',
+    },
+    headerRight: {
+        width: 40,
+    },
+    title: {
+        fontSize: Typography.sizes.h2,
+        fontWeight: Typography.fonts.displayWeight,
+        color: '#FFFFFF',
+        marginBottom: 4,
+    },
+    subtitle: {
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
+        textAlign: 'center',
     },
     form: {
-        backgroundColor: Colors.neutral.white,
-        margin: Spacing.lg,
+        backgroundColor: '#1a1a1a',
+        borderRadius: BorderRadius.card,
         padding: Spacing.lg,
-        ...ComponentStyles.card,
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
+        shadowColor: '#FFD300',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
     },
     inputGroup: {
         marginBottom: Spacing.lg,
     },
     label: {
-        ...Typography.body,
-        fontWeight: '600',
-        color: Colors.text.primary,
-        marginBottom: Spacing.xs,
-    },
-    required: {
-        color: Colors.accent.error,
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
+        marginBottom: Spacing.sm,
     },
     inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: '#2a2a2a',
         borderWidth: 1,
-        borderColor: Colors.neutral.border,
-        borderRadius: BorderRadius.md,
+        borderColor: '#3a3a3a',
+        borderRadius: BorderRadius.input,
         paddingHorizontal: Spacing.md,
     },
-    inputIcon: {
-        marginRight: Spacing.sm,
-    },
     input: {
-        flex: 1,
         paddingVertical: Spacing.md,
-        fontSize: 16,
-        color: Colors.text.primary,
+        fontSize: Typography.sizes.body,
+        color: '#FFFFFF',
     },
     row: {
         flexDirection: 'row',
@@ -554,66 +568,44 @@ const styles = StyleSheet.create({
     optionButton: {
         paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.sm,
-        borderRadius: BorderRadius.md,
-        backgroundColor: Colors.neutral.white,
+        borderRadius: BorderRadius.input,
+        backgroundColor: '#2a2a2a',
         borderWidth: 1,
-        borderColor: Colors.neutral.border,
+        borderColor: '#3a3a3a',
     },
     optionButtonActive: {
-        backgroundColor: Colors.primary.mikasaBright,
-        borderColor: Colors.primary.mikasaBright,
+        backgroundColor: '#FFD300',
+        borderColor: '#FFD300',
     },
     optionButtonText: {
-        ...Typography.small,
-        fontWeight: '600',
-        color: Colors.text.secondary,
+        fontSize: Typography.sizes.small,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
     },
     optionButtonTextActive: {
-        color: Colors.neutral.white,
-    },
-    section: {
-        backgroundColor: Colors.neutral.white,
-        borderRadius: BorderRadius.lg,
-        padding: Spacing.lg,
-        marginBottom: Spacing.lg,
-        borderWidth: 1,
-        borderColor: Colors.neutral.border,
-    },
-    sectionTitleContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: Spacing.md,
-        gap: Spacing.sm,
-    },
-    sectionTitle: {
-        ...Typography.h4,
-        color: Colors.text.primary,
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        gap: Spacing.md,
-        marginTop: Spacing.lg,
-    },
-    button: {
-        flex: 1,
-        ...ComponentStyles.buttonPrimary,
-    },
-    cancelButton: {
-        backgroundColor: Colors.neutral.white,
-        borderWidth: 1,
-        borderColor: Colors.neutral.border,
-    },
-    cancelButtonText: {
-        ...Typography.body,
-        fontWeight: '600',
-        color: Colors.text.secondary,
+        color: '#000000',
     },
     submitButton: {
-        backgroundColor: Colors.primary.mikasaBright,
+        backgroundColor: '#FFD300',
+        padding: Spacing.base,
+        borderRadius: BorderRadius.button,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: Spacing.sm,
+        marginTop: Spacing.md,
+        shadowColor: '#FFD300',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+    submitButtonDisabled: {
+        opacity: 0.6,
     },
     submitButtonText: {
-        ...Typography.body,
-        fontWeight: '600',
-        color: Colors.neutral.white,
+        color: '#000000',
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
     },
 });

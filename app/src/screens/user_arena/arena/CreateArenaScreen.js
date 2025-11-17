@@ -194,7 +194,7 @@ export default function NovaArenaScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="dark" />
+            <StatusBar style="light" />
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 keyboardShouldPersistTaps="handled"
@@ -207,8 +207,7 @@ export default function NovaArenaScreen() {
                         onPress={() => router.back()}
                         activeOpacity={0.7}
                     >
-                        <Ionicons name="arrow-back" size={24} color={Colors.secondary.ocean} />
-                        <Text style={styles.backButtonText}>Voltar</Text>
+                        <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
                     </TouchableOpacity>
                     <Text style={styles.title}>Nova Arena</Text>
                     <Text style={styles.subtitle}>Cadastre uma nova arena</Text>
@@ -220,14 +219,14 @@ export default function NovaArenaScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Nome da Arena *</Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons name="business" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <Ionicons name="business" size={20} color="#FFD300" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="Ex: Arena Esportiva Central"
                                 value={formData.nome}
                                 onChangeText={(text) => handleInputChange('nome', text)}
                                 maxLength={100}
-                                placeholderTextColor={Colors.neutral.charcoal}
+                                placeholderTextColor="#666666"
                             />
                         </View>
                         <Text style={styles.helperText}>Máximo 100 caracteres</Text>
@@ -244,7 +243,7 @@ export default function NovaArenaScreen() {
                             multiline
                             numberOfLines={4}
                             textAlignVertical="top"
-                            placeholderTextColor={Colors.neutral.charcoal}
+                            placeholderTextColor="#666666"
                         />
                     </View>
 
@@ -252,7 +251,7 @@ export default function NovaArenaScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>CNPJ</Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons name="document-text" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <Ionicons name="document-text" size={20} color="#FFD300" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="00.000.000/0000-00"
@@ -260,7 +259,7 @@ export default function NovaArenaScreen() {
                                 onChangeText={handleCNPJChange}
                                 keyboardType="numeric"
                                 maxLength={18}
-                                placeholderTextColor={Colors.neutral.charcoal}
+                                placeholderTextColor="#666666"
                             />
                         </View>
                     </View>
@@ -269,13 +268,13 @@ export default function NovaArenaScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Endereço *</Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons name="location" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <Ionicons name="location" size={20} color="#FFD300" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="Rua, número, bairro"
                                 value={formData.endereco}
                                 onChangeText={(text) => handleInputChange('endereco', text)}
-                                placeholderTextColor={Colors.neutral.charcoal}
+                                placeholderTextColor="#666666"
                             />
                         </View>
                     </View>
@@ -290,7 +289,7 @@ export default function NovaArenaScreen() {
                                 value={formData.cidade}
                                 onChangeText={(text) => handleInputChange('cidade', text)}
                                 maxLength={100}
-                                placeholderTextColor={Colors.neutral.charcoal}
+                                placeholderTextColor="#666666"
                             />
                         </View>
 
@@ -303,7 +302,7 @@ export default function NovaArenaScreen() {
                                 onChangeText={(text) => handleInputChange('estado', text.toUpperCase())}
                                 maxLength={2}
                                 autoCapitalize="characters"
-                                placeholderTextColor={Colors.neutral.charcoal}
+                                placeholderTextColor="#666666"
                             />
                         </View>
                     </View>
@@ -312,7 +311,7 @@ export default function NovaArenaScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>CEP</Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons name="mail" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <Ionicons name="mail" size={20} color="#FFD300" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="00000-000"
@@ -320,7 +319,7 @@ export default function NovaArenaScreen() {
                                 onChangeText={handleCEPChange}
                                 keyboardType="numeric"
                                 maxLength={9}
-                                placeholderTextColor={Colors.neutral.charcoal}
+                                placeholderTextColor="#666666"
                             />
                         </View>
                     </View>
@@ -329,7 +328,7 @@ export default function NovaArenaScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Telefone</Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons name="call" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <Ionicons name="call" size={20} color="#FFD300" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="(00) 0000-0000"
@@ -337,7 +336,7 @@ export default function NovaArenaScreen() {
                                 onChangeText={handlePhoneChange}
                                 keyboardType="phone-pad"
                                 maxLength={15}
-                                placeholderTextColor={Colors.neutral.charcoal}
+                                placeholderTextColor="#666666"
                             />
                         </View>
                     </View>
@@ -346,7 +345,7 @@ export default function NovaArenaScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>WhatsApp</Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons name="logo-whatsapp" size={20} color={Colors.neutral.charcoal} style={styles.inputIcon} />
+                            <Ionicons name="logo-whatsapp" size={20} color="#FFD300" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="(00) 00000-0000"
@@ -354,7 +353,7 @@ export default function NovaArenaScreen() {
                                 onChangeText={handleWhatsAppChange}
                                 keyboardType="phone-pad"
                                 maxLength={15}
-                                placeholderTextColor={Colors.neutral.charcoal}
+                                placeholderTextColor="#666666"
                             />
                         </View>
                         <Text style={styles.helperText}>
@@ -371,12 +370,12 @@ export default function NovaArenaScreen() {
                     >
                         {loading ? (
                             <View style={styles.buttonContent}>
-                                <ActivityIndicator color={Colors.neutral.navyDeep} size="small" />
+                                <ActivityIndicator color="#000000" size="small" />
                                 <Text style={[styles.submitButtonText, {marginLeft: Spacing.sm}]}>Cadastrando...</Text>
                             </View>
                         ) : (
                             <View style={styles.buttonContent}>
-                                <Ionicons name="checkmark-circle" size={20} color={Colors.neutral.navyDeep} />
+                                <Ionicons name="checkmark-circle" size={20} color="#000000" />
                                 <Text style={[styles.submitButtonText, {marginLeft: Spacing.sm}]}>Cadastrar Arena</Text>
                             </View>
                         )}
@@ -390,7 +389,7 @@ export default function NovaArenaScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.neutral.sandLight,
+        backgroundColor: "#0a0a0a",
     },
     scrollContent: {
         padding: Spacing.lg,
@@ -400,31 +399,32 @@ const styles = StyleSheet.create({
         marginBottom: Spacing.xxxl,
     },
     backButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        padding: Spacing.xs,
         marginBottom: Spacing.base,
-        gap: Spacing.xs,
-    },
-    backButtonText: {
-        fontSize: Typography.sizes.body,
-        color: Colors.secondary.ocean,
-        fontWeight: Typography.fonts.headingWeight,
     },
     title: {
-        fontSize: Typography.sizes.h1,
+        fontSize: Typography.sizes.h2,
         fontWeight: Typography.fonts.displayWeight,
-        color: Colors.neutral.navyDeep,
-        marginBottom: Spacing.xs,
+        color: "#FFFFFF",
+        marginBottom: 4,
+        textAlign: 'center',
     },
     subtitle: {
-        fontSize: Typography.sizes.body,
-        color: Colors.neutral.charcoal,
+        fontSize: Typography.sizes.caption,
+        color: "#999999",
+        textAlign: 'center',
     },
     form: {
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: "#1a1a1a",
         borderRadius: BorderRadius.card,
         padding: Spacing.lg,
-        ...ComponentStyles.card,
+        borderWidth: 1,
+        borderColor: "#2a2a2a",
+        shadowColor: "#FFD300",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
     },
     inputGroup: {
         marginBottom: Spacing.lg,
@@ -432,15 +432,15 @@ const styles = StyleSheet.create({
     label: {
         fontSize: Typography.sizes.label,
         fontWeight: Typography.fonts.headingWeight,
-        color: Colors.neutral.navyDeep,
+        color: "#FFFFFF",
         marginBottom: Spacing.sm,
     },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: "#2a2a2a",
         borderWidth: 1,
-        borderColor: Colors.neutral.greyLight,
+        borderColor: "#3a3a3a",
         borderRadius: BorderRadius.input,
         paddingHorizontal: Spacing.md,
     },
@@ -451,16 +451,16 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingVertical: Spacing.md,
         fontSize: Typography.sizes.body,
-        color: Colors.neutral.navyDeep,
+        color: "#FFFFFF",
     },
     inputFull: {
-        backgroundColor: Colors.neutral.white,
+        backgroundColor: "#2a2a2a",
         borderWidth: 1,
-        borderColor: Colors.neutral.greyLight,
+        borderColor: "#3a3a3a",
         borderRadius: BorderRadius.input,
         padding: Spacing.md,
         fontSize: Typography.sizes.body,
-        color: Colors.neutral.navyDeep,
+        color: "#FFFFFF",
     },
     textArea: {
         minHeight: 100,
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
     },
     helperText: {
         fontSize: Typography.sizes.caption,
-        color: Colors.neutral.charcoal,
+        color: "#999999",
         marginTop: Spacing.xs,
     },
     row: {
@@ -477,12 +477,16 @@ const styles = StyleSheet.create({
         gap: Spacing.md,
     },
     submitButton: {
-        backgroundColor: Colors.primary.mikasaBright,
+        backgroundColor: "#FFD300",
         padding: Spacing.base,
         borderRadius: BorderRadius.button,
         alignItems: 'center',
         marginTop: Spacing.md,
-        ...ComponentStyles.buttonPrimary,
+        shadowColor: "#FFD300",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 4,
     },
     submitButtonDisabled: {
         opacity: 0.6,
@@ -492,7 +496,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     submitButtonText: {
-        color: Colors.neutral.navyDeep,
+        color: "#000000",
         fontSize: Typography.sizes.body,
         fontWeight: Typography.fonts.headingWeight,
     },

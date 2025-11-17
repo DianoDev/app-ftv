@@ -169,52 +169,46 @@ export default function QuadrasListScreen() {
     const renderQuadraItem = ({ item }) => (
         <View style={styles.quadraCard}>
             <View style={styles.quadraHeader}>
+                <View style={styles.quadraIconContainer}>
+                    <Ionicons name="grid" size={24} color="#FFD300" />
+                </View>
                 <View style={styles.quadraInfo}>
                     <Text style={styles.quadraNome}>{item.nome}</Text>
                     <View style={styles.badgesContainer}>
                         {item.coberta !== 0 && item.coberta !== null && item.coberta && (
-                            <View style={[styles.badge, styles.badgeCoberta]}>
+                            <View style={styles.badge}>
+                                <Ionicons name="umbrella" size={12} color="#FFD300" />
                                 <Text style={styles.badgeText}>Coberta</Text>
                             </View>
                         )}
                         {item.iluminacao !== 0 && item.iluminacao !== null && item.iluminacao && (
-                            <View style={[styles.badge, styles.badgeIluminacao]}>
+                            <View style={styles.badge}>
+                                <Ionicons name="bulb" size={12} color="#FFD300" />
                                 <Text style={styles.badgeText}>Iluminação</Text>
-                            </View>
-                        )}
-                        {item.ativa ? (
-                            <View style={[styles.badge, styles.badgeAtiva]}>
-                                <Text style={styles.badgeText}>Ativa</Text>
-                            </View>
-                        ) : (
-                            <View style={[styles.badge, styles.badgeInativa]}>
-                                <Text style={styles.badgeText}>Inativa</Text>
                             </View>
                         )}
                     </View>
                 </View>
-                <View style={styles.statusContainer}>
-                    <View style={[
-                        styles.statusIndicator,
-                        item.ativa ? styles.statusAtivo : styles.statusInativo
-                    ]} />
-                </View>
+                <View style={[
+                    styles.statusIndicator,
+                    item.ativa ? styles.statusAtivo : styles.statusInativo
+                ]} />
             </View>
 
             <View style={styles.quadraDetails}>
                 {item.comprimento && item.largura && (
                     <View style={styles.detailRow}>
-                        <Ionicons name="resize" size={16} color={Colors.neutral.charcoal} />
+                        <Ionicons name="resize" size={16} color="#FFD300" />
                         <Text style={styles.detailLabel}>Dimensões:</Text>
                         <Text style={styles.detailValue}>
-                            {item.comprimento} x {item.largura}
+                            {item.comprimento} x {item.largura}m
                         </Text>
                     </View>
                 )}
 
                 {item.valor_hora && (
                     <View style={styles.detailRow}>
-                        <Ionicons name="cash" size={16} color={Colors.neutral.charcoal} />
+                        <Ionicons name="cash" size={16} color="#FFD300" />
                         <Text style={styles.detailLabel}>Valor/Hora:</Text>
                         <Text style={styles.detailValue}>
                             R$ {parseFloat(item.valor_hora).toFixed(2)}
@@ -224,8 +218,7 @@ export default function QuadrasListScreen() {
 
                 {item.observacoes && (
                     <View style={styles.detailRow}>
-                        <Ionicons name="document-text" size={16} color={Colors.neutral.charcoal} />
-                        <Text style={styles.detailLabel}>Observações:</Text>
+                        <Ionicons name="document-text" size={16} color="#999999" />
                         <Text style={styles.observacoesText} numberOfLines={2}>
                             {item.observacoes}
                         </Text>
@@ -237,17 +230,19 @@ export default function QuadrasListScreen() {
                 <TouchableOpacity
                     style={[styles.actionButton, styles.editButton]}
                     onPress={() => handleEdit(item)}
+                    activeOpacity={0.8}
                 >
-                    <Ionicons name="create" size={18} color={Colors.neutral.white} />
+                    <Ionicons name="create" size={18} color="#000000" />
                     <Text style={styles.actionButtonText}>Editar</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     style={[styles.actionButton, styles.deleteButton]}
                     onPress={() => confirmDelete(item)}
+                    activeOpacity={0.8}
                 >
-                    <Ionicons name="trash" size={18} color={Colors.neutral.white} />
-                    <Text style={styles.actionButtonText}>Excluir</Text>
+                    <Ionicons name="trash" size={18} color="#FFFFFF" />
+                    <Text style={styles.deleteButtonText}>Excluir</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -259,7 +254,7 @@ export default function QuadrasListScreen() {
 
         return (
             <View style={styles.footerLoader}>
-                <ActivityIndicator size="small" color={Colors.primary.mikasaBright} />
+                <ActivityIndicator size="small" color="#FFD300" />
             </View>
         );
     };
@@ -270,7 +265,7 @@ export default function QuadrasListScreen() {
 
         return (
             <View style={styles.emptyContainer}>
-                <Ionicons name="grid-outline" size={64} color={Colors.neutral.charcoal} />
+                <Ionicons name="grid-outline" size={64} color="#2a2a2a" />
                 <Text style={styles.emptyTitle}>Nenhuma quadra cadastrada</Text>
                 <Text style={styles.emptyDescription}>
                     Comece adicionando sua primeira quadra
@@ -278,8 +273,9 @@ export default function QuadrasListScreen() {
                 <TouchableOpacity
                     style={styles.emptyButton}
                     onPress={handleCreateQuadra}
+                    activeOpacity={0.8}
                 >
-                    <Ionicons name="add-circle" size={20} color={Colors.neutral.navyDeep} />
+                    <Ionicons name="add-circle" size={20} color="#000000" />
                     <Text style={styles.emptyButtonText}>Adicionar Quadra</Text>
                 </TouchableOpacity>
             </View>
@@ -289,9 +285,9 @@ export default function QuadrasListScreen() {
     if (loading && page === 1) {
         return (
             <SafeAreaView style={styles.container}>
-                <StatusBar style="dark" />
+                <StatusBar style="light" />
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color={Colors.primary.mikasaBright} />
+                    <ActivityIndicator size="large" color="#FFD300" />
                     <Text style={styles.loadingText}>Carregando quadras...</Text>
                 </View>
             </SafeAreaView>
@@ -300,21 +296,27 @@ export default function QuadrasListScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="dark" />
+            <StatusBar style="light" />
+
             {/* Header */}
             <View style={styles.header}>
-                <View>
+                <TouchableOpacity
+                    style={styles.backButton}
+                    onPress={() => router.back()}
+                >
+                    <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+                </TouchableOpacity>
+                <View style={styles.headerCenter}>
                     <Text style={styles.headerTitle}>Minhas Quadras</Text>
                     <Text style={styles.headerSubtitle}>
-                        {quadras.length} {quadras.length === 1 ? 'quadra' : 'quadras'} cadastrada{quadras.length === 1 ? '' : 's'}
+                        {quadras.length} {quadras.length === 1 ? 'quadra' : 'quadras'}
                     </Text>
                 </View>
                 <TouchableOpacity
                     style={styles.addButton}
                     onPress={handleCreateQuadra}
                 >
-                    <Ionicons name="add-circle" size={20} color={Colors.neutral.navyDeep} />
-                    <Text style={styles.addButtonText}>Nova</Text>
+                    <Ionicons name="add-circle" size={28} color="#FFD300" />
                 </TouchableOpacity>
             </View>
 
@@ -329,8 +331,8 @@ export default function QuadrasListScreen() {
                     <RefreshControl
                         refreshing={refreshing}
                         onRefresh={onRefresh}
-                        colors={[Colors.primary.mikasaBright]}
-                        tintColor={Colors.primary.mikasaBright}
+                        colors={['#FFD300']}
+                        tintColor="#FFD300"
                     />
                 }
                 onEndReached={loadMore}
@@ -345,7 +347,7 @@ export default function QuadrasListScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.neutral.sandLight,
+        backgroundColor: '#0a0a0a',
     },
     loadingContainer: {
         flex: 1,
@@ -355,67 +357,79 @@ const styles = StyleSheet.create({
     loadingText: {
         marginTop: Spacing.md,
         fontSize: Typography.sizes.body,
-        color: Colors.neutral.charcoal,
+        color: '#999999',
     },
     header: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        padding: Spacing.lg,
-        backgroundColor: Colors.neutral.white,
+        justifyContent: 'space-between',
+        paddingHorizontal: Spacing.md,
+        paddingVertical: Spacing.md,
+        backgroundColor: '#0a0a0a',
         borderBottomWidth: 1,
-        borderBottomColor: Colors.neutral.greyLight,
+        borderBottomColor: '#2a2a2a',
+    },
+    backButton: {
+        padding: Spacing.xs,
+    },
+    headerCenter: {
+        flex: 1,
+        alignItems: 'center',
     },
     headerTitle: {
         fontSize: Typography.sizes.h2,
         fontWeight: Typography.fonts.displayWeight,
-        color: Colors.neutral.navyDeep,
+        color: '#FFFFFF',
     },
     headerSubtitle: {
-        fontSize: Typography.sizes.bodySmall,
-        color: Colors.neutral.charcoal,
-        marginTop: Spacing.xs,
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
+        marginTop: 2,
     },
     addButton: {
-        backgroundColor: Colors.primary.mikasaBright,
-        paddingHorizontal: Spacing.lg,
-        paddingVertical: Spacing.md,
-        borderRadius: BorderRadius.button,
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: Spacing.xs,
-        ...ComponentStyles.buttonPrimary,
-    },
-    addButtonText: {
-        color: Colors.neutral.navyDeep,
-        fontWeight: Typography.fonts.headingWeight,
-        fontSize: Typography.sizes.body,
+        padding: Spacing.xs,
     },
     listContent: {
-        padding: Spacing.base,
+        padding: Spacing.md,
         paddingBottom: Spacing.xxxl,
     },
     quadraCard: {
-        backgroundColor: Colors.neutral.white,
-        borderRadius: BorderRadius.card,
-        padding: Spacing.base,
-        marginBottom: Spacing.base,
-        ...ComponentStyles.card,
+        backgroundColor: '#1a1a1a',
+        borderRadius: BorderRadius.lg,
+        padding: Spacing.md,
+        marginBottom: Spacing.md,
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
+        shadowColor: '#FFD300',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
     },
     quadraHeader: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'flex-start',
         marginBottom: Spacing.md,
+    },
+    quadraIconContainer: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#2a2a2a',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: Spacing.sm,
+        borderWidth: 1,
+        borderColor: '#FFD300',
     },
     quadraInfo: {
         flex: 1,
     },
     quadraNome: {
-        fontSize: Typography.sizes.h4,
-        fontWeight: Typography.fonts.displayWeight,
-        color: Colors.neutral.navyDeep,
-        marginBottom: Spacing.sm,
+        fontSize: Typography.sizes.h3,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
+        marginBottom: Spacing.xs,
     },
     badgesContainer: {
         flexDirection: 'row',
@@ -423,46 +437,43 @@ const styles = StyleSheet.create({
         gap: Spacing.xs,
     },
     badge: {
-        paddingHorizontal: Spacing.sm,
-        paddingVertical: Spacing.xs,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        backgroundColor: 'rgba(255, 211, 0, 0.15)',
+        paddingHorizontal: Spacing.xs,
+        paddingVertical: 2,
         borderRadius: BorderRadius.xs,
-    },
-    badgeCoberta: {
-        backgroundColor: Colors.secondary.oceanLight + '30',
-    },
-    badgeIluminacao: {
-        backgroundColor: Colors.primary.mikasaBright + '30',
-    },
-    badgeAtiva: {
-        backgroundColor: Colors.accent.lime + '30',
-    },
-    badgeInativa: {
-        backgroundColor: Colors.accent.coral + '30',
+        borderWidth: 1,
+        borderColor: '#FFD300',
     },
     badgeText: {
-        fontSize: Typography.sizes.caption,
+        fontSize: 11,
         fontWeight: Typography.fonts.headingWeight,
-        color: Colors.neutral.navyDeep,
-    },
-    statusContainer: {
-        marginLeft: Spacing.md,
+        color: '#FFD300',
     },
     statusIndicator: {
         width: 12,
         height: 12,
         borderRadius: 6,
+        marginLeft: Spacing.sm,
     },
     statusAtivo: {
-        backgroundColor: Colors.status.success,
+        backgroundColor: '#4CAF50',
+        shadowColor: '#4CAF50',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.5,
+        shadowRadius: 4,
+        elevation: 3,
     },
     statusInativo: {
-        backgroundColor: Colors.status.error,
+        backgroundColor: '#999999',
     },
     quadraDetails: {
         marginBottom: Spacing.md,
         paddingTop: Spacing.md,
         borderTopWidth: 1,
-        borderTopColor: Colors.neutral.greyLight,
+        borderTopColor: '#2a2a2a',
     },
     detailRow: {
         flexDirection: 'row',
@@ -472,19 +483,20 @@ const styles = StyleSheet.create({
     },
     detailLabel: {
         fontSize: Typography.sizes.bodySmall,
-        color: Colors.neutral.charcoal,
+        color: '#999999',
         fontWeight: Typography.fonts.headingWeight,
     },
     detailValue: {
         fontSize: Typography.sizes.bodySmall,
-        color: Colors.neutral.navyDeep,
+        color: '#FFFFFF',
         flex: 1,
     },
     observacoesText: {
         fontSize: Typography.sizes.bodySmall,
-        color: Colors.neutral.charcoal,
+        color: '#999999',
         flex: 1,
         fontStyle: 'italic',
+        marginLeft: Spacing.xs,
     },
     actionsContainer: {
         flexDirection: 'row',
@@ -501,13 +513,20 @@ const styles = StyleSheet.create({
         gap: Spacing.xs,
     },
     editButton: {
-        backgroundColor: Colors.secondary.ocean,
+        backgroundColor: '#FFD300',
     },
     deleteButton: {
-        backgroundColor: Colors.accent.coral,
+        backgroundColor: '#2a2a2a',
+        borderWidth: 1,
+        borderColor: '#FF5252',
     },
     actionButtonText: {
-        color: Colors.neutral.white,
+        color: '#000000',
+        fontWeight: Typography.fonts.headingWeight,
+        fontSize: Typography.sizes.bodySmall,
+    },
+    deleteButtonText: {
+        color: '#FF5252',
         fontWeight: Typography.fonts.headingWeight,
         fontSize: Typography.sizes.bodySmall,
     },
@@ -525,29 +544,33 @@ const styles = StyleSheet.create({
     emptyTitle: {
         fontSize: Typography.sizes.h3,
         fontWeight: Typography.fonts.displayWeight,
-        color: Colors.neutral.navyDeep,
+        color: '#FFFFFF',
         marginTop: Spacing.base,
         marginBottom: Spacing.sm,
         textAlign: 'center',
     },
     emptyDescription: {
         fontSize: Typography.sizes.body,
-        color: Colors.neutral.charcoal,
+        color: '#999999',
         textAlign: 'center',
         marginBottom: Spacing.xl,
     },
     emptyButton: {
-        backgroundColor: Colors.primary.mikasaBright,
+        backgroundColor: '#FFD300',
         paddingHorizontal: Spacing.xl,
         paddingVertical: Spacing.md,
         borderRadius: BorderRadius.button,
         flexDirection: 'row',
         alignItems: 'center',
         gap: Spacing.xs,
-        ...ComponentStyles.buttonPrimary,
+        shadowColor: '#FFD300',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 4,
     },
     emptyButtonText: {
-        color: Colors.neutral.navyDeep,
+        color: '#000000',
         fontWeight: Typography.fonts.headingWeight,
         fontSize: Typography.sizes.body,
     },

@@ -154,15 +154,15 @@ export default function CategoriasListScreen() {
     const getStatusColor = (status) => {
         switch (status) {
             case 'inscricoes_abertas':
-                return Colors.accent.success;
+                return '#00FF88';
             case 'em_andamento':
-                return Colors.neutral.charcoal.ocean;
+                return '#4A9EFF';
             case 'finalizado':
-                return Colors.text.secondary;
+                return '#999999';
             case 'cancelado':
-                return Colors.accent.error;
+                return '#FF4444';
             default:
-                return Colors.text.tertiary;
+                return '#666666';
         }
     };
 
@@ -186,79 +186,62 @@ export default function CategoriasListScreen() {
     const renderCategoriaItem = ({ item }) => (
         <View style={styles.categoriaCard}>
             <View style={styles.categoriaHeader}>
-                <View style={styles.categoriaInfo}>
+                <View style={styles.categoriaTitleRow}>
+                    <Ionicons name="pricetag" size={20} color="#FFD300" />
                     <Text style={styles.categoriaNome}>{item.nome}</Text>
-                    <View style={styles.statusBadge}>
-                        <View
-                            style={[
-                                styles.statusDot,
-                                { backgroundColor: getStatusColor(item.status) }
-                            ]}
-                        />
-                        <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
-                            {getStatusText(item.status)}
-                        </Text>
-                    </View>
+                </View>
+                <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '20' }]}>
+                    <View style={[styles.statusDot, { backgroundColor: getStatusColor(item.status) }]} />
+                    <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
+                        {getStatusText(item.status)}
+                    </Text>
                 </View>
             </View>
 
             <View style={styles.categoriaDetails}>
                 {item.genero && (
-                    <View style={styles.detailRow}>
-                        <Ionicons name="people" size={20} color={Colors.primary.mikasaBright} />
-                        <View style={styles.detailContent}>
-                            <Text style={styles.detailLabel}>Gênero:</Text>
-                            <Text style={styles.detailValue}>{item.genero}</Text>
-                        </View>
+                    <View style={styles.detailItem}>
+                        <Ionicons name="people" size={16} color="#FFD300" />
+                        <Text style={styles.detailText}>{item.genero}</Text>
                     </View>
                 )}
 
                 {item.nivel && (
-                    <View style={styles.detailRow}>
-                        <Ionicons name="star" size={20} color={Colors.primary.mikasaBright} />
-                        <View style={styles.detailContent}>
-                            <Text style={styles.detailLabel}>Nível:</Text>
-                            <Text style={styles.detailValue}>{item.nivel}</Text>
-                        </View>
+                    <View style={styles.detailItem}>
+                        <Ionicons name="star" size={16} color="#FFD300" />
+                        <Text style={styles.detailText}>{item.nivel}</Text>
                     </View>
                 )}
 
                 {item.max_duplas && (
-                    <View style={styles.detailRow}>
-                        <Ionicons name="options" size={20} color={Colors.primary.mikasaBright} />
-                        <View style={styles.detailContent}>
-                            <Text style={styles.detailLabel}>Máximo de Duplas:</Text>
-                            <Text style={styles.detailValue}>{item.max_duplas}</Text>
-                        </View>
+                    <View style={styles.detailItem}>
+                        <Ionicons name="options" size={16} color="#FFD300" />
+                        <Text style={styles.detailText}>{item.max_duplas} duplas</Text>
                     </View>
                 )}
 
-                <View style={styles.detailRow}>
-                    <Ionicons name="cash-outline" size={20} color={Colors.primary.mikasaBright} />
-                    <View style={styles.detailContent}>
-                        <Text style={styles.detailLabel}>Valor da Inscrição:</Text>
-                        <Text style={styles.detailValue}>
-                            R$ {parseFloat(item.valor_inscricao || 0).toFixed(2)}
-                        </Text>
-                    </View>
+                <View style={styles.detailItem}>
+                    <Ionicons name="cash-outline" size={16} color="#FFD300" />
+                    <Text style={styles.detailText}>
+                        R$ {parseFloat(item.valor_inscricao || 0).toFixed(2)}
+                    </Text>
                 </View>
             </View>
 
             <View style={styles.actionsContainer}>
                 <TouchableOpacity
-                    style={[styles.actionButton, styles.editButton]}
+                    style={styles.editButton}
                     onPress={() => handleEdit(item)}
                 >
-                    <Ionicons name="create-outline" size={20} color={Colors.neutral.white} />
-                    <Text style={styles.actionButtonText}>Editar</Text>
+                    <Ionicons name="create-outline" size={18} color="#000000" />
+                    <Text style={styles.editButtonText}>Editar</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    style={[styles.actionButton, styles.deleteButton]}
+                    style={styles.deleteButton}
                     onPress={() => confirmDelete(item)}
                 >
-                    <Ionicons name="trash-outline" size={20} color={Colors.neutral.white} />
-                    <Text style={styles.actionButtonText}>Excluir</Text>
+                    <Ionicons name="trash-outline" size={18} color="#FF4444" />
                 </TouchableOpacity>
             </View>
         </View>
@@ -270,8 +253,10 @@ export default function CategoriasListScreen() {
 
         return (
             <View style={styles.emptyContainer}>
-                <Ionicons name="list-outline" size={64} color={Colors.text.tertiary} />
-                <Text style={styles.emptyTitle}>Nenhuma categoria cadastrada</Text>
+                <View style={styles.emptyIconContainer}>
+                    <Ionicons name="list-outline" size={64} color="#FFD300" />
+                </View>
+                <Text style={styles.emptyTitle}>Nenhuma categoria</Text>
                 <Text style={styles.emptyDescription}>
                     Adicione categorias para organizar o campeonato
                 </Text>
@@ -279,8 +264,8 @@ export default function CategoriasListScreen() {
                     style={styles.emptyButton}
                     onPress={handleCreateCategoria}
                 >
-                    <Ionicons name="add-circle-outline" size={24} color={Colors.neutral.white} />
-                    <Text style={styles.emptyButtonText}>Adicionar Categoria</Text>
+                    <Ionicons name="add-circle" size={20} color="#000000" />
+                    <Text style={styles.emptyButtonText}>Criar Categoria</Text>
                 </TouchableOpacity>
             </View>
         );
@@ -289,9 +274,9 @@ export default function CategoriasListScreen() {
     if (loading) {
         return (
             <SafeAreaView style={styles.container}>
-                <StatusBar style="dark" />
+                <StatusBar style="light" />
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color={Colors.primary.mikasaBright} />
+                    <ActivityIndicator size="large" color="#FFD300" />
                     <Text style={styles.loadingText}>Carregando categorias...</Text>
                 </View>
             </SafeAreaView>
@@ -300,23 +285,21 @@ export default function CategoriasListScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="dark" />
+            <StatusBar style="light" />
+
             {/* Header */}
             <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.backButton}
                     onPress={() => router.back()}
                 >
-                    <Ionicons name="arrow-back" size={24} color={Colors.secondary.ocean} />
-                    <Text style={styles.backButtonText}>Voltar</Text>
+                    <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
                 </TouchableOpacity>
-                <View style={styles.headerTitleContainer}>
-                    <Text style={styles.headerTitle}>Categorias</Text>
-                    <Text style={styles.headerSubtitle}>{campeonatoNome}</Text>
-                    <Text style={styles.headerCount}>
-                        {categorias.length} {categorias.length === 1 ? 'categoria' : 'categorias'}
-                    </Text>
+                <View style={styles.headerCenter}>
+                    <Text style={styles.title}>Categorias</Text>
+                    <Text style={styles.subtitle}>{campeonatoNome}</Text>
                 </View>
+                <View style={styles.headerRight} />
             </View>
 
             {/* Lista de Categorias */}
@@ -330,7 +313,8 @@ export default function CategoriasListScreen() {
                     <RefreshControl
                         refreshing={refreshing}
                         onRefresh={onRefresh}
-                        colors={[Colors.primary.mikasaBright]}
+                        colors={['#FFD300']}
+                        tintColor="#FFD300"
                     />
                 }
                 ListEmptyComponent={renderEmpty}
@@ -341,8 +325,9 @@ export default function CategoriasListScreen() {
                 <TouchableOpacity
                     style={styles.fab}
                     onPress={handleCreateCategoria}
+                    activeOpacity={0.8}
                 >
-                    <Ionicons name="add" size={28} color={Colors.neutral.white} />
+                    <Ionicons name="add" size={28} color="#000000" />
                 </TouchableOpacity>
             )}
         </SafeAreaView>
@@ -352,7 +337,7 @@ export default function CategoriasListScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.neutral.sandLight,
+        backgroundColor: '#0a0a0a',
     },
     loadingContainer: {
         flex: 1,
@@ -361,133 +346,148 @@ const styles = StyleSheet.create({
     },
     loadingText: {
         marginTop: Spacing.sm,
-        ...Typography.body,
-        color: Colors.neutral.charcoal
+        fontSize: Typography.sizes.body,
+        color: '#999999',
     },
     header: {
-        padding: Spacing.lg,
-        backgroundColor: Colors.neutral.white,
-        borderBottomWidth: 1,
-        borderBottomColor: Colors.neutral.border,
-    },
-    backButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: Spacing.sm,
-        gap: Spacing.xs,
+        justifyContent: 'space-between',
+        padding: Spacing.lg,
+        backgroundColor: '#1a1a1a',
+        borderBottomWidth: 1,
+        borderBottomColor: '#2a2a2a',
     },
-    backButtonText: {
-        ...Typography.body,
-        color: Colors.neutral.charcoal.ocean,
-        fontWeight: '600',
+    backButton: {
+        padding: Spacing.xs,
     },
-    headerTitleContainer: {
-        marginBottom: Spacing.sm,
+    headerCenter: {
+        flex: 1,
+        alignItems: 'center',
     },
-    headerTitle: {
-        ...Typography.h3,
-        color: Colors.text.secondary,
+    headerRight: {
+        width: 40,
     },
-    headerSubtitle: {
-        ...Typography.small,
-        color: Colors.text.secondary,
-        marginTop: Spacing.xs,
+    title: {
+        fontSize: Typography.sizes.h2,
+        fontWeight: Typography.fonts.displayWeight,
+        color: '#FFFFFF',
+        marginBottom: 4,
     },
-    headerCount: {
-        ...Typography.small,
-        color: Colors.text.tertiary,
-        marginTop: Spacing.xs,
+    subtitle: {
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
+        textAlign: 'center',
     },
     listContent: {
-        padding: Spacing.md,
-        paddingBottom: 80,
+        padding: Spacing.lg,
+        paddingBottom: 100,
     },
     categoriaCard: {
-        backgroundColor: Colors.neutral.white,
-        borderRadius: BorderRadius.lg,
+        backgroundColor: '#1a1a1a',
+        borderRadius: BorderRadius.card,
         padding: Spacing.lg,
         marginBottom: Spacing.md,
-        ...ComponentStyles.card,
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
+        shadowColor: '#FFD300',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
     },
     categoriaHeader: {
+        marginBottom: Spacing.md,
+    },
+    categoriaTitleRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.sm,
         marginBottom: Spacing.sm,
     },
-    categoriaInfo: {
-        flex: 1,
-    },
     categoriaNome: {
-        ...Typography.h4,
-        color: Colors.text.primary,
-        marginBottom: Spacing.xs,
+        fontSize: Typography.sizes.h3,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
+        flex: 1,
     },
     statusBadge: {
         flexDirection: 'row',
         alignItems: 'center',
         alignSelf: 'flex-start',
-        paddingHorizontal: Spacing.sm,
+        paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.xs,
         borderRadius: BorderRadius.full,
-        backgroundColor: Colors.neutral.lightGray,
+        gap: Spacing.xs,
     },
     statusDot: {
         width: 8,
         height: 8,
         borderRadius: 4,
-        marginRight: Spacing.xs,
     },
     statusText: {
-        ...Typography.small,
-        fontWeight: '600',
+        fontSize: Typography.sizes.small,
+        fontWeight: Typography.fonts.headingWeight,
     },
     categoriaDetails: {
-        marginBottom: Spacing.sm,
-        paddingTop: Spacing.sm,
-        borderTopWidth: 1,
-        borderTopColor: Colors.neutral.border,
-        gap: Spacing.xs,
-    },
-    detailRow: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
-        gap: Spacing.sm,
+        flexWrap: 'wrap',
+        gap: Spacing.md,
+        marginBottom: Spacing.md,
+        paddingTop: Spacing.md,
+        borderTopWidth: 1,
+        borderTopColor: '#2a2a2a',
     },
-    detailContent: {
-        flex: 1,
+    detailItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.xs,
+        backgroundColor: '#2a2a2a',
+        paddingHorizontal: Spacing.md,
+        paddingVertical: Spacing.sm,
+        borderRadius: BorderRadius.input,
     },
-    detailLabel: {
-        ...Typography.small,
-        color: Colors.text.secondary,
-        fontWeight: '600',
-    },
-    detailValue: {
-        ...Typography.body,
-        color: Colors.text.primary,
-        marginTop: 2,
+    detailText: {
+        fontSize: Typography.sizes.small,
+        color: '#FFFFFF',
+        fontWeight: Typography.fonts.bodyWeight,
     },
     actionsContainer: {
         flexDirection: 'row',
         gap: Spacing.sm,
-        marginTop: Spacing.sm,
+        paddingTop: Spacing.md,
+        borderTopWidth: 1,
+        borderTopColor: '#2a2a2a',
     },
-    actionButton: {
+    editButton: {
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         gap: Spacing.xs,
-        paddingVertical: Spacing.sm,
-        borderRadius: BorderRadius.md,
+        backgroundColor: '#FFD300',
+        paddingVertical: Spacing.md,
+        borderRadius: BorderRadius.button,
+        shadowColor: '#FFD300',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 4,
     },
-    editButton: {
-        backgroundColor: Colors.neutral.charcoal.ocean,
+    editButtonText: {
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#000000',
     },
     deleteButton: {
-        backgroundColor: Colors.accent.error,
-    },
-    actionButtonText: {
-        ...Typography.body,
-        color: Colors.neutral.white,
-        fontWeight: '600',
+        width: 48,
+        height: 48,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#2a2a2a',
+        borderRadius: BorderRadius.button,
+        borderWidth: 1,
+        borderColor: '#FF4444',
     },
     emptyContainer: {
         flex: 1,
@@ -496,32 +496,48 @@ const styles = StyleSheet.create({
         paddingVertical: 60,
         paddingHorizontal: Spacing.xl,
     },
+    emptyIconContainer: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        backgroundColor: '#1a1a1a',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: Spacing.lg,
+        borderWidth: 2,
+        borderColor: '#2a2a2a',
+    },
     emptyTitle: {
-        ...Typography.h4,
-        color: Colors.text.primary,
-        marginTop: Spacing.md,
+        fontSize: Typography.sizes.h3,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
         marginBottom: Spacing.xs,
         textAlign: 'center',
     },
     emptyDescription: {
-        ...Typography.body,
-        color: Colors.text.secondary,
+        fontSize: Typography.sizes.body,
+        color: '#999999',
         textAlign: 'center',
-        marginBottom: Spacing.lg,
+        marginBottom: Spacing.xl,
     },
     emptyButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: Spacing.xs,
-        backgroundColor: Colors.primary.mikasaBright,
-        paddingHorizontal: Spacing.lg,
+        gap: Spacing.sm,
+        backgroundColor: '#FFD300',
+        paddingHorizontal: Spacing.xl,
         paddingVertical: Spacing.md,
-        borderRadius: BorderRadius.md,
+        borderRadius: BorderRadius.button,
+        shadowColor: '#FFD300',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 4,
     },
     emptyButtonText: {
-        ...Typography.body,
-        color: Colors.neutral.white,
-        fontWeight: '600',
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#000000',
     },
     fab: {
         position: 'absolute',
@@ -530,10 +546,9 @@ const styles = StyleSheet.create({
         width: 56,
         height: 56,
         borderRadius: 28,
-        backgroundColor: Colors.primary.mikasaBright,
+        backgroundColor: '#FFD300',
         justifyContent: 'center',
         alignItems: 'center',
-        ...ComponentStyles.shadow,
-        elevation: 8,
+
     },
 });
