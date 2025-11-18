@@ -95,6 +95,14 @@ export default function JogadorHomeScreen() {
         router.push('/src/screens/user_jogador/jogador/EditJogadorScreen');
     };
 
+    const navigateToAmigos = () => {
+        router.push('/src/screens/user_jogador/amigos/ListAmigosScreen');
+    };
+
+    const navigateToPosts = () => {
+        router.push('/src/screens/user_jogador/posts/ListPostsScreen');
+    };
+
     const navigateToTorneios = () => {
         router.push('/src/screens/user_jogador/torneios/TorneiosListScreen');
     };
@@ -131,7 +139,6 @@ export default function JogadorHomeScreen() {
 
                 {/* Menu Principal */}
                 <View style={styles.mainMenu}>
-                    <Text style={styles.sectionTitle}>Menu Principal</Text>
 
                     <View style={styles.menuGrid}>
                         {/* Arenas */}
@@ -141,10 +148,9 @@ export default function JogadorHomeScreen() {
                             activeOpacity={0.8}
                         >
                             <View style={styles.menuIconContainer}>
-                                <Ionicons name="location" size={32} color="#000000" />
+                                <Ionicons name="location" size={24} color="#000000" />
                             </View>
                             <Text style={styles.menuCardTitle}>Arenas</Text>
-                            <Text style={styles.menuCardDescription}>Encontre quadras próximas</Text>
                         </TouchableOpacity>
 
                         {/* Rachas */}
@@ -154,10 +160,33 @@ export default function JogadorHomeScreen() {
                             activeOpacity={0.8}
                         >
                             <View style={styles.menuIconContainer}>
-                                <Ionicons name="tennisball" size={32} color="#000000" />
+                                <Ionicons name="tennisball" size={24} color="#000000" />
                             </View>
                             <Text style={styles.menuCardTitle}>Rachas</Text>
-                            <Text style={styles.menuCardDescription}>Partidas disponíveis</Text>
+                        </TouchableOpacity>
+
+                        {/* Posts */}
+                        <TouchableOpacity
+                            style={styles.menuCard}
+                            onPress={navigateToPosts}
+                            activeOpacity={0.8}
+                        >
+                            <View style={styles.menuIconContainer}>
+                                <Ionicons name="notifications" size={24} color="#000000" />
+                            </View>
+                            <Text style={styles.menuCardTitle}>Posts</Text>
+                        </TouchableOpacity>
+
+                        {/* Amigos */}
+                        <TouchableOpacity
+                            style={styles.menuCard}
+                            onPress={navigateToAmigos}
+                            activeOpacity={0.8}
+                        >
+                            <View style={styles.menuIconContainer}>
+                                <Ionicons name="people" size={24} color="#000000" />
+                            </View>
+                            <Text style={styles.menuCardTitle}>Amigos</Text>
                         </TouchableOpacity>
 
                         {/* Perfil */}
@@ -167,47 +196,43 @@ export default function JogadorHomeScreen() {
                             activeOpacity={0.8}
                         >
                             <View style={styles.menuIconContainer}>
-                                <Ionicons name="person" size={32} color="#000000" />
+                                <Ionicons name="person" size={24} color="#000000" />
                             </View>
                             <Text style={styles.menuCardTitle}>Perfil</Text>
-                            <Text style={styles.menuCardDescription}>Meus dados</Text>
-                        </TouchableOpacity>
-
-                        {/* Ranking */}
-                        <TouchableOpacity
-                            style={[styles.menuCard, styles.menuCardRanking]}
-                            activeOpacity={0.8}
-                        >
-                            <View style={styles.menuIconContainer}>
-                                <Ionicons name="trophy" size={32}  color="#000000"  />
-                            </View>
-                            <Text style={styles.menuCardTitle}>Ranking</Text>
-                            <Text style={styles.menuCardDescription}>Ver classificação</Text>
                         </TouchableOpacity>
 
                         {/* Torneios */}
                         <TouchableOpacity
-                            style={[styles.menuCard, styles.menuCardTournaments]}
+                            style={styles.menuCard}
                             activeOpacity={0.8}
                             onPress={navigateToTorneios}
                         >
                             <View style={styles.menuIconContainer}>
-                                <Ionicons name="medal" size={32}  color="#000000"  />
+                                <Ionicons name="medal" size={24} color="#000000" />
                             </View>
                             <Text style={styles.menuCardTitle}>Torneios</Text>
-                            <Text style={styles.menuCardDescription}>Competições</Text>
+                        </TouchableOpacity>
+
+                        {/* Ranking */}
+                        <TouchableOpacity
+                            style={styles.menuCard}
+                            activeOpacity={0.8}
+                        >
+                            <View style={styles.menuIconContainer}>
+                                <Ionicons name="trophy" size={24} color="#000000" />
+                            </View>
+                            <Text style={styles.menuCardTitle}>Ranking</Text>
                         </TouchableOpacity>
 
                         {/* Estatísticas */}
                         <TouchableOpacity
-                            style={[styles.menuCard, styles.menuCardStats]}
+                            style={styles.menuCard}
                             activeOpacity={0.8}
                         >
                             <View style={styles.menuIconContainer}>
-                                <Ionicons name="bar-chart" size={32}  color="#000000"  />
+                                <Ionicons name="bar-chart" size={24} color="#000000" />
                             </View>
                             <Text style={styles.menuCardTitle}>Estatísticas</Text>
-                            <Text style={styles.menuCardDescription}>Meu desempenho</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -433,17 +458,19 @@ const styles = StyleSheet.create({
     menuGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: Spacing.md,
+        gap: Spacing.sm,
+        justifyContent: 'space-between',
     },
     menuCard: {
-        width: '48%',
-        padding: Spacing.lg,
-        borderRadius: BorderRadius.card,
+        width: '23%',
+        aspectRatio: 1,
+        padding: Spacing.sm,
+        borderRadius: BorderRadius.md,
         alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: '#1a1a1a',
         borderWidth: 1,
         borderColor: '#2a2a2a',
-        minHeight: 140,
         shadowColor: '#FFD300',
         shadowOffset: {
             width: 0,
@@ -454,25 +481,19 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     menuIconContainer: {
-        width: 64,
-        height: 64,
-        borderRadius: 32,
+        width: 48,
+        height: 48,
+        borderRadius: 24,
         backgroundColor: '#FFD300',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: Spacing.sm,
+        marginBottom: Spacing.xs,
         elevation: 3,
     },
     menuCardTitle: {
-        fontSize: Typography.sizes.body,
+        fontSize: Typography.sizes.caption,
         fontWeight: Typography.fonts.headingWeight,
         color: '#FFD300',
-        marginBottom: Spacing.xs,
-        textAlign: 'center',
-    },
-    menuCardDescription: {
-        fontSize: Typography.sizes.caption,
-        color: '#999999',
         textAlign: 'center',
     },
 
