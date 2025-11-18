@@ -164,18 +164,14 @@ export default function LoginScreen() {
 
                 <View style={styles.form}>
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Email</Text>
+                        <Text style={styles.label}>
+                            <Ionicons name="mail" size={16} color="#FFD300" /> Email
+                        </Text>
                         <View style={styles.inputContainer}>
-                            <Ionicons
-                                name="mail-outline"
-                                size={20}
-                                color="#FFD300"
-                                style={styles.inputIcon}
-                            />
                             <TextInput
                                 style={styles.input}
                                 placeholder="seu@email.com"
-                                placeholderTextColor="#666"
+                                placeholderTextColor="#666666"
                                 value={email}
                                 onChangeText={setEmail}
                                 keyboardType="email-address"
@@ -187,18 +183,14 @@ export default function LoginScreen() {
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Senha</Text>
-                        <View style={styles.passwordContainer}>
-                            <Ionicons
-                                name="lock-closed-outline"
-                                size={20}
-                                color="#FFD300"
-                                style={styles.inputIcon}
-                            />
+                        <Text style={styles.label}>
+                            <Ionicons name="lock-closed" size={16} color="#FFD300" /> Senha
+                        </Text>
+                        <View style={styles.inputContainer}>
                             <TextInput
-                                style={styles.passwordInput}
+                                style={styles.input}
                                 placeholder="Digite sua senha"
-                                placeholderTextColor="#666"
+                                placeholderTextColor="#666666"
                                 value={senha}
                                 onChangeText={setSenha}
                                 secureTextEntry={!mostrarSenha}
@@ -210,7 +202,7 @@ export default function LoginScreen() {
                                 disabled={loading}
                             >
                                 <Ionicons
-                                    name={mostrarSenha ? 'eye-outline' : 'eye-off-outline'}
+                                    name={mostrarSenha ? 'eye' : 'eye-off'}
                                     size={20}
                                     color="#FFD300"
                                 />
@@ -234,13 +226,16 @@ export default function LoginScreen() {
                     >
                         {loading ? (
                             <View style={styles.buttonContent}>
-                                <ActivityIndicator color="#000" size="small"/>
+                                <ActivityIndicator color="#000000" size="small"/>
                                 <Text style={[styles.buttonText, {marginLeft: 10}]}>
                                     Entrando...
                                 </Text>
                             </View>
                         ) : (
-                            <Text style={styles.buttonText}>Entrar</Text>
+                            <>
+                                <Ionicons name="log-in" size={20} color="#000000" />
+                                <Text style={styles.buttonText}>Entrar</Text>
+                            </>
                         )}
                     </TouchableOpacity>
 
@@ -248,7 +243,7 @@ export default function LoginScreen() {
                         <Text style={styles.footerText}>Não tem uma conta?</Text>
                         <TouchableOpacity
                             disabled={loading}
-                            activeOpacity={0.7}
+                            activeOpacity={0.8}
                             onPress={handleCadastro}
                         >
                             <Text style={[styles.linkText, loading && styles.linkDisabled]}>
@@ -256,18 +251,6 @@ export default function LoginScreen() {
                             </Text>
                         </TouchableOpacity>
                     </View>
-                </View>
-
-                <View style={styles.infoBox}>
-                    <Ionicons
-                        name="shield-checkmark-outline"
-                        size={18}
-                        color="#FFD300"
-                        style={styles.infoIcon}
-                    />
-                    <Text style={styles.infoText}>
-                        Seus dados estão seguros conosco
-                    </Text>
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -277,206 +260,138 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#000000",
+        backgroundColor: '#0a0a0a',
     },
-
     scrollContainer: {
         flexGrow: 1,
-        justifyContent: "center",
+        justifyContent: 'center',
         padding: Spacing.xl,
     },
-
     header: {
-        alignItems: "center",
-        marginBottom: Spacing.xxl,
+        alignItems: 'center',
+        marginBottom: Spacing.xl,
     },
-
     logoContainer: {
         marginBottom: Spacing.lg,
-        alignItems: "center",
-        justifyContent: "center",
+        width: 200,
+        height: 200,
+        borderRadius: 100,
+        backgroundColor: '#1a1a1a',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#FFD300',
     },
-
     logo: {
         width: 200,
         height: 200,
     },
-
     title: {
-        fontSize: 28,
-        fontWeight: "700",
-        color: "#FFD300",
+        fontSize: Typography.sizes.h1,
+        fontWeight: Typography.fonts.displayWeight,
+        color: '#FFFFFF',
         marginBottom: Spacing.xs,
-        textAlign: "center",
-        letterSpacing: 0.5,
+        textAlign: 'center',
     },
-
     subtitle: {
-        fontSize: 15,
-        color: "#999",
-        textAlign: "center",
-        letterSpacing: 0.3,
+        fontSize: Typography.sizes.body,
+        color: '#999999',
+        textAlign: 'center',
     },
-
     form: {
-        backgroundColor: "#0a0a0a",
-        borderRadius: 20,
+        backgroundColor: '#1a1a1a',
+        borderRadius: BorderRadius.card,
         padding: Spacing.xl,
         borderWidth: 1,
-        borderColor: "#1a1a1a",
-        shadowColor: "#FFD300",
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
+        borderColor: '#2a2a2a',
+        shadowColor: '#FFD300',
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
-        shadowRadius: 12,
-        elevation: 8,
+        shadowRadius: 8,
+        elevation: 4,
     },
-
     inputGroup: {
         marginBottom: Spacing.lg,
     },
-
     label: {
-        fontSize: 13,
-        fontWeight: "600",
-        color: "#FFD300",
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
         marginBottom: Spacing.sm,
-        letterSpacing: 0.5,
-        textTransform: "uppercase",
     },
-
     inputContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#000000",
-        borderWidth: 1.5,
-        borderColor: "#222",
-        borderRadius: 12,
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#2a2a2a',
+        borderWidth: 1,
+        borderColor: '#3a3a3a',
+        borderRadius: BorderRadius.input,
         paddingHorizontal: Spacing.md,
-        height: 52,
     },
-
-    inputIcon: {
-        marginRight: Spacing.sm,
-    },
-
     input: {
         flex: 1,
-        fontSize: 15,
-        color: "#FFF",
+        paddingVertical: Spacing.md,
+        fontSize: Typography.sizes.body,
+        color: '#FFFFFF',
     },
-
-    passwordContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#000000",
-        borderWidth: 1.5,
-        borderColor: "#222",
-        borderRadius: 12,
-        paddingHorizontal: Spacing.md,
-        height: 52,
-    },
-
-    passwordInput: {
-        flex: 1,
-        fontSize: 15,
-        color: "#FFF",
-    },
-
     eyeButton: {
         padding: Spacing.xs,
     },
-
     forgotPassword: {
-        alignSelf: "flex-end",
-        marginBottom: Spacing.lg,
+        alignSelf: 'flex-end',
+        marginBottom: Spacing.md,
         marginTop: -Spacing.xs,
     },
-
     forgotPasswordText: {
-        color: "#FFD300",
-        fontSize: 13,
-        fontWeight: "600",
+        color: '#FFD300',
+        fontSize: Typography.sizes.small,
+        fontWeight: Typography.fonts.headingWeight,
     },
-
     button: {
-        backgroundColor: "#FFD300",
-        borderRadius: 12,
-        height: 52,
-        alignItems: "center",
-        justifyContent: "center",
+        backgroundColor: '#FFD300',
+        borderRadius: BorderRadius.button,
+        padding: Spacing.base,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: Spacing.sm,
         marginTop: Spacing.sm,
-        shadowColor: "#FFD300",
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
+        shadowColor: '#FFD300',
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
-        elevation: 6,
+        elevation: 4,
     },
-
     buttonDisabled: {
-        opacity: 0.7,
+        opacity: 0.6,
     },
-
     buttonContent: {
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.sm,
     },
-
     buttonText: {
-        color: "#000",
-        fontSize: 16,
-        fontWeight: "700",
-        letterSpacing: 0.5,
+        color: '#000000',
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
     },
-
     footer: {
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
         marginTop: Spacing.lg,
         gap: Spacing.xs,
     },
-
     footerText: {
-        fontSize: 14,
-        color: "#999",
+        fontSize: Typography.sizes.bodySmall,
+        color: '#999999',
     },
-
     linkText: {
-        fontSize: 14,
-        color: "#FFD300",
-        fontWeight: "700",
-        textDecorationLine: "underline",
+        fontSize: Typography.sizes.bodySmall,
+        color: '#FFD300',
+        fontWeight: Typography.fonts.headingWeight,
     },
-
     linkDisabled: {
         opacity: 0.5,
-    },
-
-    infoBox: {
-        marginTop: Spacing.xl,
-        backgroundColor: "#0a0a0a",
-        padding: Spacing.md,
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: "#1a1a1a",
-        flexDirection: "row",
-        alignItems: "center",
-    },
-
-    infoIcon: {
-        marginRight: Spacing.sm,
-    },
-
-    infoText: {
-        flex: 1,
-        fontSize: 12,
-        color: "#999",
-        letterSpacing: 0.3,
     },
 });

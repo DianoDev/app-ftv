@@ -5,10 +5,15 @@ import {
     StyleSheet,
     SafeAreaView,
     ScrollView,
-    TouchableOpacity, Alert, ActivityIndicator,
+    TouchableOpacity,
+    Alert,
+    ActivityIndicator,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import {StorageService} from "../../services/storage";
+import { Colors, Typography, Spacing, BorderRadius } from '../../styles/theme';
 
 export default function ProfessorHomeScreen() {
     const router = useRouter();
@@ -56,9 +61,11 @@ export default function ProfessorHomeScreen() {
             ]
         );
     };
+
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+            <StatusBar style="light" />
+            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 {/* Header */}
                 <View style={styles.header}>
                     <View>
@@ -69,48 +76,60 @@ export default function ProfessorHomeScreen() {
                         style={styles.logoutButton}
                         onPress={confirmLogout}
                         disabled={isLoggingOut}
+                        activeOpacity={0.8}
                     >
                         {isLoggingOut ? (
-                            <ActivityIndicator color="#fff" size="small" />
+                            <ActivityIndicator color="#000000" size="small" />
                         ) : (
-                            <Text style={styles.logoutText}>Sair</Text>
+                            <>
+                                <Ionicons name="log-out-outline" size={18} color="#000000" />
+                                <Text style={styles.logoutText}>Sair</Text>
+                            </>
                         )}
                     </TouchableOpacity>
                 </View>
 
                 {/* Cards de Ações Rápidas */}
-                <View style={styles.quickActions}>
+                <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Ações Rápidas</Text>
 
                     <View style={styles.cardsContainer}>
-                        <TouchableOpacity style={[styles.card, styles.cardPrimary]}>
-                            <Text style={styles.cardIcon}>📅</Text>
-                            <Text style={styles.cardTitle}>Aulas</Text>
-                            <Text style={styles.cardDescription}>Gerenciar agenda</Text>
+                        <TouchableOpacity style={styles.quickCard} activeOpacity={0.8}>
+                            <View style={styles.quickCardIcon}>
+                                <Ionicons name="calendar" size={28} color="#FFD300" />
+                            </View>
+                            <Text style={styles.quickCardTitle}>Aulas</Text>
+                            <Text style={styles.quickCardDescription}>Gerenciar agenda</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.card, styles.cardSecondary]}>
-                            <Text style={styles.cardIcon}>👥</Text>
-                            <Text style={styles.cardTitle}>Alunos</Text>
-                            <Text style={styles.cardDescription}>Ver lista de alunos</Text>
+                        <TouchableOpacity style={styles.quickCard} activeOpacity={0.8}>
+                            <View style={styles.quickCardIcon}>
+                                <Ionicons name="people" size={28} color="#FFD300" />
+                            </View>
+                            <Text style={styles.quickCardTitle}>Alunos</Text>
+                            <Text style={styles.quickCardDescription}>Ver lista de alunos</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.card, styles.cardSuccess]}>
-                            <Text style={styles.cardIcon}>📊</Text>
-                            <Text style={styles.cardTitle}>Progresso</Text>
-                            <Text style={styles.cardDescription}>Acompanhar evolução</Text>
+                        <TouchableOpacity style={styles.quickCard} activeOpacity={0.8}>
+                            <View style={styles.quickCardIcon}>
+                                <Ionicons name="stats-chart" size={28} color="#FFD300" />
+                            </View>
+                            <Text style={styles.quickCardTitle}>Progresso</Text>
+                            <Text style={styles.quickCardDescription}>Acompanhar evolução</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.card, styles.cardWarning]}>
-                            <Text style={styles.cardIcon}>💰</Text>
-                            <Text style={styles.cardTitle}>Pagamentos</Text>
-                            <Text style={styles.cardDescription}>Ver recebimentos</Text>
+                        <TouchableOpacity style={styles.quickCard} activeOpacity={0.8}>
+                            <View style={styles.quickCardIcon}>
+                                <Ionicons name="cash" size={28} color="#FFD300" />
+                            </View>
+                            <Text style={styles.quickCardTitle}>Pagamentos</Text>
+                            <Text style={styles.quickCardDescription}>Ver recebimentos</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
 
                 {/* Estatísticas do Dia */}
-                <View style={styles.statsSection}>
+                <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Hoje</Text>
 
                     <View style={styles.statsContainer}>
@@ -132,7 +151,7 @@ export default function ProfessorHomeScreen() {
                 </View>
 
                 {/* Próximas Aulas */}
-                <View style={styles.classesSection}>
+                <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Próximas Aulas</Text>
 
                     <View style={styles.classCard}>
@@ -142,13 +161,17 @@ export default function ProfessorHomeScreen() {
                         </View>
                         <View style={styles.classInfo}>
                             <Text style={styles.classTitle}>Técnicas de Saque</Text>
-                            <Text style={styles.classStudents}>👥 8 alunos • Iniciante</Text>
-                            <Text style={styles.classLocation}>📍 Arena Beach Club</Text>
-                        </View>
-                        <View style={styles.classStatus}>
-                            <View style={[styles.statusBadge, styles.statusConfirmed]}>
-                                <Text style={styles.statusText}>✓</Text>
+                            <View style={styles.classDetail}>
+                                <Ionicons name="people" size={14} color="#FFD300" />
+                                <Text style={styles.classDetailText}>8 alunos • Iniciante</Text>
                             </View>
+                            <View style={styles.classDetail}>
+                                <Ionicons name="location" size={14} color="#FFD300" />
+                                <Text style={styles.classDetailText}>Arena Beach Club</Text>
+                            </View>
+                        </View>
+                        <View style={styles.statusBadgeConfirmed}>
+                            <Ionicons name="checkmark" size={16} color="#FFFFFF" />
                         </View>
                     </View>
 
@@ -159,13 +182,17 @@ export default function ProfessorHomeScreen() {
                         </View>
                         <View style={styles.classInfo}>
                             <Text style={styles.classTitle}>Tática de Jogo</Text>
-                            <Text style={styles.classStudents}>👥 6 alunos • Avançado</Text>
-                            <Text style={styles.classLocation}>📍 Praia do Futuro</Text>
-                        </View>
-                        <View style={styles.classStatus}>
-                            <View style={[styles.statusBadge, styles.statusPending]}>
-                                <Text style={styles.statusText}>!</Text>
+                            <View style={styles.classDetail}>
+                                <Ionicons name="people" size={14} color="#FFD300" />
+                                <Text style={styles.classDetailText}>6 alunos • Avançado</Text>
                             </View>
+                            <View style={styles.classDetail}>
+                                <Ionicons name="location" size={14} color="#FFD300" />
+                                <Text style={styles.classDetailText}>Praia do Futuro</Text>
+                            </View>
+                        </View>
+                        <View style={styles.statusBadgePending}>
+                            <Ionicons name="alert" size={16} color="#FFFFFF" />
                         </View>
                     </View>
 
@@ -176,19 +203,23 @@ export default function ProfessorHomeScreen() {
                         </View>
                         <View style={styles.classInfo}>
                             <Text style={styles.classTitle}>Aula Particular</Text>
-                            <Text style={styles.classStudents}>👤 1 aluno • Intermediário</Text>
-                            <Text style={styles.classLocation}>📍 Arena Praia Verde</Text>
-                        </View>
-                        <View style={styles.classStatus}>
-                            <View style={[styles.statusBadge, styles.statusConfirmed]}>
-                                <Text style={styles.statusText}>✓</Text>
+                            <View style={styles.classDetail}>
+                                <Ionicons name="person" size={14} color="#FFD300" />
+                                <Text style={styles.classDetailText}>1 aluno • Intermediário</Text>
                             </View>
+                            <View style={styles.classDetail}>
+                                <Ionicons name="location" size={14} color="#FFD300" />
+                                <Text style={styles.classDetailText}>Arena Praia Verde</Text>
+                            </View>
+                        </View>
+                        <View style={styles.statusBadgeConfirmed}>
+                            <Ionicons name="checkmark" size={16} color="#FFFFFF" />
                         </View>
                     </View>
                 </View>
 
                 {/* Solicitações Pendentes */}
-                <View style={styles.requestsSection}>
+                <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Solicitações Pendentes</Text>
 
                     <View style={styles.requestCard}>
@@ -198,11 +229,11 @@ export default function ProfessorHomeScreen() {
                             <Text style={styles.requestTime}>Há 2 horas</Text>
                         </View>
                         <View style={styles.requestActions}>
-                            <TouchableOpacity style={styles.acceptButton}>
-                                <Text style={styles.acceptButtonText}>✓</Text>
+                            <TouchableOpacity style={styles.acceptButton} activeOpacity={0.8}>
+                                <Ionicons name="checkmark" size={20} color="#FFFFFF" />
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.rejectButton}>
-                                <Text style={styles.rejectButtonText}>✕</Text>
+                            <TouchableOpacity style={styles.rejectButton} activeOpacity={0.8}>
+                                <Ionicons name="close" size={20} color="#FFFFFF" />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -214,11 +245,11 @@ export default function ProfessorHomeScreen() {
                             <Text style={styles.requestTime}>Há 5 horas</Text>
                         </View>
                         <View style={styles.requestActions}>
-                            <TouchableOpacity style={styles.acceptButton}>
-                                <Text style={styles.acceptButtonText}>✓</Text>
+                            <TouchableOpacity style={styles.acceptButton} activeOpacity={0.8}>
+                                <Ionicons name="checkmark" size={20} color="#FFFFFF" />
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.rejectButton}>
-                                <Text style={styles.rejectButtonText}>✕</Text>
+                            <TouchableOpacity style={styles.rejectButton} activeOpacity={0.8}>
+                                <Ionicons name="close" size={20} color="#FFFFFF" />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -231,249 +262,227 @@ export default function ProfessorHomeScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#0a0a0a',
     },
     scrollContent: {
-        padding: 20,
+        padding: Spacing.lg,
+        paddingBottom: Spacing.huge,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 30,
+        marginBottom: Spacing.xl,
     },
     greeting: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#1b1b18',
+        fontSize: Typography.sizes.h2,
+        fontWeight: Typography.fonts.displayWeight,
+        color: '#FFFFFF',
     },
     subtitle: {
-        fontSize: 14,
-        color: '#666',
+        fontSize: Typography.sizes.body,
+        color: '#999999',
         marginTop: 4,
     },
     logoutButton: {
-        backgroundColor: '#ff4444',
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 8,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.xs,
+        backgroundColor: '#FFD300',
+        paddingHorizontal: Spacing.md,
+        paddingVertical: Spacing.sm,
+        borderRadius: BorderRadius.button,
+        shadowColor: '#FFD300',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 4,
     },
     logoutText: {
-        color: '#fff',
-        fontWeight: '600',
+        color: '#000000',
+        fontWeight: Typography.fonts.headingWeight,
+        fontSize: Typography.sizes.small,
     },
-    quickActions: {
-        marginBottom: 30,
+    section: {
+        marginBottom: Spacing.xl,
     },
     sectionTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#1b1b18',
-        marginBottom: 16,
+        fontSize: Typography.sizes.h3,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
+        marginBottom: Spacing.md,
     },
     cardsContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 12,
+        gap: Spacing.md,
     },
-    card: {
+    quickCard: {
         width: '48%',
-        padding: 20,
-        borderRadius: 12,
+        backgroundColor: '#1a1a1a',
+        padding: Spacing.lg,
+        borderRadius: BorderRadius.card,
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
         alignItems: 'center',
     },
-    cardPrimary: {
-        backgroundColor: '#5856D6',
+    quickCardIcon: {
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: '#2a2a2a',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: Spacing.sm,
     },
-    cardSecondary: {
-        backgroundColor: '#007AFF',
-    },
-    cardSuccess: {
-        backgroundColor: '#34C759',
-    },
-    cardWarning: {
-        backgroundColor: '#FF9500',
-    },
-    cardIcon: {
-        fontSize: 32,
-        marginBottom: 8,
-    },
-    cardTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#fff',
+    quickCardTitle: {
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
         marginBottom: 4,
     },
-    cardDescription: {
-        fontSize: 12,
-        color: '#fff',
-        opacity: 0.9,
-    },
-    statsSection: {
-        marginBottom: 30,
+    quickCardDescription: {
+        fontSize: Typography.sizes.small,
+        color: '#999999',
+        textAlign: 'center',
     },
     statsContainer: {
         flexDirection: 'row',
-        gap: 12,
+        gap: Spacing.md,
     },
     statCard: {
         flex: 1,
-        backgroundColor: '#fff',
-        padding: 16,
-        borderRadius: 12,
+        backgroundColor: '#1a1a1a',
+        padding: Spacing.lg,
+        borderRadius: BorderRadius.card,
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
     },
     statNumber: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#5856D6',
+        fontSize: Typography.sizes.h1,
+        fontWeight: Typography.fonts.displayWeight,
+        color: '#FFD300',
         marginBottom: 4,
     },
     statLabel: {
-        fontSize: 12,
-        color: '#666',
+        fontSize: Typography.sizes.small,
+        color: '#999999',
         textAlign: 'center',
-    },
-    classesSection: {
-        marginBottom: 30,
     },
     classCard: {
         flexDirection: 'row',
-        backgroundColor: '#fff',
-        padding: 16,
-        borderRadius: 12,
-        marginBottom: 12,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
+        backgroundColor: '#1a1a1a',
+        padding: Spacing.md,
+        borderRadius: BorderRadius.card,
+        marginBottom: Spacing.md,
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
         alignItems: 'center',
     },
     classTime: {
-        backgroundColor: '#5856D6',
-        padding: 12,
-        borderRadius: 8,
-        marginRight: 16,
+        backgroundColor: '#2a2a2a',
+        padding: Spacing.md,
+        borderRadius: BorderRadius.input,
+        marginRight: Spacing.md,
         alignItems: 'center',
         minWidth: 60,
+        borderWidth: 1,
+        borderColor: '#FFD300',
     },
     classHour: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#fff',
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFD300',
     },
     classDuration: {
-        fontSize: 12,
-        color: '#fff',
+        fontSize: Typography.sizes.small,
+        color: '#FFFFFF',
         marginTop: 4,
     },
     classInfo: {
         flex: 1,
     },
     classTitle: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#1b1b18',
-        marginBottom: 4,
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
+        marginBottom: Spacing.xs,
     },
-    classStudents: {
-        fontSize: 14,
-        color: '#666',
+    classDetail: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.xs,
         marginBottom: 2,
     },
-    classLocation: {
-        fontSize: 14,
-        color: '#666',
+    classDetailText: {
+        fontSize: Typography.sizes.small,
+        color: '#999999',
     },
-    classStatus: {
-        marginLeft: 12,
-    },
-    statusBadge: {
+    statusBadgeConfirmed: {
         width: 32,
         height: 32,
         borderRadius: 16,
+        backgroundColor: '#00FF88',
         alignItems: 'center',
         justifyContent: 'center',
+        marginLeft: Spacing.sm,
     },
-    statusConfirmed: {
-        backgroundColor: '#34C759',
-    },
-    statusPending: {
+    statusBadgePending: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
         backgroundColor: '#FF9500',
-    },
-    statusText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    requestsSection: {
-        marginBottom: 30,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: Spacing.sm,
     },
     requestCard: {
         flexDirection: 'row',
-        backgroundColor: '#fff',
-        padding: 16,
-        borderRadius: 12,
-        marginBottom: 12,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
+        backgroundColor: '#1a1a1a',
+        padding: Spacing.md,
+        borderRadius: BorderRadius.card,
+        marginBottom: Spacing.md,
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
         alignItems: 'center',
     },
     requestInfo: {
         flex: 1,
     },
     requestName: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#1b1b18',
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
         marginBottom: 4,
     },
     requestDetails: {
-        fontSize: 14,
-        color: '#666',
+        fontSize: Typography.sizes.small,
+        color: '#999999',
         marginBottom: 2,
     },
     requestTime: {
-        fontSize: 12,
-        color: '#999',
+        fontSize: Typography.sizes.caption,
+        color: '#666666',
     },
     requestActions: {
         flexDirection: 'row',
-        gap: 8,
+        gap: Spacing.sm,
     },
     acceptButton: {
-        backgroundColor: '#34C759',
+        backgroundColor: '#00FF88',
         width: 40,
         height: 40,
         borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    acceptButtonText: {
-        color: '#fff',
-        fontSize: 20,
-        fontWeight: 'bold',
     },
     rejectButton: {
-        backgroundColor: '#ff4444',
+        backgroundColor: '#FF4444',
         width: 40,
         height: 40,
         borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    rejectButtonText: {
-        color: '#fff',
-        fontSize: 20,
-        fontWeight: 'bold',
     },
 });
