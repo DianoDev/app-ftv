@@ -162,4 +162,174 @@ export const CampeonatoService = {
             };
         }
     },
+
+    /**
+     * Buscar chaveamento de uma categoria
+     */
+    async getChaveamento(categoriaId) {
+        try {
+            const token = await StorageService.getToken();
+
+            if (!token) {
+                throw new Error('Usuário não autenticado');
+            }
+
+            const response = await apiRequest(`/api/chaveamento/categoria/${categoriaId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.success) {
+                return {
+                    success: true,
+                    data: response.data,
+                };
+            }
+
+            throw new Error(response.message || 'Chaveamento não encontrado');
+        } catch (error) {
+            console.error('Erro ao buscar chaveamento:', error);
+            return {
+                success: false,
+                message: error.message || 'Erro ao buscar chaveamento',
+            };
+        }
+    },
+
+    /**
+     * Buscar todas as fases do chaveamento
+     */
+    async getTodasFases(categoriaId) {
+        try {
+            const token = await StorageService.getToken();
+
+            if (!token) {
+                throw new Error('Usuário não autenticado');
+            }
+
+            const response = await apiRequest(`/api/chaveamento/categoria/${categoriaId}/fases`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.success) {
+                return {
+                    success: true,
+                    data: response.data,
+                };
+            }
+
+            throw new Error(response.message || 'Erro ao buscar fases');
+        } catch (error) {
+            console.error('Erro ao buscar fases:', error);
+            return {
+                success: false,
+                message: error.message || 'Erro ao buscar fases',
+            };
+        }
+    },
+
+    /**
+     * Buscar partidas de uma categoria
+     */
+    async getPartidasCategoria(categoriaId) {
+        try {
+            const token = await StorageService.getToken();
+
+            if (!token) {
+                throw new Error('Usuário não autenticado');
+            }
+
+            const response = await apiRequest(`/api/partidas/categoria/${categoriaId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.success) {
+                return {
+                    success: true,
+                    data: response.data,
+                };
+            }
+
+            throw new Error(response.message || 'Erro ao buscar partidas');
+        } catch (error) {
+            console.error('Erro ao buscar partidas:', error);
+            return {
+                success: false,
+                message: error.message || 'Erro ao buscar partidas',
+            };
+        }
+    },
+
+    /**
+     * Buscar partida por ID
+     */
+    async getPartida(partidaId) {
+        try {
+            const token = await StorageService.getToken();
+
+            if (!token) {
+                throw new Error('Usuário não autenticado');
+            }
+
+            const response = await apiRequest(`/api/partidas/${partidaId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.success) {
+                return {
+                    success: true,
+                    data: response.data,
+                };
+            }
+
+            throw new Error(response.message || 'Partida não encontrada');
+        } catch (error) {
+            console.error('Erro ao buscar partida:', error);
+            return {
+                success: false,
+                message: error.message || 'Erro ao buscar partida',
+            };
+        }
+    },
+
+    /**
+     * Buscar minhas partidas (por inscrição)
+     */
+    async getMinhasPartidas(inscricaoId) {
+        try {
+            const token = await StorageService.getToken();
+
+            if (!token) {
+                throw new Error('Usuário não autenticado');
+            }
+
+            const response = await apiRequest(`/api/partidas/inscricao/${inscricaoId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.success) {
+                return {
+                    success: true,
+                    data: response.data,
+                };
+            }
+
+            throw new Error(response.message || 'Erro ao buscar partidas');
+        } catch (error) {
+            console.error('Erro ao buscar partidas:', error);
+            return {
+                success: false,
+                message: error.message || 'Erro ao buscar partidas',
+            };
+        }
+    },
 };
