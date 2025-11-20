@@ -23,6 +23,92 @@ import { Colors, Typography, Spacing, BorderRadius } from '../../../styles/theme
 const { width } = Dimensions.get('window');
 const STORY_WIDTH = 100;
 
+// Componente separado para o item do Post/Story
+const PostStoryItem = ({ item, onDelete, calcularTempoRestante }) => {
+    const progressAnim = useRef(new Animated.Value(0)).current;
+    const [user, setUser] = useState(null);
+
+    // Obter usuário logado
+    React.useEffect(() => {
+        const getUserData = async () => {
+            const userData = await StorageService.getUser();
+            setUser(userData);
+        };
+        getUserData();
+    }, []);
+
+    const isMyPost = item.usuario_id === user?.id;
+
+    // Calcular progresso do tempo
+    const agora = new Date();
+    const criacao = new Date(item.created_at);
+    const expiracao = new Date(item.expira_em);
+    const tempoTotal = expiracao - criacao;
+    const tempoDecorrido = agora - criacao;
+    const progresso = Math.min(Math.max(tempoDecorrido / tempoTotal, 0), 1);
+
+    React.useEffect(() => {
+        Animated.timing(progressAnim, {
+            toValue: progresso,
+            duration: 500,
+            useNativeDriver: false,
+        }).start();
+    }, [progresso]);
+
+    return (
+        <TouchableOpacity
+            style={styles.storyContainer}
+            activeOpacity={0.7}
+        >
+            <View style={styles.storyBorder}>
+                <View style={styles.storyImageContainer}>
+                    {item.imagem ? (
+                        <Image
+                            source={{ uri: `${API_CONFIG.BASE_URL}/storage/${item.imagem}` }}
+                            style={styles.storyImage}
+                            resizeMode="cover"
+                        />
+                    ) : (
+                        <View style={styles.storyPlaceholder}>
+                            <Ionicons name="image-outline" size={40} color="#666666" />
+                        </View>
+                    )}
+                    {/* Progress bar circular */}
+                    <View style={styles.progressContainer}>
+                        <Animated.View
+                            style={[
+                                styles.progressBar,
+                                {
+                                    width: progressAnim.interpolate({
+                                        inputRange: [0, 1],
+                                        outputRange: ['0%', '100%'],
+                                    }),
+                                },
+                            ]}
+                        />
+                    </View>
+                </View>
+                <View style={styles.storyInfo}>
+                    <Text style={styles.storyUsername} numberOfLines={1}>
+                        {item.usuario?.nome || 'Usuário'}
+                    </Text>
+                    <Text style={styles.storyTime}>
+                        {calcularTempoRestante(item.expira_em)}
+                    </Text>
+                </View>
+                {isMyPost && (
+                    <TouchableOpacity
+                        style={styles.deleteStoryButton}
+                        onPress={() => onDelete(item.id)}
+                    >
+                        <Ionicons name="trash-outline" size={16} color="#FF5252" />
+                    </TouchableOpacity>
+                )}
+            </View>
+        </TouchableOpacity>
+    );
+};
+
 export default function ListPostsScreen() {
     const router = useRouter();
     const [posts, setPosts] = useState([]);
@@ -165,80 +251,13 @@ export default function ListPostsScreen() {
         return `${minutos}min restante${minutos > 1 ? 's' : ''}`;
     };
 
-    const renderPostStory = ({ item, index }) => {
-        const progressAnim = useRef(new Animated.Value(0)).current;
-        const user = StorageService.getUser();
-        const isMyPost = item.usuario_id === user?.id;
-
-        // Calcular progresso do tempo
-        const agora = new Date();
-        const criacao = new Date(item.created_at);
-        const expiracao = new Date(item.expira_em);
-        const tempoTotal = expiracao - criacao;
-        const tempoDecorrido = agora - criacao;
-        const progresso = Math.min(Math.max(tempoDecorrido / tempoTotal, 0), 1);
-
-        React.useEffect(() => {
-            Animated.timing(progressAnim, {
-                toValue: progresso,
-                duration: 500,
-                useNativeDriver: false,
-            }).start();
-        }, [progresso]);
-
-        return (
-            <TouchableOpacity
-                style={styles.storyContainer}
-                activeOpacity={0.7}
-            >
-                <View style={styles.storyBorder}>
-                    <View style={styles.storyImageContainer}>
-                        {item.imagem ? (
-                            <Image
-                                source={{ uri: `${API_CONFIG.BASE_URL}/storage/${item.imagem}` }}
-                                style={styles.storyImage}
-                                resizeMode="cover"
-                            />
-                        ) : (
-                            <View style={styles.storyPlaceholder}>
-                                <Ionicons name="image-outline" size={40} color="#666666" />
-                            </View>
-                        )}
-                        {/* Progress bar circular */}
-                        <View style={styles.progressContainer}>
-                            <Animated.View
-                                style={[
-                                    styles.progressBar,
-                                    {
-                                        width: progressAnim.interpolate({
-                                            inputRange: [0, 1],
-                                            outputRange: ['0%', '100%'],
-                                        }),
-                                    },
-                                ]}
-                            />
-                        </View>
-                    </View>
-                    <View style={styles.storyInfo}>
-                        <Text style={styles.storyUsername} numberOfLines={1}>
-                            {item.usuario?.nome || 'Usuário'}
-                        </Text>
-                        <Text style={styles.storyTime}>
-                            {calcularTempoRestante(item.expira_em)}
-                        </Text>
-                    </View>
-                    {isMyPost && (
-                        <TouchableOpacity
-                            style={styles.deleteStoryButton}
-                            onPress={() => handleDeletePost(item.id)}
-                        >
-                            <Ionicons name="trash-outline" size={16} color="#FF5252" />
-                        </TouchableOpacity>
-                    )}
-                </View>
-            </TouchableOpacity>
-        );
-    };
+    const renderPostStory = ({ item, index }) => (
+        <PostStoryItem
+            item={item}
+            onDelete={handleDeletePost}
+            calcularTempoRestante={calcularTempoRestante}
+        />
+    );
 
     const renderHeader = () => (
         <View style={styles.storiesSection}>
