@@ -119,6 +119,7 @@ export default function TorneiosListScreen() {
 
     const getStatusColor = (status) => {
         switch (status) {
+            case 'inscricoes_abertas':
             case 'aberto':
                 return '#4CAF50';
             case 'em_andamento':
@@ -134,6 +135,7 @@ export default function TorneiosListScreen() {
 
     const getStatusLabel = (status) => {
         switch (status) {
+            case 'inscricoes_abertas':
             case 'aberto':
                 return 'Inscrições Abertas';
             case 'em_andamento':
@@ -322,7 +324,7 @@ export default function TorneiosListScreen() {
                     contentContainerStyle={styles.filtersContent}
                 >
                     {renderFilterButton('all', 'Todos')}
-                    {renderFilterButton('aberto', 'Inscrições Abertas')}
+                    {renderFilterButton('inscricoes_abertas', 'Inscrições Abertas')}
                     {renderFilterButton('em_andamento', 'Em Andamento')}
                     {renderFilterButton('finalizado', 'Finalizados')}
                 </ScrollView>

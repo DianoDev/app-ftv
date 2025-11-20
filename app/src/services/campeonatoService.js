@@ -8,6 +8,8 @@ export const CampeonatoService = {
      */
     async listCampeonatos(params = {}) {
         try {
+            const token = await StorageService.getToken();
+
             const queryParams = new URLSearchParams({
                 per_page: params.perPage || 20,
                 page: params.page || 1,
@@ -15,16 +17,25 @@ export const CampeonatoService = {
                 ...(params.search && { search: params.search }),
             }).toString();
 
-            const response = await apiRequest(`/api/campeonatos-public?${queryParams}`);
+            const headers = {};
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
 
-            if (response.success) {
+            const response = await apiRequest(
+                `/api/campeonatos/list?${queryParams}`,
+                { headers }
+            );
+
+            // A resposta já vem com a estrutura paginada diretamente
+            if (response && response.data) {
                 return {
                     success: true,
-                    data: response.data,
+                    data: response, // response já contém current_page, data, last_page, etc.
                 };
             }
 
-            throw new Error(response.message || 'Erro ao buscar campeonatos');
+            throw new Error('Erro ao buscar campeonatos');
         } catch (error) {
             console.error('Erro ao listar campeonatos:', error);
             return {
