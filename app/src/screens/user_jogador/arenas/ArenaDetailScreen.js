@@ -109,10 +109,10 @@ export default function ArenaDetailScreen() {
                         </View>
                         <View style={styles.titleInfo}>
                             <Text style={styles.arenaName}>{arena.nome}</Text>
-                            {arena.rating && arena.rating > 0 && (
+                            {arena.rating != null && arena.rating > 0 && (
                                 <View style={styles.ratingRow}>
                                     <Ionicons name="star" size={18} color="#FFD300" />
-                                    <Text style={styles.ratingText}>{arena.rating.toFixed(1)}</Text>
+                                    <Text style={styles.ratingText}>{Number(arena.rating).toFixed(1)}</Text>
                                     <Text style={styles.ratingLabel}>estrelas</Text>
                                 </View>
                             )}

@@ -43,7 +43,9 @@ export default function ArenasListScreen() {
             }
 
             if (result.success) {
-                const newArenas = result.data.data || [];
+                // Verifica se é resposta paginada ou array direto
+                const isArray = Array.isArray(result.data);
+                const newArenas = isArray ? result.data : (result.data.data || []);
 
                 if (page === 1) {
                     setArenas(newArenas);
@@ -51,9 +53,16 @@ export default function ArenasListScreen() {
                     setArenas(prev => [...prev, ...newArenas]);
                 }
 
-                setCurrentPage(result.data.current_page || page);
-                setTotalPages(result.data.last_page || 1);
-                setHasMore((result.data.current_page || page) < (result.data.last_page || 1));
+                // Se for array direto, não há paginação
+                if (isArray) {
+                    setCurrentPage(1);
+                    setTotalPages(1);
+                    setHasMore(false);
+                } else {
+                    setCurrentPage(result.data.current_page || page);
+                    setTotalPages(result.data.last_page || 1);
+                    setHasMore((result.data.current_page || page) < (result.data.last_page || 1));
+                }
             } else {
                 Alert.alert('Erro', result.message || 'Erro ao carregar arenas');
             }
