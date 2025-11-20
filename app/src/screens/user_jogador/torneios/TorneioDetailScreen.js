@@ -29,10 +29,11 @@ export default function TorneioDetailScreen() {
         try {
             setLoading(true);
             const result = await CampeonatoService.getCampeonato(campeonatoId);
+            console.log('Result completo:', JSON.stringify(result, null, 2));
 
             if (result.success) {
                 const campeonatoData = result.data.campeonato || result.data;
-                console.log('Campeonato carregado:', campeonatoData);
+                console.log('Campeonato carregado:', JSON.stringify(campeonatoData, null, 2));
                 setCampeonato(campeonatoData);
             } else {
                 Alert.alert('Erro', result.message);
@@ -56,8 +57,38 @@ export default function TorneioDetailScreen() {
         return `${day}/${month}/${year}`;
     };
 
+    const parsePremiacao = (premiacaoString) => {
+        if (!premiacaoString) return null;
+        try {
+            // Se já for objeto, retorna
+            if (typeof premiacaoString === 'object') return premiacaoString;
+            // Tenta fazer parse da string JSON
+            return JSON.parse(premiacaoString);
+        } catch (error) {
+            console.error('Erro ao fazer parse da premiação:', error);
+            return null;
+        }
+    };
+
+    const formatPremiacao = (premiacaoObj) => {
+        if (!premiacaoObj) return '';
+        if (typeof premiacaoObj === 'string') return premiacaoObj;
+
+        // Converte objeto em string formatada
+        return Object.entries(premiacaoObj)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(', ');
+    };
+
+    const calcularVagasDisponiveis = (categoria) => {
+        const maxDuplas = categoria.max_duplas || 0;
+        const inscricoes = categoria.inscricao_campeonato?.length || 0;
+        return Math.max(0, maxDuplas - inscricoes);
+    };
+
     const getStatusColor = (status) => {
         switch (status) {
+            case 'inscricoes_abertas':
             case 'aberto':
                 return '#4CAF50';
             case 'em_andamento':
@@ -73,6 +104,7 @@ export default function TorneioDetailScreen() {
 
     const getStatusLabel = (status) => {
         switch (status) {
+            case 'inscricoes_abertas':
             case 'aberto':
                 return 'Inscrições Abertas';
             case 'em_andamento':
@@ -124,7 +156,7 @@ export default function TorneioDetailScreen() {
                     {/* Nome e Status */}
                     <View style={styles.titleSection}>
                         <View style={styles.iconContainer}>
-                            <Ionicons name="trophy" size={40} color="#FFD300" />
+                            <Ionicons name="trophy" size={28} color="#FFD300" />
                         </View>
                         <View style={styles.titleInfo}>
                             <Text style={styles.campeonatoNome}>{campeonato.nome}</Text>
@@ -143,7 +175,7 @@ export default function TorneioDetailScreen() {
                     {campeonato.descricao && (
                         <View style={styles.section}>
                             <View style={styles.sectionHeader}>
-                                <Ionicons name="information-circle" size={20} color="#FFD300" />
+                                <Ionicons name="information-circle" size={16} color="#FFD300" />
                                 <Text style={styles.sectionTitle}>Sobre o Torneio</Text>
                             </View>
                             <Text style={styles.description}>{campeonato.descricao}</Text>
@@ -153,13 +185,13 @@ export default function TorneioDetailScreen() {
                     {/* Informações */}
                     <View style={styles.section}>
                         <View style={styles.sectionHeader}>
-                            <Ionicons name="calendar" size={20} color="#FFD300" />
+                            <Ionicons name="calendar" size={16} color="#FFD300" />
                             <Text style={styles.sectionTitle}>Informações</Text>
                         </View>
 
                         {campeonato.data_inicio && (
                             <View style={styles.infoRow}>
-                                <Ionicons name="calendar-outline" size={18} color="#FFD300" />
+                                <Ionicons name="calendar-outline" size={16} color="#FFD300" />
                                 <Text style={styles.infoLabel}>Data de Início:</Text>
                                 <Text style={styles.infoValue}>{formatDate(campeonato.data_inicio)}</Text>
                             </View>
@@ -167,173 +199,202 @@ export default function TorneioDetailScreen() {
 
                         {campeonato.data_fim && (
                             <View style={styles.infoRow}>
-                                <Ionicons name="calendar-outline" size={18} color="#FFD300" />
+                                <Ionicons name="calendar-outline" size={16} color="#FFD300" />
                                 <Text style={styles.infoLabel}>Data de Término:</Text>
                                 <Text style={styles.infoValue}>{formatDate(campeonato.data_fim)}</Text>
                             </View>
                         )}
 
-                        {campeonato.local && (
+                        {campeonato.tipo && (
                             <View style={styles.infoRow}>
-                                <Ionicons name="location-outline" size={18} color="#FFD300" />
-                                <Text style={styles.infoLabel}>Local:</Text>
-                                <Text style={styles.infoValue}>{campeonato.local}</Text>
+                                <Ionicons name="ribbon-outline" size={16} color="#FFD300" />
+                                <Text style={styles.infoLabel}>Tipo:</Text>
+                                <Text style={styles.infoValue}>
+                                    {campeonato.tipo === 'misto' ? 'Misto' : campeonato.tipo === 'masculino' ? 'Masculino' : campeonato.tipo === 'feminino' ? 'Feminino' : campeonato.tipo}
+                                </Text>
                             </View>
                         )}
 
-                        {campeonato.organizador && (
+                        {(campeonato.local || campeonato.arena?.nome) && (
                             <View style={styles.infoRow}>
-                                <Ionicons name="person-outline" size={18} color="#FFD300" />
+                                <Ionicons name="location-outline" size={16} color="#FFD300" />
+                                <Text style={styles.infoLabel}>Local:</Text>
+                                <Text style={styles.infoValue}>{campeonato.local || campeonato.arena?.nome}</Text>
+                            </View>
+                        )}
+
+                        {(campeonato.organizador || campeonato.organizador_nome) && (
+                            <View style={styles.infoRow}>
+                                <Ionicons name="person-outline" size={16} color="#FFD300" />
                                 <Text style={styles.infoLabel}>Organizador:</Text>
-                                <Text style={styles.infoValue}>{campeonato.organizador}</Text>
+                                <Text style={styles.infoValue}>{campeonato.organizador || campeonato.organizador_nome}</Text>
                             </View>
                         )}
                     </View>
 
-                    {/* Regulamento */}
-                    {campeonato.regulamento && (
+                    {/* Regulamento / Regras */}
+                    {(campeonato.regulamento || campeonato.regras) && (
                         <View style={styles.section}>
                             <View style={styles.sectionHeader}>
-                                <Ionicons name="document-text" size={20} color="#FFD300" />
+                                <Ionicons name="document-text" size={16} color="#FFD300" />
                                 <Text style={styles.sectionTitle}>Regulamento</Text>
                             </View>
-                            <Text style={styles.regulamento}>{campeonato.regulamento}</Text>
+                            <Text style={styles.regulamento}>{campeonato.regulamento || campeonato.regras}</Text>
                         </View>
                     )}
                 </View>
 
                 {/* Categorias */}
-                {campeonato.categorias && campeonato.categorias.length > 0 && (
-                    <View style={styles.categoriasSection}>
-                        <View style={styles.categoriasHeader}>
-                            <Ionicons name="list" size={24} color="#FFD300" />
-                            <Text style={styles.categoriasTitle}>
-                                Categorias ({campeonato.categorias.length})
-                            </Text>
-                        </View>
+                {(campeonato.categorias || campeonato.categorias_campeonato) &&
+                    (campeonato.categorias?.length > 0 || campeonato.categorias_campeonato?.length > 0) && (
+                        <View style={styles.categoriasSection}>
+                            <View style={styles.categoriasHeader}>
+                                <Ionicons name="list" size={18} color="#FFD300" />
+                                <Text style={styles.categoriasTitle}>
+                                    Categorias ({(campeonato.categorias || campeonato.categorias_campeonato).length})
+                                </Text>
+                            </View>
 
-                        {campeonato.categorias.map((categoria, index) => (
-                            <View key={categoria.id || index} style={styles.categoriaCard}>
-                                <View style={styles.categoriaHeader}>
-                                    <View style={styles.categoriaIconContainer}>
-                                        <Ionicons name="ribbon" size={24} color="#FFD300" />
-                                    </View>
-                                    <View style={styles.categoriaInfo}>
-                                        <Text style={styles.categoriaNome}>
-                                            {categoria.nome}
-                                        </Text>
-                                        {categoria.genero && (
-                                            <Text style={styles.categoriaGenero}>
-                                                {categoria.genero === 'M' ? 'Masculino' : categoria.genero === 'F' ? 'Feminino' : 'Misto'}
-                                            </Text>
+                            {(campeonato.categorias || campeonato.categorias_campeonato).map((categoria, index) => {
+                                const vagasDisponiveis = calcularVagasDisponiveis(categoria);
+                                const premiacaoObj = parsePremiacao(categoria.premiacao);
+
+                                return (
+                                    <View key={categoria.id || index} style={styles.categoriaCard}>
+                                        <View style={styles.categoriaHeader}>
+                                            <View style={styles.categoriaIconContainer}>
+                                                <Ionicons name="ribbon" size={18} color="#FFD300" />
+                                            </View>
+                                            <View style={styles.categoriaInfo}>
+                                                <Text style={styles.categoriaNome}>
+                                                    {categoria.nome}
+                                                </Text>
+                                                {categoria.genero && (
+                                                    <Text style={styles.categoriaGenero}>
+                                                        {categoria.genero === 'M' || categoria.genero === 'masculino' ? 'Masculino' :
+                                                            categoria.genero === 'F' || categoria.genero === 'feminino' ? 'Feminino' : 'Misto'}
+                                                    </Text>
+                                                )}
+                                                {categoria.nivel && (
+                                                    <Text style={[styles.categoriaGenero, { color: '#999999' }]}>
+                                                        Nível: {categoria.nivel.charAt(0).toUpperCase() + categoria.nivel.slice(1)}
+                                                    </Text>
+                                                )}
+                                            </View>
+                                            {vagasDisponiveis !== undefined && (
+                                                <View style={styles.vagasBadge}>
+                                                    <Text style={styles.vagasText}>
+                                                        {vagasDisponiveis} {vagasDisponiveis === 1 ? 'vaga' : 'vagas'}
+                                                    </Text>
+                                                </View>
+                                            )}
+                                        </View>
+
+                                        {/* Detalhes da Categoria */}
+                                        <View style={styles.categoriaDetails}>
+                                            {categoria.max_duplas && (
+                                                <View style={styles.categoriaDetailItem}>
+                                                    <Ionicons name="people-outline" size={14} color="#FFD300" />
+                                                    <Text style={styles.categoriaDetailText}>
+                                                        Máximo de duplas: {categoria.max_duplas}
+                                                    </Text>
+                                                </View>
+                                            )}
+
+                                            {categoria.idade_minima && (
+                                                <View style={styles.categoriaDetailItem}>
+                                                    <Ionicons name="calendar-outline" size={14} color="#FFD300" />
+                                                    <Text style={styles.categoriaDetailText}>
+                                                        Idade mínima: {categoria.idade_minima} anos
+                                                    </Text>
+                                                </View>
+                                            )}
+
+                                            {categoria.idade_maxima && (
+                                                <View style={styles.categoriaDetailItem}>
+                                                    <Ionicons name="calendar-outline" size={14} color="#FFD300" />
+                                                    <Text style={styles.categoriaDetailText}>
+                                                        Idade máxima: {categoria.idade_maxima} anos
+                                                    </Text>
+                                                </View>
+                                            )}
+
+                                            {categoria.valor_inscricao && (
+                                                <View style={styles.categoriaDetailItem}>
+                                                    <Ionicons name="cash-outline" size={14} color="#4CAF50" />
+                                                    <Text style={[styles.categoriaDetailText, { color: '#4CAF50' }]}>
+                                                        R$ {parseFloat(categoria.valor_inscricao).toFixed(2)}
+                                                    </Text>
+                                                </View>
+                                            )}
+
+                                            {premiacaoObj && (
+                                                <View style={styles.categoriaDetailItem}>
+                                                    <Ionicons name="trophy-outline" size={14} color="#FFD300" />
+                                                    <View style={{ flex: 1 }}>
+                                                        <Text style={styles.categoriaDetailText}>Premiação:</Text>
+                                                        {Object.entries(premiacaoObj).map(([posicao, premio], idx) => (
+                                                            <Text key={idx} style={[styles.categoriaDetailText, { marginLeft: 8, fontSize: 12, color: '#CCCCCC' }]}>
+                                                                • {posicao}: {premio}
+                                                            </Text>
+                                                        ))}
+                                                    </View>
+                                                </View>
+                                            )}
+                                        </View>
+
+                                        {/* Observações */}
+                                        {categoria.observacoes && (
+                                            <View style={styles.categoriaObservacoes}>
+                                                <Text style={styles.categoriaObservacoesText}>
+                                                    {categoria.observacoes}
+                                                </Text>
+                                            </View>
+                                        )}
+
+                                        {/* Botão de Inscrição */}
+                                        {(campeonato.status === 'aberto' || campeonato.status === 'inscricoes_abertas') && vagasDisponiveis > 0 && (
+                                            <TouchableOpacity
+                                                style={styles.inscricaoButton}
+                                                activeOpacity={0.7}
+                                                onPress={() => {
+                                                    Alert.alert(
+                                                        'Inscrição',
+                                                        'Funcionalidade de inscrição em desenvolvimento',
+                                                        [{ text: 'OK' }]
+                                                    );
+                                                }}
+                                            >
+                                                <Ionicons name="add-circle" size={18} color="#000000" />
+                                                <Text style={styles.inscricaoButtonText}>
+                                                    Inscrever Dupla
+                                                </Text>
+                                            </TouchableOpacity>
+                                        )}
+
+                                        {(campeonato.status === 'aberto' || campeonato.status === 'inscricoes_abertas') && vagasDisponiveis === 0 && (
+                                            <View style={styles.lotadoBadge}>
+                                                <Ionicons name="alert-circle" size={14} color="#F44336" />
+                                                <Text style={styles.lotadoText}>Categoria Lotada</Text>
+                                            </View>
                                         )}
                                     </View>
-                                    {categoria.vagas_disponiveis !== undefined && (
-                                        <View style={styles.vagasBadge}>
-                                            <Text style={styles.vagasText}>
-                                                {categoria.vagas_disponiveis} vagas
-                                            </Text>
-                                        </View>
-                                    )}
-                                </View>
-
-                                {/* Detalhes da Categoria */}
-                                <View style={styles.categoriaDetails}>
-                                    {categoria.idade_minima && (
-                                        <View style={styles.categoriaDetailItem}>
-                                            <Ionicons name="calendar-outline" size={16} color="#FFD300" />
-                                            <Text style={styles.categoriaDetailText}>
-                                                Idade mínima: {categoria.idade_minima} anos
-                                            </Text>
-                                        </View>
-                                    )}
-
-                                    {categoria.idade_maxima && (
-                                        <View style={styles.categoriaDetailItem}>
-                                            <Ionicons name="calendar-outline" size={16} color="#FFD300" />
-                                            <Text style={styles.categoriaDetailText}>
-                                                Idade máxima: {categoria.idade_maxima} anos
-                                            </Text>
-                                        </View>
-                                    )}
-
-                                    {categoria.numero_jogadores && (
-                                        <View style={styles.categoriaDetailItem}>
-                                            <Ionicons name="people-outline" size={16} color="#FFD300" />
-                                            <Text style={styles.categoriaDetailText}>
-                                                {categoria.numero_jogadores} jogadores por time
-                                            </Text>
-                                        </View>
-                                    )}
-
-                                    {categoria.valor_inscricao && (
-                                        <View style={styles.categoriaDetailItem}>
-                                            <Ionicons name="cash-outline" size={16} color="#4CAF50" />
-                                            <Text style={[styles.categoriaDetailText, { color: '#4CAF50' }]}>
-                                                R$ {parseFloat(categoria.valor_inscricao).toFixed(2)}
-                                            </Text>
-                                        </View>
-                                    )}
-
-                                    {categoria.premiacao && (
-                                        <View style={styles.categoriaDetailItem}>
-                                            <Ionicons name="trophy-outline" size={16} color="#FFD300" />
-                                            <Text style={styles.categoriaDetailText}>
-                                                Premiação: {categoria.premiacao}
-                                            </Text>
-                                        </View>
-                                    )}
-                                </View>
-
-                                {/* Observações */}
-                                {categoria.observacoes && (
-                                    <View style={styles.categoriaObservacoes}>
-                                        <Text style={styles.categoriaObservacoesText}>
-                                            {categoria.observacoes}
-                                        </Text>
-                                    </View>
-                                )}
-
-                                {/* Botão de Inscrição */}
-                                {campeonato.status === 'aberto' && categoria.vagas_disponiveis > 0 && (
-                                    <TouchableOpacity
-                                        style={styles.inscricaoButton}
-                                        activeOpacity={0.7}
-                                        onPress={() => {
-                                            Alert.alert(
-                                                'Inscrição',
-                                                'Funcionalidade de inscrição em desenvolvimento',
-                                                [{ text: 'OK' }]
-                                            );
-                                        }}
-                                    >
-                                        <Ionicons name="add-circle" size={20} color="#000000" />
-                                        <Text style={styles.inscricaoButtonText}>
-                                            Inscrever Time
-                                        </Text>
-                                    </TouchableOpacity>
-                                )}
-
-                                {campeonato.status === 'aberto' && categoria.vagas_disponiveis === 0 && (
-                                    <View style={styles.lotadoBadge}>
-                                        <Ionicons name="alert-circle" size={16} color="#F44336" />
-                                        <Text style={styles.lotadoText}>Categoria Lotada</Text>
-                                    </View>
-                                )}
-                            </View>
-                        ))}
-                    </View>
-                )}
+                                );
+                            })}
+                        </View>
+                    )}
 
                 {/* Mensagem caso não tenha categorias */}
-                {(!campeonato.categorias || campeonato.categorias.length === 0) && (
+                {(!campeonato.categorias && !campeonato.categorias_campeonato) ||
+                ((campeonato.categorias?.length === 0 || !campeonato.categorias) &&
+                    (campeonato.categorias_campeonato?.length === 0 || !campeonato.categorias_campeonato)) ? (
                     <View style={styles.emptyCategorias}>
-                        <Ionicons name="alert-circle-outline" size={48} color="#666666" />
+                        <Ionicons name="alert-circle-outline" size={40} color="#666666" />
                         <Text style={styles.emptyCategoriasText}>
                             Nenhuma categoria cadastrada para este torneio
                         </Text>
                     </View>
-                )}
+                ) : null}
             </ScrollView>
         </SafeAreaView>
     );
@@ -358,8 +419,8 @@ const styles = StyleSheet.create({
         padding: Spacing.xs,
     },
     headerTitle: {
-        fontSize: Typography.sizes.h2,
-        fontWeight: Typography.fonts.displayWeight,
+        fontSize: 16,
+        fontWeight: '600',
         color: '#FFFFFF',
     },
     headerRight: {
@@ -371,7 +432,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     loadingText: {
-        fontSize: Typography.sizes.body,
+        fontSize: 14,
         color: '#999999',
         marginTop: Spacing.sm,
     },
@@ -380,34 +441,29 @@ const styles = StyleSheet.create({
     },
     mainCard: {
         backgroundColor: '#1a1a1a',
-        borderRadius: BorderRadius.lg,
-        padding: Spacing.lg,
+        borderRadius: BorderRadius.md,
+        padding: Spacing.md,
         marginBottom: Spacing.md,
         borderWidth: 1,
         borderColor: '#2a2a2a',
-        shadowColor: '#FFD300',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 4,
     },
     titleSection: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        marginBottom: Spacing.lg,
-        paddingBottom: Spacing.lg,
+        marginBottom: Spacing.md,
+        paddingBottom: Spacing.md,
         borderBottomWidth: 1,
         borderBottomColor: '#2a2a2a',
     },
     iconContainer: {
-        width: 70,
-        height: 70,
-        borderRadius: 35,
+        width: 50,
+        height: 50,
+        borderRadius: 25,
         backgroundColor: '#2a2a2a',
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: Spacing.md,
-        borderWidth: 2,
+        marginRight: Spacing.sm,
+        borderWidth: 1,
         borderColor: '#FFD300',
     },
     titleInfo: {
@@ -415,8 +471,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     campeonatoNome: {
-        fontSize: Typography.sizes.h1,
-        fontWeight: Typography.fonts.displayWeight,
+        fontSize: 18,
+        fontWeight: '700',
         color: '#FFD300',
         marginBottom: Spacing.xs,
     },
@@ -428,48 +484,48 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     statusText: {
-        fontSize: Typography.sizes.caption,
+        fontSize: 11,
         fontWeight: '600',
     },
     section: {
-        marginBottom: Spacing.lg,
+        marginBottom: Spacing.md,
     },
     sectionHeader: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
-        marginBottom: Spacing.sm,
+        gap: 6,
+        marginBottom: Spacing.xs,
     },
     sectionTitle: {
-        fontSize: Typography.sizes.h3,
-        fontWeight: Typography.fonts.headingWeight,
+        fontSize: 14,
+        fontWeight: '600',
         color: '#FFFFFF',
     },
     description: {
-        fontSize: Typography.sizes.body,
+        fontSize: 14,
         color: '#FFFFFF',
-        lineHeight: 22,
+        lineHeight: 20,
     },
     infoRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
+        gap: 6,
         marginBottom: Spacing.xs,
     },
     infoLabel: {
-        fontSize: Typography.sizes.body,
+        fontSize: 13,
         color: '#999999',
     },
     infoValue: {
-        fontSize: Typography.sizes.body,
+        fontSize: 13,
         color: '#FFFFFF',
         fontWeight: '500',
         flex: 1,
     },
     regulamento: {
-        fontSize: Typography.sizes.body,
+        fontSize: 14,
         color: '#FFFFFF',
-        lineHeight: 22,
+        lineHeight: 20,
     },
     categoriasSection: {
         marginBottom: Spacing.md,
@@ -477,39 +533,39 @@ const styles = StyleSheet.create({
     categoriasHeader: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: Spacing.sm,
-        marginBottom: Spacing.md,
+        gap: Spacing.xs,
+        marginBottom: Spacing.sm,
         paddingHorizontal: Spacing.xs,
     },
     categoriasTitle: {
-        fontSize: Typography.sizes.h2,
-        fontWeight: Typography.fonts.displayWeight,
+        fontSize: 16,
+        fontWeight: '600',
         color: '#FFFFFF',
     },
     categoriaCard: {
         backgroundColor: '#1a1a1a',
-        borderRadius: BorderRadius.lg,
-        padding: Spacing.md,
-        marginBottom: Spacing.md,
+        borderRadius: BorderRadius.md,
+        padding: Spacing.sm,
+        marginBottom: Spacing.sm,
         borderWidth: 1,
         borderColor: '#2a2a2a',
     },
     categoriaHeader: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: Spacing.sm,
-        paddingBottom: Spacing.sm,
+        marginBottom: Spacing.xs,
+        paddingBottom: Spacing.xs,
         borderBottomWidth: 1,
         borderBottomColor: '#2a2a2a',
     },
     categoriaIconContainer: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
+        width: 36,
+        height: 36,
+        borderRadius: 18,
         backgroundColor: '#2a2a2a',
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: Spacing.sm,
+        marginRight: Spacing.xs,
         borderWidth: 1,
         borderColor: '#FFD300',
     },
@@ -517,64 +573,64 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     categoriaNome: {
-        fontSize: Typography.sizes.h3,
-        fontWeight: Typography.fonts.headingWeight,
+        fontSize: 15,
+        fontWeight: '600',
         color: '#FFFFFF',
         marginBottom: 2,
     },
     categoriaGenero: {
-        fontSize: Typography.sizes.caption,
+        fontSize: 11,
         color: '#FFD300',
         fontWeight: '500',
     },
     vagasBadge: {
         backgroundColor: '#2a2a2a',
-        paddingHorizontal: Spacing.sm,
-        paddingVertical: 4,
+        paddingHorizontal: Spacing.xs,
+        paddingVertical: 3,
         borderRadius: BorderRadius.sm,
         borderWidth: 1,
         borderColor: '#FFD300',
     },
     vagasText: {
-        fontSize: Typography.sizes.caption,
+        fontSize: 11,
         color: '#FFD300',
         fontWeight: '600',
     },
     categoriaDetails: {
-        gap: Spacing.xs,
-        marginBottom: Spacing.sm,
+        gap: 6,
+        marginBottom: Spacing.xs,
     },
     categoriaDetailItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
+        gap: 6,
     },
     categoriaDetailText: {
-        fontSize: Typography.sizes.body,
+        fontSize: 13,
         color: '#FFFFFF',
     },
     categoriaObservacoes: {
         backgroundColor: '#2a2a2a',
-        padding: Spacing.sm,
-        borderRadius: BorderRadius.md,
-        marginBottom: Spacing.sm,
+        padding: Spacing.xs,
+        borderRadius: BorderRadius.sm,
+        marginBottom: Spacing.xs,
     },
     categoriaObservacoesText: {
-        fontSize: Typography.sizes.caption,
+        fontSize: 12,
         color: '#999999',
-        lineHeight: 18,
+        lineHeight: 16,
     },
     inscricaoButton: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#FFD300',
-        paddingVertical: Spacing.sm,
-        borderRadius: BorderRadius.md,
-        gap: 8,
+        paddingVertical: Spacing.xs,
+        borderRadius: BorderRadius.sm,
+        gap: 6,
     },
     inscricaoButtonText: {
-        fontSize: Typography.sizes.body,
+        fontSize: 13,
         color: '#000000',
         fontWeight: '700',
     },
@@ -583,21 +639,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'rgba(244, 67, 54, 0.15)',
-        paddingVertical: Spacing.sm,
-        borderRadius: BorderRadius.md,
-        gap: 8,
+        paddingVertical: Spacing.xs,
+        borderRadius: BorderRadius.sm,
+        gap: 6,
         borderWidth: 1,
         borderColor: '#F44336',
     },
     lotadoText: {
-        fontSize: Typography.sizes.body,
+        fontSize: 13,
         color: '#F44336',
         fontWeight: '600',
     },
     emptyCategorias: {
         backgroundColor: '#1a1a1a',
-        borderRadius: BorderRadius.lg,
-        padding: Spacing.xl * 2,
+        borderRadius: BorderRadius.md,
+        padding: Spacing.xl,
         alignItems: 'center',
         justifyContent: 'center',
         borderWidth: 1,
@@ -605,9 +661,9 @@ const styles = StyleSheet.create({
         borderStyle: 'dashed',
     },
     emptyCategoriasText: {
-        fontSize: Typography.sizes.body,
+        fontSize: 13,
         color: '#666666',
-        marginTop: Spacing.md,
+        marginTop: Spacing.sm,
         textAlign: 'center',
     },
 });

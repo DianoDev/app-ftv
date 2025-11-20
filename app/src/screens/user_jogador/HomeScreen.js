@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.3,
         shadowRadius: 8,
-        elevation: 8,
+        elevation: 1,
     },
     greeting: {
         fontSize: Typography.sizes.h2,
@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.3,
         shadowRadius: 8,
-        elevation: 8,
+        elevation: 1,
     },
 
     // Menu Principal
@@ -478,7 +478,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.15,
         shadowRadius: 12,
-        elevation: 3,
+        elevation: 1,
     },
     menuIconContainer: {
         width: 48,
@@ -488,7 +488,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: Spacing.xs,
-        elevation: 3,
+        elevation: 1,
     },
     menuCardTitle: {
         fontSize: Typography.sizes.caption,
@@ -521,7 +521,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.1,
         shadowRadius: 8,
-        elevation: 2,
+        elevation: 1,
     },
     statIconContainer: {
         marginBottom: Spacing.xs,
@@ -568,7 +568,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.1,
         shadowRadius: 8,
-        elevation: 4,
+        elevation: 1,
     },
     rachaHeader: {
         flexDirection: 'row',
@@ -676,7 +676,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.1,
         shadowRadius: 8,
-        elevation: 4,
+        elevation: 1,
     },
     tipIconContainer: {
         width: 56,
@@ -692,7 +692,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.4,
         shadowRadius: 12,
-        elevation: 8,
+        elevation: 1,
     },
     tipContent: {
         flex: 1,

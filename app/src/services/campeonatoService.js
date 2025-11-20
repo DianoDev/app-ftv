@@ -50,8 +50,16 @@ export const CampeonatoService = {
      */
     async getCampeonato(id) {
         try {
-            const response = await apiRequest(`/api/campeonatos-public/${id}`);
+            const token = await StorageService.getToken();
 
+            const headers = {};
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            const response = await apiRequest(`/api/campeonatos/${id}`,
+                { headers });
+
+            console.log(response,'ssssssssssssssssssssssss')
             if (response.success) {
                 return {
                     success: true,
