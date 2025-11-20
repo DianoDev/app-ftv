@@ -115,10 +115,10 @@ export default function ArenasListScreen() {
                         {' '}{item.cidade}, {item.estado}
                     </Text>
                 </View>
-                {item.rating > 0 && (
+                {item.rating != null && item.rating > 0 && (
                     <View style={styles.ratingContainer}>
                         <Ionicons name="star" size={16} color="#FFD300" />
-                        <Text style={styles.ratingText}>{item.rating.toFixed(1)}</Text>
+                        <Text style={styles.ratingText}>{Number(item.rating).toFixed(1)}</Text>
                     </View>
                 )}
             </View>

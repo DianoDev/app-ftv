@@ -71,14 +71,15 @@ export const ArenaService = {
 
             const response = await apiRequest(`/api/arenas/buscar?${queryParams}`);
 
-            if (response.success) {
+            // A resposta já vem com a estrutura paginada diretamente
+            if (response && response.data) {
                 return {
                     success: true,
-                    data: response.data,
+                    data: response, // response já contém current_page, data, last_page, etc.
                 };
             }
 
-            throw new Error(response.message || 'Erro ao buscar arenas');
+            throw new Error('Erro ao buscar arenas');
         } catch (error) {
             console.error('Erro ao buscar arenas:', error);
             return {
@@ -102,14 +103,15 @@ export const ArenaService = {
 
             const response = await apiRequest(`/api/arenas/buscar-por-localizacao?${queryParams}`);
 
-            if (response.success) {
+            // A resposta já vem com a estrutura paginada diretamente
+            if (response && response.data) {
                 return {
                     success: true,
-                    data: response.data,
+                    data: response, // response já contém current_page, data, last_page, etc.
                 };
             }
 
-            throw new Error(response.message || 'Erro ao buscar arenas');
+            throw new Error('Erro ao buscar arenas');
         } catch (error) {
             console.error('Erro ao buscar arenas por localização:', error);
             return {
@@ -134,14 +136,15 @@ export const ArenaService = {
 
             const response = await apiRequest(`/api/arenas/proximas?${queryParams}`);
 
-            if (response.success) {
+            // A resposta já vem com a estrutura paginada diretamente
+            if (response && response.data) {
                 return {
                     success: true,
-                    data: response.data,
+                    data: response, // response já contém current_page, data, last_page, etc.
                 };
             }
 
-            throw new Error(response.message || 'Erro ao buscar arenas próximas');
+            throw new Error('Erro ao buscar arenas próximas');
         } catch (error) {
             console.error('Erro ao buscar arenas próximas:', error);
             return {
