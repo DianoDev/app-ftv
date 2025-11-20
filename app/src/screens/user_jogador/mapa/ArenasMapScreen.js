@@ -285,7 +285,7 @@ export default function ArenasMapScreen() {
                                     )}
 
                                     {/* Avaliação */}
-                                    {selectedArena.rating && selectedArena.rating > 0 && (
+                                    {selectedArena.rating != null && selectedArena.rating > 0 && (
                                         <View style={styles.infoRow}>
                                             <View style={styles.infoIcon}>
                                                 <Ionicons name="star" size={20} color="#FFD300" />
@@ -293,7 +293,7 @@ export default function ArenasMapScreen() {
                                             <View style={styles.infoContent}>
                                                 <Text style={styles.infoLabel}>Avaliação</Text>
                                                 <Text style={styles.infoValue}>
-                                                    {selectedArena.rating.toFixed(1)} estrelas
+                                                    {Number(selectedArena.rating).toFixed(1)} estrelas
                                                 </Text>
                                             </View>
                                         </View>
