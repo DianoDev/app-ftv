@@ -16,6 +16,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { CampeonatoService } from '../../../services/campeonatoService';
+import { InscricaoCampeonatoService } from '../../../services/inscricaoCampeonatoService';
 import { Colors, Typography, Spacing, BorderRadius } from '../../../styles/theme';
 
 export default function TorneiosListScreen() {
@@ -28,10 +29,28 @@ export default function TorneiosListScreen() {
     const [totalPages, setTotalPages] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [filterStatus, setFilterStatus] = useState('all'); // all, aberto, em_andamento, finalizado
+    const [inscricoes, setInscricoes] = useState({}); // { campeonatoId: true/false }
 
     useEffect(() => {
         loadCampeonatos();
     }, [filterStatus]);
+
+    const verificarInscricoesCampeonatos = async (campeonatos) => {
+        const novasInscricoes = { ...inscricoes };
+
+        for (const campeonato of campeonatos) {
+            try {
+                const result = await InscricaoCampeonatoService.verificarInscricoesCampeonato(campeonato.id);
+                if (result.success) {
+                    novasInscricoes[campeonato.id] = result.data.inscrito;
+                }
+            } catch (error) {
+                console.error(`Erro ao verificar inscrição do campeonato ${campeonato.id}:`, error);
+            }
+        }
+
+        setInscricoes(novasInscricoes);
+    };
 
     const loadCampeonatos = async (page = 1, search = '') => {
         try {
@@ -64,6 +83,9 @@ export default function TorneiosListScreen() {
                 setCurrentPage(result.data.current_page || page);
                 setTotalPages(result.data.last_page || 1);
                 setHasMore((result.data.current_page || page) < (result.data.last_page || 1));
+
+                // Verificar inscrições para os campeonatos carregados
+                await verificarInscricoesCampeonatos(newCampeonatos);
             } else {
                 Alert.alert('Erro', result.message || 'Erro ao carregar torneios');
             }
@@ -149,30 +171,41 @@ export default function TorneiosListScreen() {
         }
     };
 
-    const renderCampeonatoCard = ({ item }) => (
-        <TouchableOpacity
-            style={styles.campeonatoCard}
-            onPress={() => handleCampeonatoPress(item)}
-            activeOpacity={0.7}
-        >
-            <View style={styles.cardHeader}>
-                <View style={styles.iconContainer}>
-                    <Ionicons name="trophy" size={28} color="#FFD300" />
-                </View>
-                <View style={styles.headerInfo}>
-                    <Text style={styles.campeonatoNome} numberOfLines={2}>
-                        {item.nome}
-                    </Text>
-                    <View style={[
-                        styles.statusBadge,
-                        { backgroundColor: getStatusColor(item.status) + '20', borderColor: getStatusColor(item.status) }
-                    ]}>
-                        <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
-                            {getStatusLabel(item.status)}
+    const renderCampeonatoCard = ({ item }) => {
+        const estaInscrito = inscricoes[item.id] || false;
+
+        return (
+            <TouchableOpacity
+                style={styles.campeonatoCard}
+                onPress={() => handleCampeonatoPress(item)}
+                activeOpacity={0.7}
+            >
+                <View style={styles.cardHeader}>
+                    <View style={styles.iconContainer}>
+                        <Ionicons name="trophy" size={28} color="#FFD300" />
+                    </View>
+                    <View style={styles.headerInfo}>
+                        <Text style={styles.campeonatoNome} numberOfLines={2}>
+                            {item.nome}
                         </Text>
+                        <View style={styles.badgesRow}>
+                            <View style={[
+                                styles.statusBadge,
+                                { backgroundColor: getStatusColor(item.status) + '20', borderColor: getStatusColor(item.status) }
+                            ]}>
+                                <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
+                                    {getStatusLabel(item.status)}
+                                </Text>
+                            </View>
+                            {estaInscrito && (
+                                <View style={styles.inscritoBadge}>
+                                    <Ionicons name="checkmark-circle" size={12} color="#4CAF50" />
+                                    <Text style={styles.inscritoText}>Inscrito</Text>
+                                </View>
+                            )}
+                        </View>
                     </View>
                 </View>
-            </View>
 
             {item.descricao && (
                 <Text style={styles.descricao} numberOfLines={3}>
@@ -220,12 +253,13 @@ export default function TorneiosListScreen() {
                 )}
             </View>
 
-            <View style={styles.cardFooter}>
-                <Text style={styles.verDetalhes}>Toque para ver categorias e detalhes</Text>
-                <Ionicons name="chevron-forward" size={20} color="#FFD300" />
-            </View>
-        </TouchableOpacity>
-    );
+                <View style={styles.cardFooter}>
+                    <Text style={styles.verDetalhes}>Toque para ver categorias e detalhes</Text>
+                    <Ionicons name="chevron-forward" size={20} color="#FFD300" />
+                </View>
+            </TouchableOpacity>
+        );
+    };
 
     const renderEmptyList = () => (
         <View style={styles.emptyContainer}>
@@ -511,6 +545,11 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         marginBottom: Spacing.xs,
     },
+    badgesRow: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: Spacing.xs,
+    },
     statusBadge: {
         alignSelf: 'flex-start',
         paddingHorizontal: Spacing.xs,
@@ -521,6 +560,23 @@ const styles = StyleSheet.create({
     statusText: {
         fontSize: 10,
         fontWeight: '600',
+    },
+    inscritoBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        alignSelf: 'flex-start',
+        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+        paddingHorizontal: Spacing.xs,
+        paddingVertical: 2,
+        borderRadius: BorderRadius.sm,
+        borderWidth: 1,
+        borderColor: '#4CAF50',
+        gap: 3,
+    },
+    inscritoText: {
+        fontSize: 10,
+        fontWeight: '600',
+        color: '#4CAF50',
     },
     descricao: {
         fontSize: Typography.sizes.body,

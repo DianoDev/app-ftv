@@ -13,6 +13,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { CampeonatoService } from '../../../services/campeonatoService';
+import { InscricaoCampeonatoService } from '../../../services/inscricaoCampeonatoService';
 import { Colors, Typography, Spacing, BorderRadius } from '../../../styles/theme';
 
 export default function TorneioDetailScreen() {
@@ -20,6 +21,7 @@ export default function TorneioDetailScreen() {
     const { campeonatoId } = useLocalSearchParams();
     const [loading, setLoading] = useState(true);
     const [campeonato, setCampeonato] = useState(null);
+    const [categoriasInscritas, setCategoriasInscritas] = useState([]);
 
     useEffect(() => {
         loadCampeonato();
@@ -35,6 +37,12 @@ export default function TorneioDetailScreen() {
                 const campeonatoData = result.data.campeonato || result.data;
                 console.log('Campeonato carregado:', JSON.stringify(campeonatoData, null, 2));
                 setCampeonato(campeonatoData);
+
+                // Verificar inscrições do usuário neste campeonato
+                const inscricoesResult = await InscricaoCampeonatoService.verificarInscricoesCampeonato(campeonatoId);
+                if (inscricoesResult.success) {
+                    setCategoriasInscritas(inscricoesResult.data.categorias || []);
+                }
             } else {
                 Alert.alert('Erro', result.message);
                 router.back();
@@ -258,6 +266,7 @@ export default function TorneioDetailScreen() {
                             {(campeonato.categorias || campeonato.categorias_campeonato).map((categoria, index) => {
                                 const vagasDisponiveis = calcularVagasDisponiveis(categoria);
                                 const premiacaoObj = parsePremiacao(categoria.premiacao);
+                                const estaInscrito = categoriasInscritas.includes(categoria.id);
 
                                 return (
                                     <View key={categoria.id || index} style={styles.categoriaCard}>
@@ -266,9 +275,17 @@ export default function TorneioDetailScreen() {
                                                 <Ionicons name="ribbon" size={18} color="#FFD300" />
                                             </View>
                                             <View style={styles.categoriaInfo}>
-                                                <Text style={styles.categoriaNome}>
-                                                    {categoria.nome}
-                                                </Text>
+                                                <View style={styles.categoriaTitleRow}>
+                                                    <Text style={styles.categoriaNome}>
+                                                        {categoria.nome}
+                                                    </Text>
+                                                    {estaInscrito && (
+                                                        <View style={styles.inscritoCategoryBadge}>
+                                                            <Ionicons name="checkmark-circle" size={14} color="#4CAF50" />
+                                                            <Text style={styles.inscritoCategoryText}>Inscrito</Text>
+                                                        </View>
+                                                    )}
+                                                </View>
                                                 {categoria.genero && (
                                                     <Text style={styles.categoriaGenero}>
                                                         {categoria.genero === 'M' || categoria.genero === 'masculino' ? 'Masculino' :
@@ -281,7 +298,7 @@ export default function TorneioDetailScreen() {
                                                     </Text>
                                                 )}
                                             </View>
-                                            {vagasDisponiveis !== undefined && (
+                                            {vagasDisponiveis !== undefined && !estaInscrito && (
                                                 <View style={styles.vagasBadge}>
                                                     <Text style={styles.vagasText}>
                                                         {vagasDisponiveis} {vagasDisponiveis === 1 ? 'vaga' : 'vagas'}
@@ -352,31 +369,42 @@ export default function TorneioDetailScreen() {
                                             </View>
                                         )}
 
-                                        {/* Botão de Inscrição */}
-                                        {(campeonato.status === 'aberto' || campeonato.status === 'inscricoes_abertas') && vagasDisponiveis > 0 && (
-                                            <TouchableOpacity
-                                                style={styles.inscricaoButton}
-                                                activeOpacity={0.7}
-                                                onPress={() => {
-                                                    Alert.alert(
-                                                        'Inscrição',
-                                                        'Funcionalidade de inscrição em desenvolvimento',
-                                                        [{ text: 'OK' }]
-                                                    );
-                                                }}
-                                            >
-                                                <Ionicons name="add-circle" size={18} color="#000000" />
-                                                <Text style={styles.inscricaoButtonText}>
-                                                    Inscrever Dupla
-                                                </Text>
-                                            </TouchableOpacity>
-                                        )}
-
-                                        {(campeonato.status === 'aberto' || campeonato.status === 'inscricoes_abertas') && vagasDisponiveis === 0 && (
-                                            <View style={styles.lotadoBadge}>
-                                                <Ionicons name="alert-circle" size={14} color="#F44336" />
-                                                <Text style={styles.lotadoText}>Categoria Lotada</Text>
+                                        {/* Botão de Inscrição ou Status */}
+                                        {estaInscrito ? (
+                                            <View style={styles.jaInscritoBadge}>
+                                                <Ionicons name="checkmark-circle" size={18} color="#4CAF50" />
+                                                <Text style={styles.jaInscritoText}>Você já está inscrito nesta categoria</Text>
                                             </View>
+                                        ) : (
+                                            <>
+                                                {(campeonato.status === 'aberto' || campeonato.status === 'inscricoes_abertas') && vagasDisponiveis > 0 && (
+                                                    <TouchableOpacity
+                                                        style={styles.inscricaoButton}
+                                                        activeOpacity={0.7}
+                                                        onPress={() => {
+                                                            router.push({
+                                                                pathname: '/src/screens/user_jogador/torneios/InscricaoScreen',
+                                                                params: {
+                                                                    campeonatoId: campeonato.id,
+                                                                    categoriaId: categoria.id
+                                                                }
+                                                            });
+                                                        }}
+                                                    >
+                                                        <Ionicons name="add-circle" size={18} color="#000000" />
+                                                        <Text style={styles.inscricaoButtonText}>
+                                                            {categoria.tipo_inscricao === 'solo' ? 'Inscrever' : 'Inscrever Dupla'}
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                )}
+
+                                                {(campeonato.status === 'aberto' || campeonato.status === 'inscricoes_abertas') && vagasDisponiveis === 0 && (
+                                                    <View style={styles.lotadoBadge}>
+                                                        <Ionicons name="alert-circle" size={14} color="#F44336" />
+                                                        <Text style={styles.lotadoText}>Categoria Lotada</Text>
+                                                    </View>
+                                                )}
+                                            </>
                                         )}
                                     </View>
                                 );
@@ -572,11 +600,33 @@ const styles = StyleSheet.create({
     categoriaInfo: {
         flex: 1,
     },
+    categoriaTitleRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.xs,
+        marginBottom: 2,
+        flexWrap: 'wrap',
+    },
     categoriaNome: {
         fontSize: 15,
         fontWeight: '600',
         color: '#FFFFFF',
-        marginBottom: 2,
+    },
+    inscritoCategoryBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+        paddingHorizontal: Spacing.xs,
+        paddingVertical: 2,
+        borderRadius: BorderRadius.sm,
+        borderWidth: 1,
+        borderColor: '#4CAF50',
+        gap: 3,
+    },
+    inscritoCategoryText: {
+        fontSize: 10,
+        fontWeight: '600',
+        color: '#4CAF50',
     },
     categoriaGenero: {
         fontSize: 11,
@@ -648,6 +698,22 @@ const styles = StyleSheet.create({
     lotadoText: {
         fontSize: 13,
         color: '#F44336',
+        fontWeight: '600',
+    },
+    jaInscritoBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(76, 175, 80, 0.15)',
+        paddingVertical: Spacing.xs,
+        borderRadius: BorderRadius.sm,
+        gap: 6,
+        borderWidth: 1,
+        borderColor: '#4CAF50',
+    },
+    jaInscritoText: {
+        fontSize: 13,
+        color: '#4CAF50',
         fontWeight: '600',
     },
     emptyCategorias: {
