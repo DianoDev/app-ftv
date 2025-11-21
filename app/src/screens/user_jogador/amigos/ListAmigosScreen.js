@@ -215,7 +215,7 @@ export default function ListAmigosScreen() {
                     <Ionicons name="person" size={24} color="#FFD300" />
                 </View>
                 <View style={styles.amigoInfo}>
-                    <Text style={styles.amigoNome}>{item.usuario.nome}</Text>
+                    <Text style={styles.amigoNome}>{item.nome}</Text>
                     <Text style={styles.amigoEmail}>{item.email || item.usuario?.email || ''}</Text>
                 </View>
             </View>
