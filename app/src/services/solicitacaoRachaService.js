@@ -405,4 +405,75 @@ export const SolicitacaoRachaService = {
             };
         }
     },
+
+    /**
+     * Definir parceiro para formar dupla (autenticado)
+     */
+    async definirParceiro(solicitacaoId, parceiroId) {
+        try {
+            const token = await StorageService.getToken();
+
+            if (!token) {
+                throw new Error('Usuário não autenticado');
+            }
+
+            const response = await apiRequest(`/api/solicitacoes-racha/${solicitacaoId}/definir-parceiro`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ parceiro_id: parceiroId }),
+            });
+
+            if (response.success) {
+                return {
+                    success: true,
+                    message: response.message || 'Parceiro definido com sucesso!',
+                };
+            }
+
+            throw new Error(response.message || 'Erro ao definir parceiro');
+        } catch (error) {
+            console.error('Error setting partner:', error);
+            return {
+                success: false,
+                message: error.message || 'Erro ao definir parceiro',
+            };
+        }
+    },
+
+    /**
+     * Remover parceiro da dupla (autenticado)
+     */
+    async removerParceiro(solicitacaoId) {
+        try {
+            const token = await StorageService.getToken();
+
+            if (!token) {
+                throw new Error('Usuário não autenticado');
+            }
+
+            const response = await apiRequest(`/api/solicitacoes-racha/${solicitacaoId}/remover-parceiro`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.success) {
+                return {
+                    success: true,
+                    message: response.message || 'Parceiro removido com sucesso!',
+                };
+            }
+
+            throw new Error(response.message || 'Erro ao remover parceiro');
+        } catch (error) {
+            console.error('Error removing partner:', error);
+            return {
+                success: false,
+                message: error.message || 'Erro ao remover parceiro',
+            };
+        }
+    },
 };

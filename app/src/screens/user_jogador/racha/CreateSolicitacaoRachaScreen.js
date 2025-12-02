@@ -10,14 +10,17 @@ import {
     Alert,
     ActivityIndicator,
     Platform,
+    Modal,
+    FlatList,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
-import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import CustomSelect from '../../../components/CustomSelect';
 import { SolicitacaoRachaService } from '../../../services/solicitacaoRachaService';
 import { ArenaService } from '../../../services/arenaService';
+import { AmizadeService } from '../../../services/amizadeService';
 import { Colors, Typography, Spacing, BorderRadius, ComponentStyles } from '../../../styles/theme';
 
 export default function CreateSolicitacaoRachaScreen() {
@@ -30,6 +33,12 @@ export default function CreateSolicitacaoRachaScreen() {
     const [showTimePickerInicio, setShowTimePickerInicio] = useState(false);
     const [showTimePickerFim, setShowTimePickerFim] = useState(false);
 
+    const [parceiroModal, setParceiroModal] = useState(false);
+    const [parceiro, setParceiro] = useState(null);
+    const [amigos, setAmigos] = useState([]);
+    const [loadingAmigos, setLoadingAmigos] = useState(false);
+    const [searchAmigo, setSearchAmigo] = useState('');
+
     const [formData, setFormData] = useState({
         arena_id: '',
         data_jogo: new Date(),
@@ -39,6 +48,7 @@ export default function CreateSolicitacaoRachaScreen() {
         valor_estimado: '',
         valor_por_pessoa: '',
         nivel_sugerido: '',
+        tipo_inscricao: 'ambos', // 'individual', 'dupla', 'ambos'
         descricao: '',
         observacoes: '',
     });
@@ -64,6 +74,41 @@ export default function CreateSolicitacaoRachaScreen() {
             setLoadingArenas(false);
         }
     };
+
+    const loadAmigos = async () => {
+        try {
+            setLoadingAmigos(true);
+            const result = await AmizadeService.listarAmigos();
+
+            if (result.success) {
+                setAmigos(result.data || []);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar amigos:', error);
+        } finally {
+            setLoadingAmigos(false);
+        }
+    };
+
+    const handleOpenParceiroModal = () => {
+        loadAmigos();
+        setParceiroModal(true);
+    };
+
+    const handleSelectParceiro = (amigo) => {
+        setParceiro(amigo);
+        setParceiroModal(false);
+        setSearchAmigo('');
+    };
+
+    const handleRemoveParceiro = () => {
+        setParceiro(null);
+    };
+
+    const filteredAmigos = amigos.filter(amigo =>
+        amigo.name?.toLowerCase().includes(searchAmigo.toLowerCase()) ||
+        amigo.email?.toLowerCase().includes(searchAmigo.toLowerCase())
+    );
 
     const handleInputChange = (field, value) => {
         setFormData(prev => ({
@@ -141,6 +186,17 @@ export default function CreateSolicitacaoRachaScreen() {
             return false;
         }
 
+        // Validações de tipo_inscricao
+        if (formData.tipo_inscricao === 'dupla' && !parceiro) {
+            Alert.alert('Erro', 'Para racha em dupla, é obrigatório selecionar um parceiro');
+            return false;
+        }
+
+        if (formData.tipo_inscricao === 'individual' && parceiro) {
+            Alert.alert('Erro', 'Para racha individual, não é permitido adicionar parceiro');
+            return false;
+        }
+
         return true;
     };
 
@@ -158,8 +214,12 @@ export default function CreateSolicitacaoRachaScreen() {
                 hora_inicio: formData.hora_inicio,
                 hora_fim: formData.hora_fim,
                 limite_participantes: parseInt(formData.limite_participantes),
+                tipo_inscricao: formData.tipo_inscricao,
             };
 
+            if (parceiro) {
+                dataToSend.parceiro_id = parceiro.id;
+            }
             if (formData.valor_estimado) {
                 dataToSend.valor_estimado = parseFloat(formData.valor_estimado);
             }
@@ -181,7 +241,9 @@ export default function CreateSolicitacaoRachaScreen() {
             if (result.success) {
                 Alert.alert(
                     'Sucesso!',
-                    'Solicitação de racha criada com sucesso!',
+                    parceiro
+                        ? 'Solicitação de racha criada com sucesso! Você e seu parceiro formarão uma dupla.'
+                        : 'Solicitação de racha criada com sucesso!',
                     [
                         {
                             text: 'OK',
@@ -232,24 +294,62 @@ export default function CreateSolicitacaoRachaScreen() {
                         <Text style={styles.sectionTitle}>
                             <Ionicons name="location" size={18} color="#FFD300" /> Arena
                         </Text>
-                        <View style={styles.pickerContainer}>
-                            <Picker
-                                selectedValue={formData.arena_id}
-                                onValueChange={(value) => handleInputChange('arena_id', value)}
-                                style={styles.picker}
-                                dropdownIconColor="#FFD300"
-                            >
-                                <Picker.Item label="Selecione uma arena" value="" color="#999999" />
-                                {arenas.map((arena) => (
-                                    <Picker.Item
-                                        key={arena.id}
-                                        label={`${arena.nome} - ${arena.cidade}/${arena.estado}`}
-                                        value={arena.id.toString()}
-                                        color="#FFFFFF"
-                                    />
-                                ))}
-                            </Picker>
-                        </View>
+                        <CustomSelect
+                            value={formData.arena_id}
+                            onValueChange={(value) => handleInputChange('arena_id', value)}
+                            placeholder="Selecione uma arena"
+                            options={[
+                                ...arenas.map((arena) => ({
+                                    label: `${arena.nome} - ${arena.cidade}/${arena.estado}`,
+                                    value: arena.id.toString(),
+                                }))
+                            ]}
+                        />
+                    </View>
+
+                    {/* Tipo de Inscrição */}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>
+                            <Ionicons name="git-network" size={18} color="#FFD300" /> Tipo de Inscrição
+                        </Text>
+                        <Text style={styles.helperText}>
+                            {formData.tipo_inscricao === 'individual' && 'Apenas inscrições individuais serão permitidas'}
+                            {formData.tipo_inscricao === 'dupla' && 'Todos devem se inscrever em dupla'}
+                            {formData.tipo_inscricao === 'ambos' && 'Permite inscrições individuais e em dupla'}
+                        </Text>
+                        <CustomSelect
+                            value={formData.tipo_inscricao}
+                            onValueChange={(value) => {
+                                // Se mudar para individual e já tem parceiro, pedir confirmação
+                                if (value === 'individual' && parceiro) {
+                                    Alert.alert(
+                                        'Atenção',
+                                        'Ao selecionar inscrição individual, o parceiro será removido.',
+                                        [
+                                            {
+                                                text: 'Cancelar',
+                                                style: 'cancel',
+                                            },
+                                            {
+                                                text: 'Confirmar',
+                                                onPress: () => {
+                                                    handleRemoveParceiro();
+                                                    handleInputChange('tipo_inscricao', value);
+                                                }
+                                            }
+                                        ]
+                                    );
+                                } else {
+                                    // Para outros casos, altera normalmente
+                                    handleInputChange('tipo_inscricao', value);
+                                }
+                            }}
+                            options={[
+                                { label: 'Individual', value: 'individual' },
+                                { label: 'Dupla', value: 'dupla' },
+                                { label: 'Ambos (Individual ou Dupla)', value: 'ambos' },
+                            ]}
+                        />
                     </View>
 
                     {/* Data e Horário */}
@@ -329,6 +429,48 @@ export default function CreateSolicitacaoRachaScreen() {
                         )}
                     </View>
 
+                    {/* Parceiro (Dupla) - Só aparece se não for individual */}
+                    {formData.tipo_inscricao !== 'individual' && (
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>
+                                <Ionicons name="people-circle" size={18} color="#FFD300" />
+                                {' '}Parceiro {formData.tipo_inscricao === 'dupla' ? '(Obrigatório)' : '(Opcional)'}
+                            </Text>
+                            <Text style={styles.helperText}>
+                                {formData.tipo_inscricao === 'dupla'
+                                    ? 'Para racha em dupla, você deve selecionar um parceiro para formar sua dupla fixa'
+                                    : 'Selecione um amigo para formar uma dupla fixa neste racha'
+                                }
+                            </Text>
+
+                            {parceiro ? (
+                                <View style={styles.parceiroCard}>
+                                    <View style={styles.parceiroInfo}>
+                                        <Ionicons name="person-circle" size={40} color="#FFD300" />
+                                        <View style={styles.parceiroDetails}>
+                                            <Text style={styles.parceiroName}>{parceiro.name}</Text>
+                                            <Text style={styles.parceiroEmail}>{parceiro.email}</Text>
+                                        </View>
+                                    </View>
+                                    <TouchableOpacity
+                                        style={styles.removeButton}
+                                        onPress={handleRemoveParceiro}
+                                    >
+                                        <Ionicons name="close-circle" size={24} color="#F44336" />
+                                    </TouchableOpacity>
+                                </View>
+                            ) : (
+                                <TouchableOpacity
+                                    style={styles.selectParceiroButton}
+                                    onPress={handleOpenParceiroModal}
+                                >
+                                    <Ionicons name="add-circle-outline" size={24} color="#FFD300" />
+                                    <Text style={styles.selectParceiroText}>Selecionar Parceiro</Text>
+                                </TouchableOpacity>
+                            )}
+                        </View>
+                    )}
+
                     {/* Participantes */}
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>
@@ -346,21 +488,21 @@ export default function CreateSolicitacaoRachaScreen() {
                             />
                         </View>
 
-                        <View style={styles.pickerContainer}>
+                        <View style={styles.inputContainer}>
                             <Text style={styles.label}>Nível Sugerido</Text>
-                            <Picker
-                                selectedValue={formData.nivel_sugerido}
+                            <CustomSelect
+                                value={formData.nivel_sugerido}
                                 onValueChange={(value) => handleInputChange('nivel_sugerido', value)}
-                                style={styles.picker}
-                                dropdownIconColor="#FFD300"
-                            >
-                                <Picker.Item label="Qualquer nível" value="" color="#999999" />
-                                <Picker.Item label="Iniciante" value="iniciante" color="#FFFFFF" />
-                                <Picker.Item label="Intermediário" value="intermediario" color="#FFFFFF" />
-                                <Picker.Item label="Avançado" value="avancado" color="#FFFFFF" />
-                                <Picker.Item label="Profissional" value="profissional" color="#FFFFFF" />
-                                <Picker.Item label="Misto" value="misto" color="#FFFFFF" />
-                            </Picker>
+                                placeholder="Qualquer nível"
+                                options={[
+                                    { label: 'Qualquer nível', value: '' },
+                                    { label: 'Iniciante', value: 'iniciante' },
+                                    { label: 'Intermediário', value: 'intermediario' },
+                                    { label: 'Avançado', value: 'avancado' },
+                                    { label: 'Profissional', value: 'profissional' },
+                                    { label: 'Misto', value: 'misto' },
+                                ]}
+                            />
                         </View>
                     </View>
 
@@ -449,6 +591,69 @@ export default function CreateSolicitacaoRachaScreen() {
                     <View style={styles.bottomSpacer} />
                 </ScrollView>
             )}
+
+            {/* Modal de Seleção de Parceiro */}
+            <Modal
+                visible={parceiroModal}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setParceiroModal(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Selecionar Parceiro</Text>
+                            <TouchableOpacity onPress={() => setParceiroModal(false)}>
+                                <Ionicons name="close" size={28} color="#FFFFFF" />
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.searchContainer}>
+                            <Ionicons name="search" size={20} color="#999999" />
+                            <TextInput
+                                style={styles.searchInput}
+                                placeholder="Buscar amigo..."
+                                placeholderTextColor="#666666"
+                                value={searchAmigo}
+                                onChangeText={setSearchAmigo}
+                            />
+                        </View>
+
+                        {loadingAmigos ? (
+                            <View style={styles.modalLoadingContainer}>
+                                <ActivityIndicator size="large" color="#FFD300" />
+                                <Text style={styles.loadingText}>Carregando amigos...</Text>
+                            </View>
+                        ) : filteredAmigos.length === 0 ? (
+                            <View style={styles.emptyContainer}>
+                                <Ionicons name="people-outline" size={48} color="#666666" />
+                                <Text style={styles.emptyText}>
+                                    {searchAmigo ? 'Nenhum amigo encontrado' : 'Você ainda não tem amigos'}
+                                </Text>
+                            </View>
+                        ) : (
+                            <FlatList
+                                data={filteredAmigos}
+                                keyExtractor={(item) => item.id.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity
+                                        style={styles.amigoItem}
+                                        onPress={() => handleSelectParceiro(item)}
+                                    >
+                                        <Ionicons name="person-circle" size={40} color="#FFD300" />
+                                        <View style={styles.amigoInfo}>
+                                            <Text style={styles.amigoName}>{item.name}</Text>
+                                            <Text style={styles.amigoEmail}>{item.email}</Text>
+                                        </View>
+                                        <Ionicons name="chevron-forward" size={24} color="#999999" />
+                                    </TouchableOpacity>
+                                )}
+                                contentContainerStyle={styles.amigosList}
+                            />
+                        )}
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     );
 }
@@ -539,14 +744,6 @@ const styles = StyleSheet.create({
         textAlign: 'right',
         marginTop: Spacing.xxs,
     },
-    pickerContainer: {
-        marginBottom: Spacing.sm,
-    },
-    picker: {
-        backgroundColor: '#2a2a2a',
-        borderRadius: BorderRadius.md,
-        color: '#FFFFFF',
-    },
     dateButton: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -611,5 +808,141 @@ const styles = StyleSheet.create({
     },
     bottomSpacer: {
         height: Spacing.xl,
+    },
+    helperText: {
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
+        marginBottom: Spacing.sm,
+    },
+    parceiroCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#2a2a2a',
+        padding: Spacing.sm,
+        borderRadius: BorderRadius.md,
+        borderWidth: 1,
+        borderColor: '#FFD300',
+    },
+    parceiroInfo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.sm,
+        flex: 1,
+    },
+    parceiroDetails: {
+        flex: 1,
+    },
+    parceiroName: {
+        fontSize: Typography.sizes.body,
+        color: '#FFFFFF',
+        fontWeight: '600',
+    },
+    parceiroEmail: {
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
+    },
+    removeButton: {
+        padding: Spacing.xs,
+    },
+    selectParceiroButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#2a2a2a',
+        padding: Spacing.md,
+        borderRadius: BorderRadius.md,
+        borderWidth: 1,
+        borderColor: '#3a3a3a',
+        borderStyle: 'dashed',
+        gap: Spacing.sm,
+    },
+    selectParceiroText: {
+        fontSize: Typography.sizes.body,
+        color: '#FFD300',
+        fontWeight: '500',
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        justifyContent: 'flex-end',
+    },
+    modalContent: {
+        backgroundColor: '#1a1a1a',
+        borderTopLeftRadius: BorderRadius.xl,
+        borderTopRightRadius: BorderRadius.xl,
+        maxHeight: '80%',
+        borderWidth: 1,
+        borderColor: '#2a2a2a',
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: Spacing.md,
+        borderBottomWidth: 1,
+        borderBottomColor: '#2a2a2a',
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
+    },
+    searchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#2a2a2a',
+        margin: Spacing.md,
+        paddingHorizontal: Spacing.sm,
+        borderRadius: BorderRadius.md,
+        gap: Spacing.sm,
+        borderWidth: 1,
+        borderColor: '#3a3a3a',
+    },
+    searchInput: {
+        flex: 1,
+        paddingVertical: Spacing.sm,
+        fontSize: Typography.sizes.body,
+        color: '#FFFFFF',
+    },
+    modalLoadingContainer: {
+        padding: Spacing.xl,
+        alignItems: 'center',
+    },
+    emptyContainer: {
+        padding: Spacing.xl,
+        alignItems: 'center',
+        gap: Spacing.sm,
+    },
+    emptyText: {
+        fontSize: Typography.sizes.body,
+        color: '#999999',
+        textAlign: 'center',
+    },
+    amigosList: {
+        padding: Spacing.md,
+    },
+    amigoItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#2a2a2a',
+        padding: Spacing.sm,
+        borderRadius: BorderRadius.md,
+        marginBottom: Spacing.sm,
+        gap: Spacing.sm,
+        borderWidth: 1,
+        borderColor: '#3a3a3a',
+    },
+    amigoInfo: {
+        flex: 1,
+    },
+    amigoName: {
+        fontSize: Typography.sizes.body,
+        color: '#FFFFFF',
+        fontWeight: '600',
+    },
+    amigoEmail: {
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
     },
 });

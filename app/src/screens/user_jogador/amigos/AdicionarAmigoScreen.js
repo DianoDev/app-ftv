@@ -14,8 +14,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
-import { StorageService } from '../../../services/storage';
-import { API_CONFIG } from '../../../config/api.config';
+import { AmizadeService } from '../../../services/amizadeService';
 import { Colors, Typography, Spacing, BorderRadius } from '../../../styles/theme';
 
 export default function AdicionarAmigoScreen() {
@@ -35,39 +34,20 @@ export default function AdicionarAmigoScreen() {
         try {
             setSearching(true);
             setHasSearched(true);
-            const token = await StorageService.getToken();
 
-            if (!token) {
-                Alert.alert('Erro', 'Token não encontrado. Faça login novamente.');
-                router.replace('/src/screens/auth/LoginScreen');
-                return;
-            }
+            const result = await AmizadeService.buscarUsuarios(searchTerm);
 
-            const response = await fetch(
-                `${API_CONFIG.BASE_URL}/api/usuarios/buscar?termo=${encodeURIComponent(searchTerm)}`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                }
-            );
-
-            const data = await response.json();
-
-            if (response.ok) {
-                setUsuarios(data.data || []);
-                if ((data.data || []).length === 0) {
+            if (result.success) {
+                setUsuarios(result.data || []);
+                if ((result.data || []).length === 0) {
                     Alert.alert('Resultado', 'Nenhum usuário encontrado');
                 }
             } else {
-                throw new Error(data.message || 'Erro ao buscar usuários');
+                Alert.alert('Erro', result.message);
             }
         } catch (error) {
             console.error('Erro ao buscar usuários:', error);
-            Alert.alert('Erro', error.message || 'Não foi possível buscar usuários');
+            Alert.alert('Erro', 'Não foi possível buscar usuários');
         } finally {
             setSearching(false);
         }
@@ -76,27 +56,13 @@ export default function AdicionarAmigoScreen() {
     const handleEnviarSolicitacao = async (usuarioId) => {
         try {
             setSending(true);
-            const token = await StorageService.getToken();
 
-            const response = await fetch(
-                `${API_CONFIG.BASE_URL}/api/amizades/enviar-solicitacao`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({ amigo_id: usuarioId }),
-                }
-            );
+            const result = await AmizadeService.enviarSolicitacao(usuarioId);
 
-            const data = await response.json();
-
-            if (response.ok) {
+            if (result.success) {
                 Alert.alert(
                     'Sucesso',
-                    data.message || 'Solicitação de amizade enviada!',
+                    result.message,
                     [
                         {
                             text: 'OK',
@@ -108,11 +74,11 @@ export default function AdicionarAmigoScreen() {
                     ]
                 );
             } else {
-                throw new Error(data.message || 'Erro ao enviar solicitação');
+                Alert.alert('Erro', result.message);
             }
         } catch (error) {
             console.error('Erro ao enviar solicitação:', error);
-            Alert.alert('Erro', error.message || 'Não foi possível enviar a solicitação');
+            Alert.alert('Erro', 'Não foi possível enviar a solicitação');
         } finally {
             setSending(false);
         }

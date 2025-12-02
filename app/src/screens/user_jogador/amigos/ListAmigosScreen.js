@@ -13,8 +13,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { StorageService } from '../../../services/storage';
-import { API_CONFIG } from '../../../config/api.config';
+import { AmizadeService } from '../../../services/amizadeService';
 import { Colors, Typography, Spacing, BorderRadius } from '../../../styles/theme';
 
 export default function ListAmigosScreen() {
@@ -31,52 +30,16 @@ export default function ListAmigosScreen() {
                 setLoading(true);
             }
 
-            const token = await StorageService.getToken();
-
-            if (!token) {
-                Alert.alert('Erro', 'Token não encontrado. Faça login novamente.');
-                router.replace('/src/screens/auth/LoginScreen');
-                return;
-            }
-
             // Buscar amigos
-            const amigosResponse = await fetch(
-                `${API_CONFIG.BASE_URL}/api/amizades/meus-amigos`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                }
-            );
-
-            const amigosData = await amigosResponse.json();
-            console.log('Response status:', amigosData);
-
-
-            if (amigosResponse.ok) {
-                setAmigos(amigosData.data || []);
+            const amigosResult = await AmizadeService.listarAmigos();
+            if (amigosResult.success) {
+                setAmigos(amigosResult.data || []);
             }
 
             // Buscar solicitações pendentes
-            const pendentesResponse = await fetch(
-                `${API_CONFIG.BASE_URL}/api/amizades/solicitacoes-pendentes`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                }
-            );
-
-            const pendentesData = await pendentesResponse.json();
-
-            if (pendentesResponse.ok) {
-                setSolicitacoesPendentes(pendentesData.data || []);
+            const pendentesResult = await AmizadeService.listarSolicitacoesPendentes();
+            if (pendentesResult.success) {
+                setSolicitacoesPendentes(pendentesResult.data || []);
             }
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
@@ -100,61 +63,33 @@ export default function ListAmigosScreen() {
 
     const handleAceitarSolicitacao = async (amizadeId) => {
         try {
-            const token = await StorageService.getToken();
+            const result = await AmizadeService.aceitarSolicitacao(amizadeId);
 
-            const response = await fetch(
-                `${API_CONFIG.BASE_URL}/api/amizades/${amizadeId}/aceitar`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                }
-            );
-
-            const data = await response.json();
-
-            if (response.ok) {
-                Alert.alert('Sucesso', data.message || 'Solicitação aceita!');
+            if (result.success) {
+                Alert.alert('Sucesso', result.message);
                 fetchData();
             } else {
-                throw new Error(data.message || 'Erro ao aceitar solicitação');
+                Alert.alert('Erro', result.message);
             }
         } catch (error) {
             console.error('Erro ao aceitar solicitação:', error);
-            Alert.alert('Erro', error.message || 'Não foi possível aceitar a solicitação');
+            Alert.alert('Erro', 'Não foi possível aceitar a solicitação');
         }
     };
 
     const handleRecusarSolicitacao = async (amizadeId) => {
         try {
-            const token = await StorageService.getToken();
+            const result = await AmizadeService.recusarSolicitacao(amizadeId);
 
-            const response = await fetch(
-                `${API_CONFIG.BASE_URL}/api/amizades/${amizadeId}/recusar`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                }
-            );
-
-            const data = await response.json();
-
-            if (response.ok) {
-                Alert.alert('Sucesso', data.message || 'Solicitação recusada!');
+            if (result.success) {
+                Alert.alert('Sucesso', result.message);
                 fetchData();
             } else {
-                throw new Error(data.message || 'Erro ao recusar solicitação');
+                Alert.alert('Erro', result.message);
             }
         } catch (error) {
             console.error('Erro ao recusar solicitação:', error);
-            Alert.alert('Erro', error.message || 'Não foi possível recusar a solicitação');
+            Alert.alert('Erro', 'Não foi possível recusar a solicitação');
         }
     };
 
@@ -171,31 +106,17 @@ export default function ListAmigosScreen() {
                     text: 'Remover',
                     onPress: async () => {
                         try {
-                            const token = await StorageService.getToken();
+                            const result = await AmizadeService.removerAmigo(amigoId);
 
-                            const response = await fetch(
-                                `${API_CONFIG.BASE_URL}/api/amizades/${amigoId}`,
-                                {
-                                    method: 'DELETE',
-                                    headers: {
-                                        'Accept': 'application/json',
-                                        'Content-Type': 'application/json',
-                                        'Authorization': `Bearer ${token}`,
-                                    },
-                                }
-                            );
-
-                            const data = await response.json();
-
-                            if (response.ok) {
-                                Alert.alert('Sucesso', data.message || 'Amigo removido!');
+                            if (result.success) {
+                                Alert.alert('Sucesso', result.message);
                                 fetchData();
                             } else {
-                                throw new Error(data.message || 'Erro ao remover amigo');
+                                Alert.alert('Erro', result.message);
                             }
                         } catch (error) {
                             console.error('Erro ao remover amigo:', error);
-                            Alert.alert('Erro', error.message || 'Não foi possível remover o amigo');
+                            Alert.alert('Erro', 'Não foi possível remover o amigo');
                         }
                     },
                     style: 'destructive',

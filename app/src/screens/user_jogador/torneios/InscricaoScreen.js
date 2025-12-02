@@ -48,7 +48,6 @@ export default function InscricaoScreen() {
 
             // Buscar campeonato
             const campeonatoResult = await CampeonatoService.getCampeonato(campeonatoId);
-
             if (campeonatoResult.success) {
                 const campeonatoData = campeonatoResult.data.campeonato || campeonatoResult.data;
                 setCampeonato(campeonatoData);
@@ -94,6 +93,11 @@ export default function InscricaoScreen() {
             return;
         }
 
+        if (tipoInscricao === 'solo' && parceiro) {
+            Alert.alert('Atenção', 'Esta categoria é individual e não aceita parceiros');
+            return;
+        }
+
         try {
             setSubmitting(true);
 
@@ -102,7 +106,8 @@ export default function InscricaoScreen() {
                 nome_equipe: nomeEquipe.trim() || null,
             };
 
-            if (tipoInscricao === 'dupla' && parceiro) {
+            // Se for dupla obrigatória ou ambos (com parceiro selecionado)
+            if ((tipoInscricao === 'dupla' || tipoInscricao === 'ambos') && parceiro) {
                 data.jogador2_id = parceiro.id;
             }
 
@@ -138,7 +143,18 @@ export default function InscricaoScreen() {
     const getTipoInscricaoLabel = () => {
         const tipo = categoria?.tipo_inscricao || 'dupla';
         console.log(tipo,'topooo')
-        return tipo === 'solo' ? 'Individual' : 'Dupla';
+        if (tipo === 'solo') return 'Individual';
+        if (tipo === 'dupla') return 'Dupla';
+        if (tipo === 'ambos') return 'Individual ou Dupla';
+        return 'Dupla';
+    };
+
+    const getTipoInscricaoDescricao = () => {
+        const tipo = categoria?.tipo_inscricao || 'dupla';
+        if (tipo === 'solo') return 'Esta categoria aceita apenas inscrições individuais';
+        if (tipo === 'dupla') return 'Esta categoria requer que você forme uma dupla';
+        if (tipo === 'ambos') return 'Você pode se inscrever sozinho ou em dupla';
+        return 'Inscrição em dupla';
     };
 
     if (loading) {
@@ -204,6 +220,13 @@ export default function InscricaoScreen() {
                             {formatCurrency(categoria.valor_inscricao)}
                         </Text>
                     </View>
+
+                    <View style={styles.tipoInscricaoInfo}>
+                        <Ionicons name="information-circle" size={18} color="#4CAF50" />
+                        <Text style={styles.tipoInscricaoText}>
+                            {getTipoInscricaoDescricao()}
+                        </Text>
+                    </View>
                 </View>
 
                 {/* Dados da Inscrição */}
@@ -237,10 +260,12 @@ export default function InscricaoScreen() {
                         />
                     </View>
 
-                    {/* Parceiro (se for dupla) */}
-                    {tipoInscricao === 'dupla' && (
+                    {/* Parceiro (se for dupla ou ambos) */}
+                    {(tipoInscricao === 'dupla' || tipoInscricao === 'ambos') && (
                         <View style={styles.parceiroSection}>
-                            <Text style={styles.sectionLabel}>Jogador 2 (Parceiro) *</Text>
+                            <Text style={styles.sectionLabel}>
+                                Jogador 2 (Parceiro) {tipoInscricao === 'dupla' ? '*' : '(Opcional)'}
+                            </Text>
 
                             {!parceiro ? (
                                 <View>
@@ -511,5 +536,22 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '700',
         color: '#000000',
+    },
+    tipoInscricaoInfo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+        padding: Spacing.sm,
+        borderRadius: BorderRadius.md,
+        marginTop: Spacing.sm,
+        gap: Spacing.xs,
+        borderWidth: 1,
+        borderColor: 'rgba(76, 175, 80, 0.3)',
+    },
+    tipoInscricaoText: {
+        flex: 1,
+        fontSize: 12,
+        color: '#4CAF50',
+        lineHeight: 16,
     },
 });

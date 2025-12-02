@@ -18,6 +18,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SolicitacaoRachaService } from '../../../services/solicitacaoRachaService';
 import { ArenaService } from '../../../services/arenaService';
 import { StorageService } from '../../../services/storage';
+import { AmizadeService } from '../../../services/amizadeService';
 import { Colors, Typography, Spacing, BorderRadius } from '../../../styles/theme';
 
 export default function SolicitacaoDetailScreen() {
@@ -33,6 +34,10 @@ export default function SolicitacaoDetailScreen() {
     const [jogadoresDisponiveis, setJogadoresDisponiveis] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [loadingJogadores, setLoadingJogadores] = useState(false);
+    const [parceiroModalVisible, setParceiroModalVisible] = useState(false);
+    const [amigos, setAmigos] = useState([]);
+    const [searchParceiro, setSearchParceiro] = useState('');
+    const [isParceiro, setIsParceiro] = useState(false);
 
     useEffect(() => {
         loadUserAndSolicitacao();
@@ -87,6 +92,11 @@ export default function SolicitacaoDetailScreen() {
                     const isUserCriador = solicitacaoData.criador_id === userIdToCheck;
                     setIsCriador(isUserCriador);
                     console.log('É criador?', isUserCriador);
+
+                    // Verificar se é o parceiro
+                    const isUserParceiro = solicitacaoData.parceiro_id === userIdToCheck;
+                    setIsParceiro(isUserParceiro);
+                    console.log('É parceiro?', isUserParceiro);
 
                     // Verificar se está participando
                     const isUserParticipating = solicitacaoData.participantes?.some(
@@ -188,6 +198,77 @@ export default function SolicitacaoDetailScreen() {
     const handleSearch = () => {
         loadJogadoresDisponiveis(searchTerm);
     };
+
+    const loadAmigos = async () => {
+        try {
+            const result = await AmizadeService.listarAmigos();
+            if (result.success) {
+                setAmigos(result.data || []);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar amigos:', error);
+        }
+    };
+
+    const handleDefinirParceiro = async (amigoId) => {
+        try {
+            setActionLoading(true);
+            const result = await SolicitacaoRachaService.definirParceiro(solicitacaoId, amigoId);
+
+            if (result.success) {
+                Alert.alert('Sucesso!', result.message);
+                setParceiroModalVisible(false);
+                loadSolicitacao();
+            } else {
+                Alert.alert('Erro', result.message);
+            }
+        } catch (error) {
+            Alert.alert('Erro', 'Erro ao definir parceiro');
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
+    const handleRemoverParceiro = () => {
+        Alert.alert(
+            'Remover Parceiro',
+            'Tem certeza que deseja remover o parceiro desta dupla?',
+            [
+                { text: 'Cancelar', style: 'cancel' },
+                {
+                    text: 'Remover',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            setActionLoading(true);
+                            const result = await SolicitacaoRachaService.removerParceiro(solicitacaoId);
+
+                            if (result.success) {
+                                Alert.alert('Sucesso!', result.message);
+                                loadSolicitacao();
+                            } else {
+                                Alert.alert('Erro', result.message);
+                            }
+                        } catch (error) {
+                            Alert.alert('Erro', 'Erro ao remover parceiro');
+                        } finally {
+                            setActionLoading(false);
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
+    const openParceiroModal = () => {
+        loadAmigos();
+        setParceiroModalVisible(true);
+    };
+
+    const filteredAmigos = amigos.filter(amigo =>
+        amigo.name?.toLowerCase().includes(searchParceiro.toLowerCase()) ||
+        amigo.email?.toLowerCase().includes(searchParceiro.toLowerCase())
+    );
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -373,7 +454,86 @@ export default function SolicitacaoDetailScreen() {
                             </View>
                         )}
                     </View>
+
+                    {/* Tipo de Inscrição */}
+                    {solicitacao.tipo_inscricao && (
+                        <View style={styles.tipoInscricaoSection}>
+                            <View style={styles.tipoInscricaoHeader}>
+                                <Ionicons name="git-network" size={20} color="#FFD300" />
+                                <Text style={styles.tipoInscricaoTitle}>Tipo de Inscrição</Text>
+                            </View>
+                            <View style={styles.tipoInscricaoBadge}>
+                                <Text style={styles.tipoInscricaoValue}>
+                                    {solicitacao.tipo_inscricao === 'individual' && 'Individual'}
+                                    {solicitacao.tipo_inscricao === 'dupla' && 'Dupla'}
+                                    {solicitacao.tipo_inscricao === 'ambos' && 'Individual ou Dupla'}
+                                </Text>
+                            </View>
+                            <Text style={styles.tipoInscricaoDescricao}>
+                                {solicitacao.tipo_inscricao === 'individual' && 'Apenas inscrições individuais são permitidas'}
+                                {solicitacao.tipo_inscricao === 'dupla' && 'Todos devem se inscrever em dupla'}
+                                {solicitacao.tipo_inscricao === 'ambos' && 'Permite inscrições individuais e em dupla'}
+                            </Text>
+                        </View>
+                    )}
                 </View>
+
+                {/* Parceiro (Dupla) */}
+                {(solicitacao.parceiro || isCriador) && (
+                    <View style={styles.parceiroCard}>
+                        <View style={styles.parceiroHeader}>
+                            <View style={styles.parceiroTitleRow}>
+                                <Ionicons name="people-circle" size={24} color="#FFD300" />
+                                <Text style={styles.parceiroTitle}>Parceiro de Dupla</Text>
+                            </View>
+                            {isCriador && solicitacao.status === 'aberta' && !solicitacao.parceiro && (
+                                <TouchableOpacity
+                                    style={styles.addParceiroButton}
+                                    onPress={openParceiroModal}
+                                >
+                                    <Ionicons name="add-circle" size={20} color="#000000" />
+                                    <Text style={styles.addParceiroText}>Adicionar</Text>
+                                </TouchableOpacity>
+                            )}
+                        </View>
+
+                        {solicitacao.parceiro ? (
+                            <View style={styles.parceiroInfo}>
+                                <View style={styles.parceiroAvatarContainer}>
+                                    <Ionicons name="person-circle" size={48} color="#FFD300" />
+                                </View>
+                                <View style={styles.parceiroDetails}>
+                                    <Text style={styles.parceiroName}>{solicitacao.parceiro.name}</Text>
+                                    <Text style={styles.parceiroEmail}>{solicitacao.parceiro.email}</Text>
+                                    {isParceiro && (
+                                        <View style={styles.duplaIsBadge}>
+                                            <Ionicons name="checkmark-circle" size={14} color="#4CAF50" />
+                                            <Text style={styles.duplaBadgeText}>Você é o parceiro</Text>
+                                        </View>
+                                    )}
+                                </View>
+                                {isCriador && solicitacao.status === 'aberta' && (
+                                    <TouchableOpacity
+                                        style={styles.removeParceiroButton}
+                                        onPress={handleRemoverParceiro}
+                                        disabled={actionLoading}
+                                    >
+                                        <Ionicons name="close-circle" size={28} color="#F44336" />
+                                    </TouchableOpacity>
+                                )}
+                            </View>
+                        ) : (
+                            <View style={styles.noParceiroInfo}>
+                                <Ionicons name="people-outline" size={32} color="#666666" />
+                                <Text style={styles.noParceiroText}>
+                                    {isCriador
+                                        ? 'Você pode adicionar um parceiro para formar uma dupla fixa'
+                                        : 'Sem parceiro definido'}
+                                </Text>
+                            </View>
+                        )}
+                    </View>
+                )}
 
                 {/* Lista de Participantes */}
                 <View style={styles.participantesCard}>
@@ -585,6 +745,70 @@ export default function SolicitacaoDetailScreen() {
                                         <Text style={styles.emptyJogadoresText}>Nenhum jogador disponível</Text>
                                     </View>
                                 }
+                            />
+                        )}
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Modal de Selecionar Parceiro */}
+            <Modal
+                visible={parceiroModalVisible}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setParceiroModalVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Selecionar Parceiro</Text>
+                            <TouchableOpacity onPress={() => setParceiroModalVisible(false)}>
+                                <Ionicons name="close" size={28} color="#999999" />
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.searchContainer}>
+                            <View style={styles.searchInputContainer}>
+                                <Ionicons name="search" size={20} color="#999999" />
+                                <TextInput
+                                    style={styles.searchInput}
+                                    placeholder="Buscar amigo..."
+                                    placeholderTextColor="#666666"
+                                    value={searchParceiro}
+                                    onChangeText={setSearchParceiro}
+                                />
+                            </View>
+                        </View>
+
+                        {filteredAmigos.length === 0 ? (
+                            <View style={styles.emptyJogadores}>
+                                <Ionicons name="people-outline" size={48} color="#666666" />
+                                <Text style={styles.emptyJogadoresText}>
+                                    {searchParceiro ? 'Nenhum amigo encontrado' : 'Você não tem amigos ainda'}
+                                </Text>
+                            </View>
+                        ) : (
+                            <FlatList
+                                data={filteredAmigos}
+                                keyExtractor={(item) => item.id.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity
+                                        style={styles.jogadorItem}
+                                        onPress={() => handleDefinirParceiro(item.id)}
+                                        activeOpacity={0.7}
+                                        disabled={actionLoading}
+                                    >
+                                        <View style={styles.jogadorAvatar}>
+                                            <Ionicons name="person" size={24} color="#FFD300" />
+                                        </View>
+                                        <View style={styles.jogadorInfo}>
+                                            <Text style={styles.jogadorNome}>{item.name}</Text>
+                                            <Text style={styles.jogadorLocalidade}>{item.email}</Text>
+                                        </View>
+                                        <Ionicons name="chevron-forward" size={24} color="#999999" />
+                                    </TouchableOpacity>
+                                )}
+                                contentContainerStyle={styles.jogadoresList}
                             />
                         )}
                     </View>
@@ -1040,5 +1264,133 @@ const styles = StyleSheet.create({
     emptyJogadoresText: {
         fontSize: Typography.sizes.body,
         color: '#999999',
+    },
+    parceiroCard: {
+        backgroundColor: '#1a1a1a',
+        borderRadius: BorderRadius.lg,
+        padding: Spacing.md,
+        marginBottom: Spacing.md,
+        borderWidth: 1,
+        borderColor: '#FFD300',
+    },
+    parceiroHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: Spacing.md,
+    },
+    parceiroTitleRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.sm,
+    },
+    parceiroTitle: {
+        fontSize: Typography.sizes.h3,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
+    },
+    addParceiroButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#FFD300',
+        paddingVertical: Spacing.xs,
+        paddingHorizontal: Spacing.sm,
+        borderRadius: BorderRadius.md,
+        gap: Spacing.xs,
+    },
+    addParceiroText: {
+        fontSize: Typography.sizes.caption,
+        color: '#000000',
+        fontWeight: '600',
+    },
+    parceiroInfo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.sm,
+    },
+    parceiroAvatarContainer: {
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: '#2a2a2a',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#FFD300',
+    },
+    parceiroDetails: {
+        flex: 1,
+    },
+    parceiroName: {
+        fontSize: Typography.sizes.body,
+        fontWeight: '600',
+        color: '#FFFFFF',
+        marginBottom: 2,
+    },
+    parceiroEmail: {
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
+    },
+    duplaIsBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        marginTop: 4,
+    },
+    duplaBadgeText: {
+        fontSize: Typography.sizes.caption,
+        color: '#4CAF50',
+        fontWeight: '500',
+    },
+    removeParceiroButton: {
+        padding: Spacing.xs,
+    },
+    noParceiroInfo: {
+        alignItems: 'center',
+        paddingVertical: Spacing.lg,
+        gap: Spacing.sm,
+    },
+    noParceiroText: {
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
+        textAlign: 'center',
+        maxWidth: '80%',
+    },
+    tipoInscricaoSection: {
+        marginTop: Spacing.md,
+        paddingTop: Spacing.md,
+        borderTopWidth: 1,
+        borderTopColor: '#2a2a2a',
+    },
+    tipoInscricaoHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.xs,
+        marginBottom: Spacing.sm,
+    },
+    tipoInscricaoTitle: {
+        fontSize: Typography.sizes.body,
+        fontWeight: Typography.fonts.headingWeight,
+        color: '#FFFFFF',
+    },
+    tipoInscricaoBadge: {
+        backgroundColor: '#FFD30020',
+        paddingVertical: Spacing.xs,
+        paddingHorizontal: Spacing.sm,
+        borderRadius: BorderRadius.md,
+        borderWidth: 1,
+        borderColor: '#FFD300',
+        alignSelf: 'flex-start',
+        marginBottom: Spacing.xs,
+    },
+    tipoInscricaoValue: {
+        fontSize: Typography.sizes.body,
+        color: '#FFD300',
+        fontWeight: '600',
+    },
+    tipoInscricaoDescricao: {
+        fontSize: Typography.sizes.caption,
+        color: '#999999',
+        marginTop: Spacing.xs,
     },
 });
