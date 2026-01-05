@@ -2,14 +2,13 @@ import React, { useState, useCallback } from 'react';
 import {
     View,
     Text,
-    StyleSheet,
-    SafeAreaView,
-    FlatList,
+    StyleSheet,FlatList,
     TouchableOpacity,
     Alert,
     ActivityIndicator,
     RefreshControl,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';

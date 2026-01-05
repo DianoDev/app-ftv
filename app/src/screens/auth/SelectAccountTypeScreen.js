@@ -5,9 +5,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Image,
-  SafeAreaView,
-} from 'react-native';
+  Image} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';

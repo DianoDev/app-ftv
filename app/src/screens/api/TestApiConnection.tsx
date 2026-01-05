@@ -5,9 +5,8 @@ import {
     TouchableOpacity,
     StyleSheet,
     ActivityIndicator,
-    ScrollView,
-    SafeAreaView,
-} from 'react-native';
+    ScrollView} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const TestApiConnection = () => {
     const [loading, setLoading] = useState(false);

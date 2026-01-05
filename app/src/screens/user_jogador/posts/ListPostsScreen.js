@@ -2,9 +2,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import {
     View,
     Text,
-    StyleSheet,
-    SafeAreaView,
-    FlatList,
+    StyleSheet,FlatList,
     TouchableOpacity,
     Alert,
     ActivityIndicator,
@@ -13,6 +11,7 @@ import {
     Dimensions,
     Animated,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';

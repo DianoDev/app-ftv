@@ -1,0 +1,7 @@
+# Ignore non-route directories and files
+src/services/**
+src/config/**
+src/utils/**
+src/styles/**
+src/components/**
+src/images/**

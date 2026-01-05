@@ -2,15 +2,14 @@ import React, { useState } from 'react';
 import {
     View,
     Text,
-    StyleSheet,
-    SafeAreaView,
-    ScrollView,
+    StyleSheet,ScrollView,
     TextInput,
     TouchableOpacity,
     Alert,
     ActivityIndicator,
     Switch,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { apiRequest } from '../../../config/api.config';
 import { StorageService } from '../../../services/storage';

@@ -2,13 +2,12 @@ import React, {useState} from 'react';
 import {
     View,
     Text,
-    StyleSheet,
-    SafeAreaView,
-    ScrollView,
+    StyleSheet,ScrollView,
     TouchableOpacity,
     Alert,
     ActivityIndicator,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';

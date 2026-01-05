@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
-    StyleSheet,
-    SafeAreaView,
-    ScrollView,
+    StyleSheet,ScrollView,
     TouchableOpacity,
     ActivityIndicator,
     Alert,
@@ -12,6 +10,7 @@ import {
     TextInput,
     FlatList,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
